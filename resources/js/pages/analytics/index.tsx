@@ -1,6 +1,6 @@
 import { AreaChart } from '@/components/area-chart';
-import { BarChart, LineChart, type Series } from '@/components/series-charts';
 import { Dropdown } from '@/components/dropdown';
+import { BarChart, LineChart, type Series } from '@/components/series-charts';
 import { SummaryCard } from '@/components/summary-card';
 import { RingPill } from '@/components/tone-pill';
 import { Button } from '@/components/ui/button';
@@ -63,12 +63,12 @@ export default function Analytics({
             <div className="flex flex-1 flex-col gap-4 px-3 pt-4 pb-12 lg:px-8">
                 <div>
                     <h1 className="text-xl font-semibold">Analytics &amp; Reports</h1>
-                    <p className="text-xs text-muted-foreground">Comprehensive analytics and reporting for your legal practice.</p>
+                    <p className="text-muted-foreground text-xs">Comprehensive analytics and reporting for your legal practice.</p>
                 </div>
 
                 <div className="rounded-xl border p-6">
                     <div className="space-y-6">
-                        <p className="text-sm text-muted-foreground">Comprehensive insights into your legal practice</p>
+                        <p className="text-muted-foreground text-sm">Comprehensive insights into your legal practice</p>
 
                         <div className="grid grid-cols-1 gap-3 min-[350px]:grid-cols-2 sm:grid-cols-4">
                             <SummaryCard label="Closure Rate" value={`${metrics.closureRate}%`} icon={CircleCheck} tone="green" mono={false} />
@@ -89,33 +89,36 @@ export default function Analytics({
 
                         <div className="grid gap-6 lg:grid-cols-2">
                             <Panel title="Recent Cases" icon={Scale} iconTone="text-blue-600" viewAll="/matters">
-                                {recentCases.length === 0 && <p className="text-sm text-muted-foreground">No cases yet.</p>}
+                                {recentCases.length === 0 && <p className="text-muted-foreground text-sm">No cases yet.</p>}
                                 {recentCases.map((c) => (
                                     <Link
                                         key={c.id}
                                         href={`/matters/${c.id}`}
-                                        className="flex items-center justify-between rounded-lg border p-4 transition-colors hover:bg-muted/50"
+                                        className="hover:bg-muted/50 flex items-center justify-between rounded-lg border p-4 transition-colors"
                                     >
                                         <div>
                                             <p className="text-sm font-medium">{c.title}</p>
-                                            <p className="text-xs text-muted-foreground">{c.client ?? '—'}</p>
+                                            <p className="text-muted-foreground text-xs">{c.client ?? '—'}</p>
                                         </div>
-                                        <RingPill value={c.status === 'closed' ? 'inactive' : c.status === 'pending' ? 'medium' : 'active'} label={c.status} />
+                                        <RingPill
+                                            value={c.status === 'closed' ? 'inactive' : c.status === 'pending' ? 'medium' : 'active'}
+                                            label={c.status}
+                                        />
                                     </Link>
                                 ))}
                             </Panel>
 
                             <Panel title="Overdue Invoices" icon={FileText} iconTone="text-red-600" viewAll="/invoices">
-                                {overdueInvoices.length === 0 && <p className="text-sm text-muted-foreground">Nothing overdue. </p>}
+                                {overdueInvoices.length === 0 && <p className="text-muted-foreground text-sm">Nothing overdue. </p>}
                                 {overdueInvoices.map((i) => (
                                     <Link
                                         key={i.id}
                                         href={`/invoices/${i.id}`}
-                                        className="flex items-center justify-between rounded-lg border p-4 transition-colors hover:bg-muted/50"
+                                        className="hover:bg-muted/50 flex items-center justify-between rounded-lg border p-4 transition-colors"
                                     >
                                         <div>
                                             <p className="text-sm font-medium">{i.number}</p>
-                                            <p className="text-xs text-muted-foreground">{i.client ?? '—'}</p>
+                                            <p className="text-muted-foreground text-xs">{i.client ?? '—'}</p>
                                         </div>
                                         <span className="font-mono text-rose-600">{money(i.balance_cents)}</span>
                                     </Link>
@@ -136,7 +139,9 @@ export default function Analytics({
                                 <TriangleAlert className="size-10 text-orange-600" />
                                 <div>
                                     <h3 className="font-medium text-orange-900 dark:text-orange-100">Amount Alert</h3>
-                                    <p className="font-mono text-sm text-orange-700 dark:text-orange-200">{money(metrics.outstandingCents)} in unpaid invoices</p>
+                                    <p className="font-mono text-sm text-orange-700 dark:text-orange-200">
+                                        {money(metrics.outstandingCents)} in unpaid invoices
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -163,13 +168,19 @@ function ChartCard({
     children: ReactNode;
 }) {
     return (
-        <div className="rounded-lg border bg-card shadow-sm transition-shadow hover:shadow-lg">
+        <div className="bg-card rounded-lg border shadow-sm transition-shadow hover:shadow-lg">
             <div className="flex flex-row items-center justify-between gap-2 p-6 pb-4 max-[400px]:flex-col max-[400px]:items-start">
                 <h3 className="flex items-center gap-2 text-lg leading-none font-semibold tracking-tight">
                     <Icon className={`size-5 ${iconTone}`} />
                     {title}
                 </h3>
-                <Dropdown value={year} onChange={(v) => router.get('/analytics', { year: v }, { preserveState: true, replace: true })} options={years.map((y) => ({ value: y, label: y }))} className="h-10 w-32" aria-label={`${title} year`} />
+                <Dropdown
+                    value={year}
+                    onChange={(v) => router.get('/analytics', { year: v }, { preserveState: true, replace: true })}
+                    options={years.map((y) => ({ value: y, label: y }))}
+                    className="h-10 w-32"
+                    aria-label={`${title} year`}
+                />
             </div>
             <div className="p-6 pt-0">{children}</div>
         </div>
@@ -190,7 +201,7 @@ function Panel({
     children: ReactNode;
 }) {
     return (
-        <div className="rounded-lg border bg-card shadow-sm transition-shadow hover:shadow-lg">
+        <div className="bg-card rounded-lg border shadow-sm transition-shadow hover:shadow-lg">
             <div className="flex flex-row items-center justify-between gap-2 p-6 pb-4 max-[400px]:flex-col max-[400px]:items-start">
                 <h3 className="flex items-center gap-2 text-lg leading-none font-semibold tracking-tight">
                     <Icon className={`size-5 ${iconTone}`} />

@@ -48,17 +48,7 @@ export function FormDialog({
 }
 
 /** One labelled field + its validation message. */
-export function Field({
-    label,
-    error,
-    children,
-    className,
-}: {
-    label: string;
-    error?: string;
-    children: ReactNode;
-    className?: string;
-}) {
+export function Field({ label, error, children, className }: { label: string; error?: string; children: ReactNode; className?: string }) {
     return (
         <div className={cn('flex flex-col gap-1.5', className)}>
             <Label className="text-xs">{label}</Label>
@@ -140,7 +130,7 @@ export function TextareaField({
                 placeholder={placeholder}
                 value={value ?? ''}
                 onChange={(e) => onChange(e.target.value)}
-                className="rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
+                className="border-input focus-visible:border-ring focus-visible:ring-ring/50 dark:bg-input/30 rounded-md border bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:ring-[3px]"
             />
         </Field>
     );

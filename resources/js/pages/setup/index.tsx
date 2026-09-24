@@ -1,7 +1,7 @@
-import { DataTableFooter } from '@/components/data-table-footer';
-import { FormDialog } from '@/components/form-dialog';
 import { confirmAction } from '@/components/confirm-dialog';
+import { DataTableFooter } from '@/components/data-table-footer';
 import { Dropdown } from '@/components/dropdown';
+import { FormDialog } from '@/components/form-dialog';
 import { CountTabs } from '@/components/page-toolbar';
 import { SortableHead } from '@/components/sortable-head';
 import { RingPill } from '@/components/tone-pill';
@@ -200,7 +200,18 @@ export default function SetupIndex({
     const shortName = SHORT_NAMES[kind] ?? singular;
     const icon = ICONS[kind] ?? (kind.startsWith('research') ? BookOpen : hasDays ? Clock : compliance ? ShieldCheck : Tag);
     // "Manage hearing types for your hearings." — the sentence names what the list feeds.
-    const noun = kind === 'hearing_type' ? 'hearings' : kind === 'document_type' ? 'documents' : kind.startsWith('task_') ? 'tasks' : kind.startsWith('research') ? 'legal research' : compliance ? 'organization' : 'cases';
+    const noun =
+        kind === 'hearing_type'
+            ? 'hearings'
+            : kind === 'document_type'
+              ? 'documents'
+              : kind.startsWith('task_')
+                ? 'tasks'
+                : kind.startsWith('research')
+                  ? 'legal research'
+                  : compliance
+                    ? 'organization'
+                    : 'cases';
 
     function openCreate() {
         reset();
@@ -242,7 +253,11 @@ export default function SetupIndex({
     function submit(e: FormEvent) {
         e.preventDefault();
         const done = { onSuccess: () => reset(), preserveScroll: true };
-        editing ? form.put(`/setup/${editing.id}`, done) : form.post('/setup', done);
+        if (editing) {
+            form.put(`/setup/${editing.id}`, done);
+        } else {
+            form.post('/setup', done);
+        }
     }
 
     const fields = (
@@ -251,7 +266,13 @@ export default function SetupIndex({
                 <Label htmlFor="name">
                     {shortName} Name <span className="text-sm text-red-500">*</span>
                 </Label>
-                <Input id="name" value={form.data.name} onChange={(e) => form.setData('name', e.target.value)} placeholder={`eg. ${EXAMPLES[kind] ?? 'New entry'}`} required />
+                <Input
+                    id="name"
+                    value={form.data.name}
+                    onChange={(e) => form.setData('name', e.target.value)}
+                    placeholder={`eg. ${EXAMPLES[kind] ?? 'New entry'}`}
+                    required
+                />
                 {form.errors.name && <p className="text-xs text-rose-600">{form.errors.name}</p>}
             </div>
 
@@ -263,7 +284,7 @@ export default function SetupIndex({
                     value={form.data.description}
                     onChange={(e) => form.setData('description', e.target.value)}
                     placeholder={`Enter ${singular.toLowerCase()} description...`}
-                    className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    className="border-input bg-background focus-visible:ring-ring flex min-h-[80px] w-full rounded-md border px-3 py-2 text-sm outline-none focus-visible:ring-2"
                 />
                 {form.errors.description && <p className="text-xs text-rose-600">{form.errors.description}</p>}
             </div>
@@ -328,7 +349,15 @@ export default function SetupIndex({
 
             <div className="space-y-2">
                 <Label htmlFor="status">Status</Label>
-                <Dropdown value={form.data.active ? 'active' : 'inactive'} onChange={(v) => form.setData('active', v === 'active')} options={[{ value: 'active', label: 'Active' }, { value: 'inactive', label: 'Inactive' }]} className="h-10 w-full" />
+                <Dropdown
+                    value={form.data.active ? 'active' : 'inactive'}
+                    onChange={(v) => form.setData('active', v === 'active')}
+                    options={[
+                        { value: 'active', label: 'Active' },
+                        { value: 'inactive', label: 'Inactive' },
+                    ]}
+                    className="h-10 w-full"
+                />
             </div>
 
             {parent && (
@@ -336,7 +365,14 @@ export default function SetupIndex({
                     <Label htmlFor="parent">
                         {parent.label} <span className="text-sm text-red-500">*</span>
                     </Label>
-                    <Dropdown value={form.data.meta.practice_area ?? ''} onChange={(v) => form.setData('meta', { ...form.data.meta, practice_area: v })} placeholder={`Select ${parent.label.toLowerCase()}`} options={parent.options.map((o) => ({ value: o, label: o }))} className="h-10 w-full" capitalize />
+                    <Dropdown
+                        value={form.data.meta.practice_area ?? ''}
+                        onChange={(v) => form.setData('meta', { ...form.data.meta, practice_area: v })}
+                        placeholder={`Select ${parent.label.toLowerCase()}`}
+                        options={parent.options.map((o) => ({ value: o, label: o }))}
+                        className="h-10 w-full"
+                        capitalize
+                    />
                     {(form.errors as Record<string, string>)['meta.practice_area'] && (
                         <p className="text-xs text-rose-600">{(form.errors as Record<string, string>)['meta.practice_area']}</p>
                     )}
@@ -349,12 +385,27 @@ export default function SetupIndex({
                         <Label htmlFor="facet" className="capitalize">
                             {facet.label}
                         </Label>
-                        <Dropdown value={(form.data.meta as Record<string, string>)[facet.key] ?? ''} onChange={(v) => form.setData('meta', { ...form.data.meta, [facet.key]: v })} placeholder="—" options={facet.values.map((v) => ({ value: v, label: v }))} className="h-10 w-full" capitalize />
+                        <Dropdown
+                            value={(form.data.meta as Record<string, string>)[facet.key] ?? ''}
+                            onChange={(v) => form.setData('meta', { ...form.data.meta, [facet.key]: v })}
+                            placeholder="—"
+                            options={facet.values.map((v) => ({ value: v, label: v }))}
+                            className="h-10 w-full"
+                            capitalize
+                        />
                     </div>
 
                     <div className={cn('space-y-2', !facet.tabs && 'hidden')}>
                         <Label htmlFor="primary">Primary</Label>
-                        <Dropdown value={form.data.meta.primary ? '1' : '0'} onChange={(v) => form.setData('meta', { ...form.data.meta, primary: v === '1' })} options={[{ value: '0', label: 'Secondary' }, { value: '1', label: 'Primary' }]} className="h-10 w-full" />
+                        <Dropdown
+                            value={form.data.meta.primary ? '1' : '0'}
+                            onChange={(v) => form.setData('meta', { ...form.data.meta, primary: v === '1' })}
+                            options={[
+                                { value: '0', label: 'Secondary' },
+                                { value: '1', label: 'Primary' },
+                            ]}
+                            className="h-10 w-full"
+                        />
                     </div>
                 </>
             )}
@@ -380,7 +431,7 @@ export default function SetupIndex({
                     <label className="flex items-center gap-2 text-sm">
                         <input
                             type="checkbox"
-                            className="size-4 accent-primary"
+                            className="accent-primary size-4"
                             checked={!!form.data.meta.is_default}
                             onChange={(e) => form.setData('meta', { ...form.data.meta, is_default: e.target.checked })}
                         />
@@ -389,7 +440,7 @@ export default function SetupIndex({
                     <label className="flex items-center gap-2 text-sm">
                         <input
                             type="checkbox"
-                            className="size-4 accent-primary"
+                            className="accent-primary size-4"
                             checked={!!form.data.meta.is_closed}
                             onChange={(e) => form.setData('meta', { ...form.data.meta, is_closed: e.target.checked })}
                         />
@@ -401,10 +452,10 @@ export default function SetupIndex({
     );
 
     const formCard = (
-        <div className="sticky top-4 rounded-lg border bg-card shadow-sm">
+        <div className="bg-card sticky top-4 rounded-lg border shadow-sm">
             <div className="border-b p-6">
                 <h2 className="text-lg font-semibold">{editing ? `Edit ${singular}` : `Add New ${singular}`}</h2>
-                <p className="mt-1 text-sm text-muted-foreground">
+                <p className="text-muted-foreground mt-1 text-sm">
                     {editing ? `Update ${editing.name}` : `Fill in the details to create a new ${singular.toLowerCase()}`}
                 </p>
             </div>
@@ -428,10 +479,16 @@ export default function SetupIndex({
         <div className="flex items-center justify-between">
             <div>
                 <h1 className="text-xl font-semibold">{label}</h1>
-                <p className="text-xs text-muted-foreground">{SUBTITLES[kind] ?? `Manage ${lower} for your ${noun}.`}</p>
+                <p className="text-muted-foreground text-xs">{SUBTITLES[kind] ?? `Manage ${lower} for your ${noun}.`}</p>
             </div>
             <div className="flex items-center gap-2">
-                <Dropdown value={kind} onChange={(v) => router.get('/setup', { kind: v })} options={Object.entries(kinds).map(([value, name]) => ({ value: value, label: `${name} (${kindCounts[value] ?? 0})` }))} className="h-9 w-56" aria-label="List to manage" />
+                <Dropdown
+                    value={kind}
+                    onChange={(v) => router.get('/setup', { kind: v })}
+                    options={Object.entries(kinds).map(([value, name]) => ({ value: value, label: `${name} (${kindCounts[value] ?? 0})` }))}
+                    className="h-9 w-56"
+                    aria-label="List to manage"
+                />
                 {layout === 'table' && (
                     <Button onClick={openCreate}>
                         <Plus className="size-4" /> Add {singular}
@@ -445,29 +502,31 @@ export default function SetupIndex({
         <table className="w-full caption-bottom text-sm">
             <thead>
                 <tr className="border-b bg-[#F0F0F1] dark:bg-neutral-800">
-                    {layout === 'table' && <th className="w-12 px-4 py-2.5 text-left font-semibold text-muted-foreground">#</th>}
+                    {layout === 'table' && <th className="text-muted-foreground w-12 px-4 py-2.5 text-left font-semibold">#</th>}
                     <SortableHead label={shortName} column="name" sort={sort} onSort={toggleSort} />
-                    {layout === 'table' && hasDuration && <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Duration (min)</th>}
-                    {hasDays && <th className="px-3 py-2.5 text-left font-semibold text-muted-foreground">Days</th>}
-                    {facet && <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground capitalize">{facet.label}</th>}
-                    {facet?.tabs && <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Primary</th>}
-                    {hasUrl && <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">URL</th>}
-                    {parent && <th className="px-3 py-2.5 text-left font-semibold text-muted-foreground">{parent.label}</th>}
-                    <th className="px-3 py-2.5 text-left font-semibold text-muted-foreground">Status</th>
-                    {facet?.tabs && <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Created At</th>}
-                    <th className="w-24 px-4 py-2.5 text-center font-semibold text-muted-foreground">Actions</th>
+                    {layout === 'table' && hasDuration && (
+                        <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Duration (min)</th>
+                    )}
+                    {hasDays && <th className="text-muted-foreground px-3 py-2.5 text-left font-semibold">Days</th>}
+                    {facet && <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold capitalize">{facet.label}</th>}
+                    {facet?.tabs && <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Primary</th>}
+                    {hasUrl && <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">URL</th>}
+                    {parent && <th className="text-muted-foreground px-3 py-2.5 text-left font-semibold">{parent.label}</th>}
+                    <th className="text-muted-foreground px-3 py-2.5 text-left font-semibold">Status</th>
+                    {facet?.tabs && <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Created At</th>}
+                    <th className="text-muted-foreground w-24 px-4 py-2.5 text-center font-semibold">Actions</th>
                 </tr>
             </thead>
             <tbody className="divide-y">
                 {entries.data.length === 0 && (
                     <tr>
-                        <td colSpan={5} className="py-12 text-center text-sm text-muted-foreground">
+                        <td colSpan={5} className="text-muted-foreground py-12 text-center text-sm">
                             No {lower} match this view.
                         </td>
                     </tr>
                 )}
                 {entries.data.map((entry, i) => (
-                    <tr key={entry.id} className="transition-colors hover:bg-muted/40">
+                    <tr key={entry.id} className="hover:bg-muted/40 transition-colors">
                         {layout === 'table' && <td className="px-4 py-2.5 font-medium tabular-nums">{(entries.from ?? 1) + i}</td>}
                         <td className="px-4 py-4">
                             {layout === 'table' ? (
@@ -477,7 +536,7 @@ export default function SetupIndex({
                             )}
                         </td>
                         {layout === 'table' && hasDuration && (
-                            <td className="px-4 py-2.5 text-muted-foreground">
+                            <td className="text-muted-foreground px-4 py-2.5">
                                 {entry.meta?.duration_minutes ? `${entry.meta.duration_minutes} min` : '—'}
                             </td>
                         )}
@@ -509,7 +568,7 @@ export default function SetupIndex({
                         </td>
                         {facet?.tabs && (
                             <td className="px-4 py-2.5">
-                                <div className="flex items-center gap-2 whitespace-nowrap text-muted-foreground">
+                                <div className="text-muted-foreground flex items-center gap-2 whitespace-nowrap">
                                     <Calendar className="size-4" />
                                     <span>{created(entry.created_at)}</span>
                                 </div>
@@ -536,11 +595,11 @@ export default function SetupIndex({
                         <div className="lg:col-span-1">{formCard}</div>
 
                         <div className="space-y-4 lg:col-span-2">
-                            <div className="rounded-lg border bg-card p-4 shadow-sm">
+                            <div className="bg-card rounded-lg border p-4 shadow-sm">
                                 {/* One line: the search, its button, then the list's own filters. */}
                                 <div className="flex min-w-0 items-center gap-2">
                                     <div className="relative min-w-32 flex-1">
-                                        <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+                                        <Search className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
                                         <Input
                                             value={search}
                                             onChange={(e) => setSearch(e.target.value)}
@@ -553,13 +612,31 @@ export default function SetupIndex({
                                         Search
                                     </Button>
                                     {parent && (
-                                        <Dropdown value={filters.parent ?? ''} onChange={(v) => apply({ parent: v })} placeholder={`All ${parent.label}s`} options={parent.options.map((o) => ({ value: o, label: o }))} className="h-9 w-40 min-w-24 shrink" aria-label={`${parent.label} filter`} capitalize />
+                                        <Dropdown
+                                            value={filters.parent ?? ''}
+                                            onChange={(v) => apply({ parent: v })}
+                                            placeholder={`All ${parent.label}s`}
+                                            options={parent.options.map((o) => ({ value: o, label: o }))}
+                                            className="h-9 w-40 min-w-24 shrink"
+                                            aria-label={`${parent.label} filter`}
+                                            capitalize
+                                        />
                                     )}
-                                    <Dropdown value={filters.status ?? ''} onChange={(v) => apply({ status: v })} placeholder="All Statuses" options={[{ value: 'active', label: 'Active' }, { value: 'inactive', label: 'Inactive' }]} className="h-9 w-36 min-w-24 shrink" aria-label="Status filter" />
+                                    <Dropdown
+                                        value={filters.status ?? ''}
+                                        onChange={(v) => apply({ status: v })}
+                                        placeholder="All Statuses"
+                                        options={[
+                                            { value: 'active', label: 'Active' },
+                                            { value: 'inactive', label: 'Inactive' },
+                                        ]}
+                                        className="h-9 w-36 min-w-24 shrink"
+                                        aria-label="Status filter"
+                                    />
                                 </div>
                             </div>
 
-                            <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
+                            <div className="bg-card overflow-hidden rounded-lg border shadow-sm">
                                 <div className="hidden overflow-x-auto lg:block">{rows}</div>
 
                                 <div className="space-y-4 p-4 lg:hidden">
@@ -572,19 +649,22 @@ export default function SetupIndex({
                                             <div className="mt-3 grid grid-cols-2 gap-4 border-t pt-3">
                                                 {hasDays && (
                                                     <div>
-                                                        <p className="mb-1 text-xs text-muted-foreground">Days</p>
+                                                        <p className="text-muted-foreground mb-1 text-xs">Days</p>
                                                         <RingPill value="cadence" label={cadence(entry)} />
                                                     </div>
                                                 )}
                                                 {parent && (
                                                     <div>
-                                                        <p className="mb-1 text-xs text-muted-foreground">{parent.label}</p>
+                                                        <p className="text-muted-foreground mb-1 text-xs">{parent.label}</p>
                                                         <span className="text-sm capitalize">{entry.meta?.practice_area ?? '—'}</span>
                                                     </div>
                                                 )}
                                                 <div>
-                                                    <p className="mb-1 text-xs text-muted-foreground">Status</p>
-                                                    <RingPill value={entry.active ? 'active' : 'inactive'} label={entry.active ? 'Active' : 'Inactive'} />
+                                                    <p className="text-muted-foreground mb-1 text-xs">Status</p>
+                                                    <RingPill
+                                                        value={entry.active ? 'active' : 'inactive'}
+                                                        label={entry.active ? 'Active' : 'Inactive'}
+                                                    />
                                                 </div>
                                             </div>
                                         </div>
@@ -595,10 +675,10 @@ export default function SetupIndex({
                     </div>
                 ) : (
                     <>
-                        <div className="rounded-lg border bg-card shadow-sm">
+                        <div className="bg-card rounded-lg border shadow-sm">
                             <div className="flex min-w-0 items-center gap-2 p-3">
                                 <div className="relative w-64 min-w-40 shrink">
-                                    <Search className="absolute top-2 left-2.5 size-4 text-muted-foreground" />
+                                    <Search className="text-muted-foreground absolute top-2 left-2.5 size-4" />
                                     <Input
                                         value={search}
                                         onChange={(e) => setSearch(e.target.value)}
@@ -609,14 +689,40 @@ export default function SetupIndex({
                                 </div>
 
                                 {facet && !facet.tabs && (
-                                    <Dropdown value={filters.level ?? ''} onChange={(v) => apply({ level: v })} placeholder={`All ${facet.label}s`} options={facet.values.map((v) => ({ value: v, label: v }))} className="h-9 w-40" aria-label={`${facet.label} filter`} capitalize />
+                                    <Dropdown
+                                        value={filters.level ?? ''}
+                                        onChange={(v) => apply({ level: v })}
+                                        placeholder={`All ${facet.label}s`}
+                                        options={facet.values.map((v) => ({ value: v, label: v }))}
+                                        className="h-9 w-40"
+                                        aria-label={`${facet.label} filter`}
+                                        capitalize
+                                    />
                                 )}
 
                                 {facet?.tabs && (
-                                    <Dropdown value={filters.name ?? ''} onChange={(v) => apply({ name: v })} placeholder={`All ${label.replace(/^Practice /, '')}`} options={names.map((n) => ({ value: n, label: n }))} className="h-9 w-40" aria-label={`All ${label}`} capitalize />
+                                    <Dropdown
+                                        value={filters.name ?? ''}
+                                        onChange={(v) => apply({ name: v })}
+                                        placeholder={`All ${label.replace(/^Practice /, '')}`}
+                                        options={names.map((n) => ({ value: n, label: n }))}
+                                        className="h-9 w-40"
+                                        aria-label={`All ${label}`}
+                                        capitalize
+                                    />
                                 )}
 
-                                <Dropdown value={filters.status ?? ''} onChange={(v) => apply({ status: v })} placeholder="All Status" options={[{ value: 'active', label: 'Active' }, { value: 'inactive', label: 'Inactive' }]} className="h-9 w-40" aria-label="Status filter" />
+                                <Dropdown
+                                    value={filters.status ?? ''}
+                                    onChange={(v) => apply({ status: v })}
+                                    placeholder="All Status"
+                                    options={[
+                                        { value: 'active', label: 'Active' },
+                                        { value: 'inactive', label: 'Inactive' },
+                                    ]}
+                                    className="h-9 w-40"
+                                    aria-label="Status filter"
+                                />
                             </div>
 
                             {facet?.tabs ? (
@@ -641,7 +747,7 @@ export default function SetupIndex({
                             )}
                         </div>
 
-                        <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
+                        <div className="bg-card overflow-hidden rounded-lg border shadow-sm">
                             <div className="w-full overflow-x-auto">{rows}</div>
 
                             <DataTableFooter
@@ -686,8 +792,8 @@ function EntryHeading({ entry, icon: Icon, hasColor }: { entry: Entry; icon: Com
             </div>
             <div className="min-w-0">
                 <div className="text-sm font-medium">{entry.name}</div>
-                {entry.description && <div className="mt-0.5 line-clamp-2 max-w-xs text-sm text-muted-foreground">{entry.description}</div>}
-                {entry.meta?.is_default && <span className="text-xs text-muted-foreground">Default</span>}
+                {entry.description && <div className="text-muted-foreground mt-0.5 line-clamp-2 max-w-xs text-sm">{entry.description}</div>}
+                {entry.meta?.is_default && <span className="text-muted-foreground text-xs">Default</span>}
             </div>
         </div>
     );
@@ -696,13 +802,13 @@ function EntryHeading({ entry, icon: Icon, hasColor }: { entry: Entry; icon: Com
 function Actions({ entry, onEdit }: { entry: Entry; onEdit: () => void }) {
     return (
         <div className="flex items-center justify-end gap-2">
-            <Button variant="ghost" size="icon" className={cn('size-8 text-muted-foreground')} title="Edit" onClick={onEdit}>
+            <Button variant="ghost" size="icon" className={cn('text-muted-foreground size-8')} title="Edit" onClick={onEdit}>
                 <SquarePen className="size-4" />
             </Button>
             <Button
                 variant="ghost"
                 size="icon"
-                className="size-8 text-muted-foreground"
+                className="text-muted-foreground size-8"
                 title={entry.active ? 'Retire' : 'Reactivate'}
                 onClick={() => router.patch(`/setup/${entry.id}/toggle`, {}, { preserveScroll: true })}
             >
@@ -711,9 +817,13 @@ function Actions({ entry, onEdit }: { entry: Entry; onEdit: () => void }) {
             <Button
                 variant="ghost"
                 size="icon"
-                className="size-8 text-muted-foreground"
+                className="text-muted-foreground size-8"
                 title="Delete"
-                onClick={() => confirmAction({ title: `Delete ${entry.name}?` }).then((ok) => ok && router.delete(`/setup/${entry.id}`, { preserveScroll: true }))}
+                onClick={() =>
+                    confirmAction({ title: `Delete ${entry.name}?` }).then(
+                        (ok) => ok && router.delete(`/setup/${entry.id}`, { preserveScroll: true }),
+                    )
+                }
             >
                 <Trash2 className="size-4 text-rose-600" />
             </Button>

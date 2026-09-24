@@ -68,7 +68,13 @@ export function AreaChart({
             {ticks.map((t) => (
                 <g key={t}>
                     <line x1={padL} x2={W - padR} y1={y(t)} y2={y(t)} stroke="currentColor" strokeOpacity="0.14" strokeDasharray="4 5" />
-                    <text x={padL - 10} y={y(t) + 4} textAnchor="end" className="fill-current text-[19px] opacity-50" fontFamily="ui-monospace, monospace">
+                    <text
+                        x={padL - 10}
+                        y={y(t) + 4}
+                        textAnchor="end"
+                        className="fill-current text-[19px] opacity-50"
+                        fontFamily="ui-monospace, monospace"
+                    >
                         {format(t)}
                     </text>
                 </g>
@@ -87,7 +93,13 @@ export function AreaChart({
                         {p.label}
                     </text>
                     {hover === i && (
-                        <text x={x(i)} y={y(p.value) - 16} textAnchor="middle" className="fill-current text-[21px] font-semibold" fontFamily="ui-monospace, monospace">
+                        <text
+                            x={x(i)}
+                            y={y(p.value) - 16}
+                            textAnchor="middle"
+                            className="fill-current text-[21px] font-semibold"
+                            fontFamily="ui-monospace, monospace"
+                        >
                             {format(p.value)}
                         </text>
                     )}

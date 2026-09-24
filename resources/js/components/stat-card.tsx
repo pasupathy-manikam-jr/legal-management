@@ -18,11 +18,11 @@ export function StatCard({
     return (
         <Card className={cn('gap-0 p-4', className)}>
             <div className="flex items-center justify-between">
-                <span className="text-xs font-medium tracking-wide text-muted-foreground uppercase">{label}</span>
-                {Icon && <Icon className="size-4 text-muted-foreground" />}
+                <span className="text-muted-foreground text-xs font-medium tracking-wide uppercase">{label}</span>
+                {Icon && <Icon className="text-muted-foreground size-4" />}
             </div>
             <div className="mt-2 text-2xl font-semibold tabular-nums">{value}</div>
-            {hint && <div className="mt-1 text-xs text-muted-foreground">{hint}</div>}
+            {hint && <div className="text-muted-foreground mt-1 text-xs">{hint}</div>}
         </Card>
     );
 }

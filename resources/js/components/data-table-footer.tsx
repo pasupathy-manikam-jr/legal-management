@@ -34,15 +34,15 @@ export function DataTableFooter({
 
     return (
         <div className="flex flex-wrap items-center justify-center gap-3 border-t p-4 lg:justify-between">
-            <div className="text-sm text-muted-foreground">
-                Showing <span className="font-medium text-foreground">{from ?? 0}</span> to <span className="font-medium text-foreground">{to ?? 0}</span> of{' '}
-                <span className="font-medium text-foreground">{total}</span> results
+            <div className="text-muted-foreground text-sm">
+                Showing <span className="text-foreground font-medium">{from ?? 0}</span> to{' '}
+                <span className="text-foreground font-medium">{to ?? 0}</span> of <span className="text-foreground font-medium">{total}</span> results
             </div>
 
             <div className="flex flex-wrap items-center justify-center gap-3">
                 {onPerPage && (
                     <>
-                        <label className="text-xs font-medium text-muted-foreground" htmlFor="per-page">
+                        <label className="text-muted-foreground text-xs font-medium" htmlFor="per-page">
                             Rows per page:
                         </label>
                         <Dropdown
@@ -56,7 +56,13 @@ export function DataTableFooter({
                 )}
 
                 <div className="flex flex-wrap items-center gap-1">
-                    <Button variant="outline" size="sm" className="h-8" disabled={!previous?.url} onClick={() => previous?.url && router.visit(previous.url)}>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-8"
+                        disabled={!previous?.url}
+                        onClick={() => previous?.url && router.visit(previous.url)}
+                    >
                         « Previous
                     </Button>
                     {numbered.map((link, i) => (

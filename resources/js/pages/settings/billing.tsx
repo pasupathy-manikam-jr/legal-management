@@ -34,7 +34,12 @@ export default function BillingSettings({ values }: { values: Record<string, str
                         className="flex flex-col gap-5"
                     >
                         <div className="grid gap-4 sm:grid-cols-2">
-                            <TextField label="Firm name" value={form.data.firm_name} onChange={(v) => form.setData('firm_name', v)} error={form.errors.firm_name} />
+                            <TextField
+                                label="Firm name"
+                                value={form.data.firm_name}
+                                onChange={(v) => form.setData('firm_name', v)}
+                                error={form.errors.firm_name}
+                            />
                             <TextField
                                 label="Invoice prefix"
                                 value={form.data.invoice_prefix}
@@ -77,7 +82,7 @@ export default function BillingSettings({ values }: { values: Record<string, str
                                 rows={3}
                                 value={form.data.invoice_footer}
                                 onChange={(e) => form.setData('invoice_footer', e.target.value)}
-                                className="rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
+                                className="border-input focus-visible:border-ring focus-visible:ring-ring/50 dark:bg-input/30 rounded-md border bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:ring-[3px]"
                             />
                         </Field>
 

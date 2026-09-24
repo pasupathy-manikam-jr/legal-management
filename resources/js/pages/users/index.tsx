@@ -1,6 +1,6 @@
 import { InitialsAvatar } from '@/components/avatar-stack';
-import { DataTableFooter } from '@/components/data-table-footer';
 import { confirmAction } from '@/components/confirm-dialog';
+import { DataTableFooter } from '@/components/data-table-footer';
 import { Dropdown } from '@/components/dropdown';
 import { FormDialog, SelectField, TextField } from '@/components/form-dialog';
 import { FilterActions } from '@/components/page-toolbar';
@@ -63,10 +63,13 @@ export default function UsersManagement({
     const secret = useForm({ password: '', password_confirmation: '' });
 
     const apply = (patch: Record<string, string | number>) =>
-        router.get('/users', { ...filters, view, per_page: perPage, sort: sort.column, direction: sort.direction, ...patch }, { preserveState: true, replace: true });
+        router.get(
+            '/users',
+            { ...filters, view, per_page: perPage, sort: sort.column, direction: sort.direction, ...patch },
+            { preserveState: true, replace: true },
+        );
 
-    const toggleSort = (column: string) =>
-        apply({ sort: column, direction: sort.column === column && sort.direction === 'asc' ? 'desc' : 'asc' });
+    const toggleSort = (column: string) => apply({ sort: column, direction: sort.column === column && sort.direction === 'asc' ? 'desc' : 'asc' });
 
     function openCreate() {
         form.setData({ name: '', email: '', role: 'lawyer', title: '', password: '', active: true });
@@ -90,19 +93,19 @@ export default function UsersManagement({
 
     const actions = (member: Member) => (
         <div className="flex items-center justify-end gap-0.5">
-            <Button variant="ghost" size="icon" className="size-8 text-muted-foreground" title="View" onClick={() => setViewing(member)}>
+            <Button variant="ghost" size="icon" className="text-muted-foreground size-8" title="View" onClick={() => setViewing(member)}>
                 <Eye className="size-4" />
             </Button>
-            <Button variant="ghost" size="icon" className="size-8 text-muted-foreground" title="Edit" onClick={() => openEdit(member)}>
+            <Button variant="ghost" size="icon" className="text-muted-foreground size-8" title="Edit" onClick={() => openEdit(member)}>
                 <SquarePen className="size-4" />
             </Button>
-            <Button variant="ghost" size="icon" className="size-8 text-muted-foreground" title="Reset password" onClick={() => openReset(member)}>
+            <Button variant="ghost" size="icon" className="text-muted-foreground size-8" title="Reset password" onClick={() => openReset(member)}>
                 <KeyRound className="size-4" />
             </Button>
             <Button
                 variant="ghost"
                 size="icon"
-                className="size-8 text-muted-foreground"
+                className="text-muted-foreground size-8"
                 title={member.active ? 'Suspend' : 'Reactivate'}
                 onClick={() => router.patch(`/users/${member.id}/toggle`, {}, { preserveScroll: true })}
             >
@@ -111,9 +114,13 @@ export default function UsersManagement({
             <Button
                 variant="ghost"
                 size="icon"
-                className="size-8 text-muted-foreground"
+                className="text-muted-foreground size-8"
                 title="Delete"
-                onClick={() => confirmAction({ title: `Remove ${member.name}?`, confirmLabel: 'Remove' }).then((ok) => ok && router.delete(`/users/${member.id}`, { preserveScroll: true }))}
+                onClick={() =>
+                    confirmAction({ title: `Remove ${member.name}?`, confirmLabel: 'Remove' }).then(
+                        (ok) => ok && router.delete(`/users/${member.id}`, { preserveScroll: true }),
+                    )
+                }
             >
                 <Trash2 className="size-4 text-rose-600" />
             </Button>
@@ -128,7 +135,7 @@ export default function UsersManagement({
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-xl font-semibold">Users Management</h1>
-                        <p className="text-xs text-muted-foreground">Manage users with their roles.</p>
+                        <p className="text-muted-foreground text-xs">Manage users with their roles.</p>
                     </div>
                     <div className="flex items-center gap-2">
                         {/* The firm has no activity log yet, so this reads the role matrix instead. */}
@@ -143,11 +150,11 @@ export default function UsersManagement({
                     </div>
                 </div>
 
-                <div className="rounded-lg border bg-card shadow-sm">
+                <div className="bg-card rounded-lg border shadow-sm">
                     <div className="flex items-center justify-between gap-2 p-3">
                         <div className="flex min-w-0 items-center gap-2">
                             <div className="relative w-64 min-w-40 shrink">
-                                <Search className="absolute top-2 left-2.5 size-4 text-muted-foreground" />
+                                <Search className="text-muted-foreground absolute top-2 left-2.5 size-4" />
                                 <Input
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
@@ -157,7 +164,14 @@ export default function UsersManagement({
                                 />
                             </div>
 
-                            <Dropdown value={filters.role ?? ''} onChange={(v) => apply({ role: v })} placeholder="All Roles" options={roles.map((role) => ({ value: role, label: ROLE_LABELS[role] ?? role }))} className="h-9 w-40" aria-label="Role filter" />
+                            <Dropdown
+                                value={filters.role ?? ''}
+                                onChange={(v) => apply({ role: v })}
+                                placeholder="All Roles"
+                                options={roles.map((role) => ({ value: role, label: ROLE_LABELS[role] ?? role }))}
+                                className="h-9 w-40"
+                                aria-label="Role filter"
+                            />
                         </div>
 
                         <div className="flex shrink-0 items-center gap-2">
@@ -170,10 +184,22 @@ export default function UsersManagement({
                             />
 
                             <div className="mr-2 rounded-md border p-0.5">
-                                <Button variant={view === 'list' ? 'default' : 'ghost'} size="sm" className="h-7 px-2" title="List View" onClick={() => apply({ view: 'list' })}>
+                                <Button
+                                    variant={view === 'list' ? 'default' : 'ghost'}
+                                    size="sm"
+                                    className="h-7 px-2"
+                                    title="List View"
+                                    onClick={() => apply({ view: 'list' })}
+                                >
                                     <List className="size-4" />
                                 </Button>
-                                <Button variant={view === 'grid' ? 'default' : 'ghost'} size="sm" className="h-7 px-2" title="Grid View" onClick={() => apply({ view: 'grid' })}>
+                                <Button
+                                    variant={view === 'grid' ? 'default' : 'ghost'}
+                                    size="sm"
+                                    className="h-7 px-2"
+                                    title="Grid View"
+                                    onClick={() => apply({ view: 'grid' })}
+                                >
                                     <Grid3x3 className="size-4" />
                                 </Button>
                             </div>
@@ -182,20 +208,22 @@ export default function UsersManagement({
                 </div>
 
                 {members.data.length === 0 ? (
-                    <div className="rounded-lg border bg-card py-16 text-center text-sm text-muted-foreground shadow-sm">No users match this view.</div>
+                    <div className="bg-card text-muted-foreground rounded-lg border py-16 text-center text-sm shadow-sm">
+                        No users match this view.
+                    </div>
                 ) : view === 'grid' ? (
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                         {members.data.map((member) => (
-                            <div key={member.id} className="flex flex-col items-center rounded-lg border bg-card p-5 text-center shadow-sm">
+                            <div key={member.id} className="bg-card flex flex-col items-center rounded-lg border p-5 text-center shadow-sm">
                                 <InitialsAvatar name={member.name} className="size-16 text-xl" />
                                 <h3 className="mt-3 max-w-full truncate font-semibold">{member.name}</h3>
-                                <p className="max-w-full truncate text-xs text-muted-foreground">{member.email}</p>
+                                <p className="text-muted-foreground max-w-full truncate text-xs">{member.email}</p>
                                 <div className="mt-2 flex items-center gap-2">
                                     <RolePill role={member.role} />
                                     {!member.active && <RingPill value="inactive" label="Suspended" />}
                                 </div>
                                 <div className="mt-3 flex w-full items-center justify-between border-t pt-3">
-                                    <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                                    <span className="text-muted-foreground flex items-center gap-1 text-xs">
                                         <Calendar className="size-3.5" />
                                         {date(member.joined_on)}
                                     </span>
@@ -205,28 +233,28 @@ export default function UsersManagement({
                         ))}
                     </div>
                 ) : (
-                    <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
+                    <div className="bg-card overflow-hidden rounded-lg border shadow-sm">
                         <div className="w-full overflow-x-auto">
                             <table className="w-full caption-bottom text-sm">
                                 <thead>
                                     <tr className="border-b bg-[#F0F0F1] dark:bg-neutral-800">
-                                        <th className="w-12 px-4 py-2.5 text-left font-semibold text-muted-foreground">#</th>
+                                        <th className="text-muted-foreground w-12 px-4 py-2.5 text-left font-semibold">#</th>
                                         <SortableHead label="Name" column="name" sort={sort} onSort={toggleSort} />
-                                        <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Roles</th>
+                                        <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Roles</th>
                                         <SortableHead label="Joined" column="created_at" sort={sort} onSort={toggleSort} />
-                                        <th className="w-24 px-4 py-2.5 text-center font-semibold text-muted-foreground">Actions</th>
+                                        <th className="text-muted-foreground w-24 px-4 py-2.5 text-center font-semibold">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y">
                                     {members.data.map((member, index) => (
-                                        <tr key={member.id} className="transition-colors hover:bg-muted/40">
+                                        <tr key={member.id} className="hover:bg-muted/40 transition-colors">
                                             <td className="px-4 py-2.5 font-medium">{(members.from ?? 1) + index}</td>
                                             <td className="px-4 py-2.5">
                                                 <div className="flex items-center gap-3">
                                                     <InitialsAvatar name={member.name} className="size-10 text-sm" />
                                                     <div className="min-w-0">
                                                         <div className="font-medium">{member.name}</div>
-                                                        <div className="truncate text-sm text-muted-foreground">{member.email}</div>
+                                                        <div className="text-muted-foreground truncate text-sm">{member.email}</div>
                                                     </div>
                                                 </div>
                                             </td>
@@ -237,7 +265,7 @@ export default function UsersManagement({
                                                 </div>
                                             </td>
                                             <td className="px-4 py-2.5">
-                                                <div className="flex items-center gap-2 whitespace-nowrap text-muted-foreground">
+                                                <div className="text-muted-foreground flex items-center gap-2 whitespace-nowrap">
                                                     <Calendar className="size-4" />
                                                     {date(member.joined_on)}
                                                 </div>
@@ -251,7 +279,7 @@ export default function UsersManagement({
                     </div>
                 )}
 
-                <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
+                <div className="bg-card overflow-hidden rounded-lg border shadow-sm">
                     <DataTableFooter
                         from={members.from}
                         to={members.to}
@@ -271,12 +299,22 @@ export default function UsersManagement({
                     onSubmit={(e) => {
                         e.preventDefault();
                         const done = { onSuccess: () => setOpen(false), preserveScroll: true };
-                        editing ? form.put(`/users/${editing.id}`, done) : form.post('/users', done);
+                        if (editing) {
+                            form.put(`/users/${editing.id}`, done);
+                        } else {
+                            form.post('/users', done);
+                        }
                     }}
                     wide
                 >
                     <TextField label="Name" value={form.data.name} onChange={(v) => form.setData('name', v)} error={form.errors.name} />
-                    <TextField label="Email" type="email" value={form.data.email} onChange={(v) => form.setData('email', v)} error={form.errors.email} />
+                    <TextField
+                        label="Email"
+                        type="email"
+                        value={form.data.email}
+                        onChange={(v) => form.setData('email', v)}
+                        error={form.errors.email}
+                    />
                     <SelectField
                         label="Role"
                         value={form.data.role}
@@ -344,7 +382,7 @@ export default function UsersManagement({
                                     <InitialsAvatar name={viewing.name} className="size-12 text-base" />
                                     <div className="min-w-0">
                                         <p className="truncate text-sm">{viewing.email}</p>
-                                        <p className="text-xs text-muted-foreground">{viewing.title ?? '—'}</p>
+                                        <p className="text-muted-foreground text-xs">{viewing.title ?? '—'}</p>
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-x-6 gap-y-3 border-t pt-4">
@@ -374,7 +412,7 @@ function RolePill({ role }: { role: string }) {
 function Detail({ label, value }: { label: string; value: string }) {
     return (
         <div className="min-w-0 space-y-0.5">
-            <p className="text-xs text-muted-foreground">{label}</p>
+            <p className="text-muted-foreground text-xs">{label}</p>
             <p className="text-sm font-medium">{value}</p>
         </div>
     );

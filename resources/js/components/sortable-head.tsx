@@ -18,8 +18,8 @@ export function SortableHead({
     const active = sort.column === column;
 
     return (
-        <th className={cn('px-4 py-2.5 text-left font-semibold text-muted-foreground', className)}>
-            <button type="button" onClick={() => onSort(column)} className="flex cursor-pointer items-center select-none hover:text-foreground">
+        <th className={cn('text-muted-foreground px-4 py-2.5 text-left font-semibold', className)}>
+            <button type="button" onClick={() => onSort(column)} className="hover:text-foreground flex cursor-pointer items-center select-none">
                 {label}
                 <ChevronsUpDown className={cn('ml-1 size-4', active ? 'opacity-100' : 'opacity-50')} />
             </button>

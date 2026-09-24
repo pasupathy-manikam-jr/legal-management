@@ -14,7 +14,7 @@ type LoginForm = {
     email: string;
     password: string;
     remember: boolean;
-}
+};
 
 interface LoginProps {
     status?: string;

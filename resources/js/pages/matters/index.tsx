@@ -1,6 +1,6 @@
 import { AvatarStack, InitialsAvatar } from '@/components/avatar-stack';
-import { DataTableFooter } from '@/components/data-table-footer';
 import { confirmAction } from '@/components/confirm-dialog';
+import { DataTableFooter } from '@/components/data-table-footer';
 import { Dropdown } from '@/components/dropdown';
 import { FormDialog, SelectField, TextField, TextareaField } from '@/components/form-dialog';
 import { SortableHead } from '@/components/sortable-head';
@@ -109,7 +109,7 @@ export default function MattersIndex({ matters, filters, sort, counts, typeColor
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-xl font-semibold">Cases</h1>
-                        <p className="text-xs text-muted-foreground">Manage all your legal cases and track their progress.</p>
+                        <p className="text-muted-foreground text-xs">Manage all your legal cases and track their progress.</p>
                     </div>
                     <Button
                         onClick={() => {
@@ -129,12 +129,12 @@ export default function MattersIndex({ matters, filters, sort, counts, typeColor
                     <SummaryCard label="High Priority" value={counts.high} icon={TriangleAlert} tone="red" />
                 </div>
 
-                <div className="rounded-lg border bg-card shadow-sm">
+                <div className="bg-card rounded-lg border shadow-sm">
                     <div className="w-full p-3">
                         <div className="flex items-center justify-between gap-2">
                             <div className="flex min-w-0 items-center gap-2">
                                 <div className="relative w-64 min-w-40 shrink">
-                                    <Search className="absolute top-2 left-2.5 size-4 text-muted-foreground" />
+                                    <Search className="text-muted-foreground absolute top-2 left-2.5 size-4" />
                                     <Input
                                         placeholder="Search..."
                                         value={search}
@@ -144,8 +144,18 @@ export default function MattersIndex({ matters, filters, sort, counts, typeColor
                                     />
                                 </div>
 
-                                <Select value={filters.case_type ?? ''} onChange={(v) => apply({ case_type: v })} placeholder="All Types" options={options.caseTypes} />
-                                <Select value={filters.status ?? ''} onChange={(v) => apply({ status: v })} placeholder="All Status" options={options.statuses} />
+                                <Select
+                                    value={filters.case_type ?? ''}
+                                    onChange={(v) => apply({ case_type: v })}
+                                    placeholder="All Types"
+                                    options={options.caseTypes}
+                                />
+                                <Select
+                                    value={filters.status ?? ''}
+                                    onChange={(v) => apply({ status: v })}
+                                    placeholder="All Status"
+                                    options={options.statuses}
+                                />
                                 <Select
                                     value={filters.court_id ?? ''}
                                     onChange={(v) => apply({ court_id: v })}
@@ -156,11 +166,11 @@ export default function MattersIndex({ matters, filters, sort, counts, typeColor
 
                             <div className="flex shrink-0 items-center gap-2">
                                 {hasFilters && (
-                                    <Button variant="ghost" size="sm" className="h-9 text-muted-foreground" onClick={() => router.get('/matters')}>
+                                    <Button variant="ghost" size="sm" className="text-muted-foreground h-9" onClick={() => router.get('/matters')}>
                                         <RefreshCcw className="size-4" /> Clear Filters
                                     </Button>
                                 )}
-                                <span className="flex h-8 items-center gap-1.5 rounded-md border px-2 text-sm text-muted-foreground">
+                                <span className="text-muted-foreground flex h-8 items-center gap-1.5 rounded-md border px-2 text-sm">
                                     <Filter className="size-4" /> Filters
                                 </span>
                             </div>
@@ -182,7 +192,7 @@ export default function MattersIndex({ matters, filters, sort, counts, typeColor
                                             'flex items-center gap-1.5 border-b-2 px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors',
                                             active
                                                 ? 'border-primary text-primary'
-                                                : 'border-transparent text-muted-foreground hover:border-muted-foreground hover:text-foreground',
+                                                : 'text-muted-foreground hover:border-muted-foreground hover:text-foreground border-transparent',
                                         )}
                                     >
                                         <tab.icon className="size-4" />
@@ -202,26 +212,26 @@ export default function MattersIndex({ matters, filters, sort, counts, typeColor
                     </div>
                 </div>
 
-                <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
+                <div className="bg-card overflow-hidden rounded-lg border shadow-sm">
                     <div className="w-full overflow-x-auto">
                         <table className="w-full caption-bottom text-sm">
                             <thead>
                                 <tr className="border-b bg-[#F0F0F1] dark:bg-neutral-800">
-                                    <th className="w-12 px-4 py-2.5 text-left font-semibold text-muted-foreground">#</th>
+                                    <th className="text-muted-foreground w-12 px-4 py-2.5 text-left font-semibold">#</th>
                                     <SortableHead label="Title" column="title" sort={sort} onSort={toggleSort} />
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Client</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Team</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Status</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Priority</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Client</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Team</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Status</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Priority</th>
                                     <SortableHead label="Filing Date" column="opened_on" sort={sort} onSort={toggleSort} />
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Active Status</th>
-                                    <th className="w-24 px-4 py-2.5 text-center font-semibold text-muted-foreground">Actions</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Active Status</th>
+                                    <th className="text-muted-foreground w-24 px-4 py-2.5 text-center font-semibold">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {matters.data.length === 0 && (
                                     <tr>
-                                        <td colSpan={9} className="py-12 text-center text-sm text-muted-foreground">
+                                        <td colSpan={9} className="text-muted-foreground py-12 text-center text-sm">
                                             No cases match these filters.
                                         </td>
                                     </tr>
@@ -230,7 +240,7 @@ export default function MattersIndex({ matters, filters, sort, counts, typeColor
                                     const active = m.status !== 'closed';
 
                                     return (
-                                        <tr key={m.id} className="border-b transition-colors last:border-0 hover:bg-muted/40">
+                                        <tr key={m.id} className="hover:bg-muted/40 border-b transition-colors last:border-0">
                                             <td className="px-4 py-2.5 font-medium tabular-nums">{(matters.from ?? 1) + i}</td>
                                             <td className="px-4 py-2.5">
                                                 <Link href={`/matters/${m.id}`} className="font-medium hover:underline">
@@ -251,7 +261,9 @@ export default function MattersIndex({ matters, filters, sort, counts, typeColor
                                                         <InitialsAvatar name={m.client.name} />
                                                         <div className="min-w-0">
                                                             <div className="truncate text-sm font-medium">{m.client.name}</div>
-                                                            <div className="truncate text-xs text-muted-foreground">{m.client.email ?? m.client.company ?? '—'}</div>
+                                                            <div className="text-muted-foreground truncate text-xs">
+                                                                {m.client.email ?? m.client.company ?? '—'}
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 ) : (
@@ -272,7 +284,7 @@ export default function MattersIndex({ matters, filters, sort, counts, typeColor
                                                 <RingPill value={m.priority} />
                                             </td>
                                             <td className="px-4 py-2.5">
-                                                <div className="flex items-center gap-2 whitespace-nowrap text-muted-foreground">
+                                                <div className="text-muted-foreground flex items-center gap-2 whitespace-nowrap">
                                                     <Calendar className="size-4" />
                                                     <span>{m.opened_on?.slice(0, 10)}</span>
                                                 </div>
@@ -282,7 +294,7 @@ export default function MattersIndex({ matters, filters, sort, counts, typeColor
                                             </td>
                                             <td className="px-4 py-2.5">
                                                 <div className="flex items-center justify-end gap-1">
-                                                    <Button variant="ghost" size="icon" className="size-8 text-muted-foreground" asChild title="View">
+                                                    <Button variant="ghost" size="icon" className="text-muted-foreground size-8" asChild title="View">
                                                         <Link href={`/matters/${m.id}`}>
                                                             <Eye className="size-4" />
                                                         </Link>
@@ -290,7 +302,7 @@ export default function MattersIndex({ matters, filters, sort, counts, typeColor
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
-                                                        className="size-8 text-muted-foreground"
+                                                        className="text-muted-foreground size-8"
                                                         title="Edit"
                                                         onClick={() => router.visit(`/matters/${m.id}`)}
                                                     >
@@ -299,7 +311,7 @@ export default function MattersIndex({ matters, filters, sort, counts, typeColor
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
-                                                        className="size-8 text-muted-foreground"
+                                                        className="text-muted-foreground size-8"
                                                         title={active ? 'Close case' : 'Reopen case'}
                                                         onClick={() => router.patch(`/matters/${m.id}/toggle-status`, {}, { preserveScroll: true })}
                                                     >
@@ -308,10 +320,12 @@ export default function MattersIndex({ matters, filters, sort, counts, typeColor
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
-                                                        className="size-8 text-muted-foreground"
+                                                        className="text-muted-foreground size-8"
                                                         title="Delete"
                                                         onClick={() =>
-                                                            confirmAction({ title: `Delete ${m.reference} and everything on it?` }).then((ok) => ok && router.delete(`/matters/${m.id}`, { preserveScroll: true }))
+                                                            confirmAction({ title: `Delete ${m.reference} and everything on it?` }).then(
+                                                                (ok) => ok && router.delete(`/matters/${m.id}`, { preserveScroll: true }),
+                                                            )
                                                         }
                                                     >
                                                         <Trash2 className="size-4 text-rose-600" />
@@ -348,7 +362,13 @@ export default function MattersIndex({ matters, filters, sort, counts, typeColor
                 submitLabel="Open case"
                 wide
             >
-                <TextField label="Title" value={form.data.title} onChange={(v) => form.setData('title', v)} error={form.errors.title} className="sm:col-span-2" />
+                <TextField
+                    label="Title"
+                    value={form.data.title}
+                    onChange={(v) => form.setData('title', v)}
+                    error={form.errors.title}
+                    className="sm:col-span-2"
+                />
                 <SelectField
                     label="Client"
                     value={form.data.client_id}
@@ -414,12 +434,16 @@ export default function MattersIndex({ matters, filters, sort, counts, typeColor
                     onChange={(v) => form.setData('status', v)}
                     options={options.statuses.map((s) => ({ value: s, label: s }))}
                 />
-                <TextareaField label="Description" value={form.data.description} onChange={(v) => form.setData('description', v)} className="sm:col-span-2" />
+                <TextareaField
+                    label="Description"
+                    value={form.data.description}
+                    onChange={(v) => form.setData('description', v)}
+                    className="sm:col-span-2"
+                />
             </FormDialog>
         </AppLayout>
     );
 }
-
 
 /** A filter-bar dropdown; plain strings in the list are both value and label. */
 function Select({

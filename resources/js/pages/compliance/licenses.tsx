@@ -1,7 +1,7 @@
-import { DataTableFooter } from '@/components/data-table-footer';
-import { FormDialog, SelectField, TextField, TextareaField } from '@/components/form-dialog';
 import { confirmAction } from '@/components/confirm-dialog';
+import { DataTableFooter } from '@/components/data-table-footer';
 import { Dropdown } from '@/components/dropdown';
+import { FormDialog, SelectField, TextField, TextareaField } from '@/components/form-dialog';
 import { CountTabs } from '@/components/page-toolbar';
 import { SummaryCard } from '@/components/summary-card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -54,10 +54,34 @@ interface License {
 
 /** The wax-seal stamp each card wears, top right. */
 const STAMP: Record<string, { label: string; sub: string; icon: ComponentType<{ className?: string }>; tone: string; text: string }> = {
-    active: { label: 'ACTIVE', sub: 'VERIFIED', icon: CircleCheck, tone: 'border-emerald-600 bg-emerald-100/40 dark:border-emerald-400 dark:bg-emerald-950/40', text: 'text-emerald-600 dark:text-emerald-400' },
-    expired: { label: 'EXPIRED', sub: 'INVALID', icon: TriangleAlert, tone: 'border-red-600 bg-red-100/40 dark:border-red-400 dark:bg-red-950/40', text: 'text-red-600 dark:text-red-400' },
-    suspended: { label: 'SUSPND', sub: 'ON HOLD', icon: ShieldAlert, tone: 'border-red-600 bg-red-100/40 dark:border-red-400 dark:bg-red-950/40', text: 'text-red-600 dark:text-red-400' },
-    revoked: { label: 'REVOKE', sub: 'INVALID', icon: ShieldOff, tone: 'border-red-600 bg-red-100/40 dark:border-red-400 dark:bg-red-950/40', text: 'text-red-600 dark:text-red-400' },
+    active: {
+        label: 'ACTIVE',
+        sub: 'VERIFIED',
+        icon: CircleCheck,
+        tone: 'border-emerald-600 bg-emerald-100/40 dark:border-emerald-400 dark:bg-emerald-950/40',
+        text: 'text-emerald-600 dark:text-emerald-400',
+    },
+    expired: {
+        label: 'EXPIRED',
+        sub: 'INVALID',
+        icon: TriangleAlert,
+        tone: 'border-red-600 bg-red-100/40 dark:border-red-400 dark:bg-red-950/40',
+        text: 'text-red-600 dark:text-red-400',
+    },
+    suspended: {
+        label: 'SUSPND',
+        sub: 'ON HOLD',
+        icon: ShieldAlert,
+        tone: 'border-red-600 bg-red-100/40 dark:border-red-400 dark:bg-red-950/40',
+        text: 'text-red-600 dark:text-red-400',
+    },
+    revoked: {
+        label: 'REVOKE',
+        sub: 'INVALID',
+        icon: ShieldOff,
+        tone: 'border-red-600 bg-red-100/40 dark:border-red-400 dark:bg-red-950/40',
+        text: 'text-red-600 dark:text-red-400',
+    },
 };
 
 /** "1 Year", "3 Years", "4y 2m" — how long the licence was granted for. */
@@ -158,7 +182,11 @@ export default function ProfessionalLicenses({
     function submit(e: React.FormEvent) {
         e.preventDefault();
         const done = { onSuccess: () => setOpen(false), preserveScroll: true };
-        editing ? form.put(`/compliance/professional-licenses/${editing.id}`, done) : form.post('/compliance/professional-licenses', done);
+        if (editing) {
+            form.put(`/compliance/professional-licenses/${editing.id}`, done);
+        } else {
+            form.post('/compliance/professional-licenses', done);
+        }
     }
 
     return (
@@ -169,7 +197,7 @@ export default function ProfessionalLicenses({
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-xl font-semibold">Professional Licenses</h1>
-                        <p className="text-xs text-muted-foreground">Manage and monitor staff professional licenses and expiry dates.</p>
+                        <p className="text-muted-foreground text-xs">Manage and monitor staff professional licenses and expiry dates.</p>
                     </div>
                     <Button onClick={openCreate}>
                         <Plus className="size-4" /> Add License
@@ -184,10 +212,10 @@ export default function ProfessionalLicenses({
                     <SummaryCard label="Revoked" value={counts.revoked ?? 0} icon={ShieldOff} tone="red" mono={false} />
                 </div>
 
-                <div className="rounded-lg border bg-card shadow-sm">
+                <div className="bg-card rounded-lg border shadow-sm">
                     <div className="flex min-w-0 items-center gap-2 p-3">
                         <div className="relative w-64 min-w-40 shrink">
-                            <Search className="absolute top-2 left-2.5 size-4 text-muted-foreground" />
+                            <Search className="text-muted-foreground absolute top-2 left-2.5 size-4" />
                             <Input
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
@@ -197,7 +225,14 @@ export default function ProfessionalLicenses({
                             />
                         </div>
 
-                        <Dropdown value={filters.holder ?? ''} onChange={(v) => apply({ holder: v })} placeholder="All Members" options={options.users.map((u) => ({ value: u.id, label: u.name }))} className="h-9 w-40" aria-label="Member filter" />
+                        <Dropdown
+                            value={filters.holder ?? ''}
+                            onChange={(v) => apply({ holder: v })}
+                            placeholder="All Members"
+                            options={options.users.map((u) => ({ value: u.id, label: u.name }))}
+                            className="h-9 w-40"
+                            aria-label="Member filter"
+                        />
                     </div>
 
                     <CountTabs
@@ -214,7 +249,9 @@ export default function ProfessionalLicenses({
                 </div>
 
                 {licenses.data.length === 0 ? (
-                    <div className="rounded-lg border bg-card py-16 text-center text-sm text-muted-foreground shadow-sm">No licences match this view.</div>
+                    <div className="bg-card text-muted-foreground rounded-lg border py-16 text-center text-sm shadow-sm">
+                        No licences match this view.
+                    </div>
                 ) : (
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
                         {licenses.data.map((l) => (
@@ -229,7 +266,7 @@ export default function ProfessionalLicenses({
                     </div>
                 )}
 
-                <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
+                <div className="bg-card overflow-hidden rounded-lg border shadow-sm">
                     <DataTableFooter
                         from={licenses.from}
                         to={licenses.to}
@@ -264,7 +301,12 @@ export default function ProfessionalLicenses({
                             <option key={t} value={t} />
                         ))}
                     </datalist>
-                    <TextField label="Licence number" value={form.data.number} onChange={(v) => form.setData('number', v)} error={form.errors.number} />
+                    <TextField
+                        label="Licence number"
+                        value={form.data.number}
+                        onChange={(v) => form.setData('number', v)}
+                        error={form.errors.number}
+                    />
                     <SelectField
                         label="Holder"
                         value={form.data.user_id}
@@ -281,9 +323,26 @@ export default function ProfessionalLicenses({
                         placeholder="—"
                         error={form.errors.regulatory_body_id}
                     />
-                    <TextField label="Jurisdiction" value={form.data.jurisdiction} onChange={(v) => form.setData('jurisdiction', v)} error={form.errors.jurisdiction} />
-                    <TextField label="Issued" type="date" value={form.data.issued_on} onChange={(v) => form.setData('issued_on', v)} error={form.errors.issued_on} />
-                    <TextField label="Expires" type="date" value={form.data.expires_on} onChange={(v) => form.setData('expires_on', v)} error={form.errors.expires_on} />
+                    <TextField
+                        label="Jurisdiction"
+                        value={form.data.jurisdiction}
+                        onChange={(v) => form.setData('jurisdiction', v)}
+                        error={form.errors.jurisdiction}
+                    />
+                    <TextField
+                        label="Issued"
+                        type="date"
+                        value={form.data.issued_on}
+                        onChange={(v) => form.setData('issued_on', v)}
+                        error={form.errors.issued_on}
+                    />
+                    <TextField
+                        label="Expires"
+                        type="date"
+                        value={form.data.expires_on}
+                        onChange={(v) => form.setData('expires_on', v)}
+                        error={form.errors.expires_on}
+                    />
                     <SelectField
                         label="Status"
                         value={form.data.status}
@@ -313,7 +372,7 @@ export default function ProfessionalLicenses({
                                 </dl>
                                 {viewing.notes && (
                                     <div>
-                                        <p className="mb-1 text-xs text-muted-foreground">Notes</p>
+                                        <p className="text-muted-foreground mb-1 text-xs">Notes</p>
                                         <p className="whitespace-pre-line">{viewing.notes}</p>
                                     </div>
                                 )}
@@ -344,7 +403,7 @@ function LicenseCard({
     const dueSoon = !expired && l.days_to_expiry !== null && l.days_to_expiry <= renewalWindow;
 
     return (
-        <div className="group flex flex-col overflow-hidden rounded-lg border bg-card shadow-sm transition-all duration-200 hover:shadow-md">
+        <div className="group bg-card flex flex-col overflow-hidden rounded-lg border shadow-sm transition-all duration-200 hover:shadow-md">
             <div className="flex items-center justify-between gap-2 border-b px-4 pt-4 pb-3">
                 <div className="min-w-0 flex-1">
                     <p className="truncate text-sm leading-tight font-semibold" title={l.type}>
@@ -352,21 +411,33 @@ function LicenseCard({
                     </p>
                     {l.number && (
                         <div className="mt-0.5 flex items-center gap-1">
-                            <Hash className="size-3 shrink-0 text-muted-foreground" />
-                            <p className="truncate font-mono text-[11px] text-muted-foreground">{l.number}</p>
+                            <Hash className="text-muted-foreground size-3 shrink-0" />
+                            <p className="text-muted-foreground truncate font-mono text-[11px]">{l.number}</p>
                         </div>
                     )}
                 </div>
 
-                <div className={cn('flex size-14 shrink-0 rotate-[-12deg] items-center justify-center rounded-full border-2 p-0.5 shadow-sm select-none', stamp.tone)}>
-                    <div className={cn('flex h-full w-full flex-col items-center justify-center rounded-full border border-dashed bg-background/60 p-1 text-center', stamp.tone)}>
+                <div
+                    className={cn(
+                        'flex size-14 shrink-0 rotate-[-12deg] items-center justify-center rounded-full border-2 p-0.5 shadow-sm select-none',
+                        stamp.tone,
+                    )}
+                >
+                    <div
+                        className={cn(
+                            'bg-background/60 flex h-full w-full flex-col items-center justify-center rounded-full border border-dashed p-1 text-center',
+                            stamp.tone,
+                        )}
+                    >
                         <div className={cn('flex items-center gap-0.5', stamp.text)}>
                             <span className="text-[6px]">★</span>
                             <Icon className="size-3" />
                             <span className="text-[6px]">★</span>
                         </div>
                         <span className={cn('mt-0.5 text-[8px] leading-none font-black tracking-widest uppercase', stamp.text)}>{stamp.label}</span>
-                        <span className={cn('mt-0.5 text-[6px] leading-none font-bold tracking-tighter uppercase opacity-80', stamp.text)}>{stamp.sub}</span>
+                        <span className={cn('mt-0.5 text-[6px] leading-none font-bold tracking-tighter uppercase opacity-80', stamp.text)}>
+                            {stamp.sub}
+                        </span>
                     </div>
                 </div>
             </div>
@@ -374,13 +445,13 @@ function LicenseCard({
             <div className="flex-1 space-y-3 px-4 pt-3 pb-4">
                 <div className="flex flex-col gap-1.5">
                     <div className="flex items-center gap-1.5">
-                        <Building2 className="size-3.5 shrink-0 text-muted-foreground" />
+                        <Building2 className="text-muted-foreground size-3.5 shrink-0" />
                         <span className="truncate text-xs" title={l.body ?? undefined}>
                             {l.body ?? 'No authority recorded'}
                         </span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                        <MapPin className="size-3.5 shrink-0 text-muted-foreground" />
+                        <MapPin className="text-muted-foreground size-3.5 shrink-0" />
                         <span className="truncate text-xs" title={l.jurisdiction ?? undefined}>
                             {l.jurisdiction ?? '—'}
                         </span>
@@ -389,7 +460,7 @@ function LicenseCard({
 
                 <div className="space-y-1.5">
                     <div className="flex items-center justify-between">
-                        <span className="text-[11px] font-medium text-muted-foreground">{term(l.issued_on, l.expires_on)}</span>
+                        <span className="text-muted-foreground text-[11px] font-medium">{term(l.issued_on, l.expires_on)}</span>
                         <span
                             className={cn(
                                 'inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset',
@@ -404,7 +475,7 @@ function LicenseCard({
                         </span>
                     </div>
 
-                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                    <div className="bg-muted h-1.5 w-full overflow-hidden rounded-full">
                         <div
                             className={cn(
                                 'h-full rounded-full transition-all',
@@ -414,29 +485,29 @@ function LicenseCard({
                         />
                     </div>
 
-                    <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+                    <div className="text-muted-foreground flex items-center justify-between text-[10px]">
                         <span>{l.issued_on ?? '—'}</span>
                         <span className={expired ? 'text-red-500' : ''}>{l.expires_on ?? '—'}</span>
                     </div>
                 </div>
             </div>
 
-            <div className="mt-auto flex items-center justify-between gap-2 border-t bg-muted/40 px-4 py-3">
-                <Avatar className="size-7 shrink-0 ring-2 ring-background" title={l.holder ?? 'Unassigned'}>
+            <div className="bg-muted/40 mt-auto flex items-center justify-between gap-2 border-t px-4 py-3">
+                <Avatar className="ring-background size-7 shrink-0 ring-2" title={l.holder ?? 'Unassigned'}>
                     <AvatarFallback className="text-[10px]">{l.holder ? initials(l.holder) : '—'}</AvatarFallback>
                 </Avatar>
 
                 <div className="flex items-center gap-0.5">
-                    <Button variant="ghost" size="icon" className="size-7 text-muted-foreground" title="View" onClick={onView}>
+                    <Button variant="ghost" size="icon" className="text-muted-foreground size-7" title="View" onClick={onView}>
                         <Eye className="size-3.5" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="size-7 text-muted-foreground" title="Edit" onClick={onEdit}>
+                    <Button variant="ghost" size="icon" className="text-muted-foreground size-7" title="Edit" onClick={onEdit}>
                         <SquarePen className="size-3.5" />
                     </Button>
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="size-7 text-muted-foreground"
+                        className="text-muted-foreground size-7"
                         title="Renew for another term"
                         onClick={() => router.patch(`/compliance/professional-licenses/${l.id}/renew`, {}, { preserveScroll: true })}
                     >
@@ -445,9 +516,13 @@ function LicenseCard({
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="size-7 text-muted-foreground"
+                        className="text-muted-foreground size-7"
                         title="Delete"
-                        onClick={() => confirmAction({ title: `Delete ${l.type}?` }).then((ok) => ok && router.delete(`/compliance/professional-licenses/${l.id}`, { preserveScroll: true }))}
+                        onClick={() =>
+                            confirmAction({ title: `Delete ${l.type}?` }).then(
+                                (ok) => ok && router.delete(`/compliance/professional-licenses/${l.id}`, { preserveScroll: true }),
+                            )
+                        }
                     >
                         <Trash2 className="size-3.5 text-rose-600" />
                     </Button>
@@ -460,7 +535,7 @@ function LicenseCard({
 function Detail({ label, value }: { label: string; value: string }) {
     return (
         <div>
-            <dt className="mb-1 text-xs text-muted-foreground">{label}</dt>
+            <dt className="text-muted-foreground mb-1 text-xs">{label}</dt>
             <dd className="capitalize">{value}</dd>
         </div>
     );

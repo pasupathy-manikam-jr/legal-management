@@ -28,11 +28,7 @@ const TONES: Record<string, string> = {
 export function StatusBadge({ value, className }: { value: string; className?: string }) {
     return (
         <span
-            className={cn(
-                'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium capitalize',
-                TONES[value] ?? TONES.low,
-                className,
-            )}
+            className={cn('inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium capitalize', TONES[value] ?? TONES.low, className)}
         >
             {value.replace('_', ' ')}
         </span>

@@ -1,7 +1,7 @@
-import { DataTableFooter } from '@/components/data-table-footer';
-import { FormDialog, SelectField, TextField, TextareaField } from '@/components/form-dialog';
 import { confirmAction } from '@/components/confirm-dialog';
+import { DataTableFooter } from '@/components/data-table-footer';
 import { Dropdown } from '@/components/dropdown';
+import { FormDialog, SelectField, TextField, TextareaField } from '@/components/form-dialog';
 import { CountTabs, FilterActions } from '@/components/page-toolbar';
 import { SortableHead } from '@/components/sortable-head';
 import { RingPill } from '@/components/tone-pill';
@@ -82,8 +82,7 @@ export default function InvoicesIndex({
 
     const sortParams = () => ({ sort: sort.column, direction: sort.direction, per_page: perPage });
 
-    const toggleSort = (column: string) =>
-        apply({ sort: column, direction: sort.column === column && sort.direction === 'asc' ? 'desc' : 'asc' });
+    const toggleSort = (column: string) => apply({ sort: column, direction: sort.column === column && sort.direction === 'asc' ? 'desc' : 'asc' });
 
     const filtered = filters.search || filters.client;
     const billable = options.matters.filter((m) => m.unbilled > 0);
@@ -107,7 +106,7 @@ export default function InvoicesIndex({
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-xl font-semibold">Invoices</h1>
-                        <p className="text-xs text-muted-foreground">Create, manage and track client invoices and their payment status.</p>
+                        <p className="text-muted-foreground text-xs">Create, manage and track client invoices and their payment status.</p>
                     </div>
                     <Button
                         onClick={() => {
@@ -119,11 +118,11 @@ export default function InvoicesIndex({
                     </Button>
                 </div>
 
-                <div className="rounded-lg border bg-card shadow-sm">
+                <div className="bg-card rounded-lg border shadow-sm">
                     <div className="flex items-center justify-between gap-2 p-3">
                         <div className="flex min-w-0 items-center gap-2">
                             <div className="relative w-64 min-w-40 shrink">
-                                <Search className="absolute top-2 left-2.5 size-4 text-muted-foreground" />
+                                <Search className="text-muted-foreground absolute top-2 left-2.5 size-4" />
                                 <Input
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
@@ -133,7 +132,14 @@ export default function InvoicesIndex({
                                 />
                             </div>
 
-                            <Dropdown value={filters.client ?? ''} onChange={(v) => apply({ client: v })} placeholder="All Clients" options={options.clients.map((client) => ({ value: client.id, label: client.name }))} className="h-9 w-40" aria-label="Client filter" />
+                            <Dropdown
+                                value={filters.client ?? ''}
+                                onChange={(v) => apply({ client: v })}
+                                placeholder="All Clients"
+                                options={options.clients.map((client) => ({ value: client.id, label: client.name }))}
+                                className="h-9 w-40"
+                                aria-label="Client filter"
+                            />
                         </div>
 
                         <FilterActions
@@ -159,31 +165,31 @@ export default function InvoicesIndex({
                     />
                 </div>
 
-                <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
+                <div className="bg-card overflow-hidden rounded-lg border shadow-sm">
                     <div className="w-full overflow-x-auto">
                         <table className="w-full caption-bottom text-sm">
                             <thead>
                                 <tr className="border-b bg-[#F0F0F1] dark:bg-neutral-800">
-                                    <th className="w-12 px-4 py-2.5 text-left font-semibold text-muted-foreground">#</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Client</th>
+                                    <th className="text-muted-foreground w-12 px-4 py-2.5 text-left font-semibold">#</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Client</th>
                                     <SortableHead label="Invoice Number" column="number" sort={sort} onSort={toggleSort} />
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Total</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Total</th>
                                     <SortableHead label="Invoice Date" column="issued_on" sort={sort} onSort={toggleSort} />
                                     <SortableHead label="Due Date" column="due_on" sort={sort} onSort={toggleSort} />
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Status</th>
-                                    <th className="w-24 px-4 py-2.5 text-center font-semibold text-muted-foreground">Actions</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Status</th>
+                                    <th className="text-muted-foreground w-24 px-4 py-2.5 text-center font-semibold">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y">
                                 {invoices.data.length === 0 && (
                                     <tr>
-                                        <td colSpan={8} className="py-16 text-center text-sm text-muted-foreground">
+                                        <td colSpan={8} className="text-muted-foreground py-16 text-center text-sm">
                                             No invoices match this view.
                                         </td>
                                     </tr>
                                 )}
                                 {invoices.data.map((invoice, index) => (
-                                    <tr key={invoice.id} className="transition-colors hover:bg-muted/40">
+                                    <tr key={invoice.id} className="hover:bg-muted/40 transition-colors">
                                         <td className="px-4 py-2.5 font-medium">{(invoices.from ?? 1) + index}</td>
                                         <td className="px-4 py-2.5">
                                             <div className="flex items-center gap-3">
@@ -192,23 +198,23 @@ export default function InvoicesIndex({
                                                 </Avatar>
                                                 <div className="min-w-0">
                                                     <div className="text-sm font-medium">{invoice.client ?? '—'}</div>
-                                                    <div className="truncate text-xs text-muted-foreground">{invoice.client_email ?? '—'}</div>
+                                                    <div className="text-muted-foreground truncate text-xs">{invoice.client_email ?? '—'}</div>
                                                 </div>
                                             </div>
                                         </td>
                                         <td className="px-4 py-2.5">
                                             <div className="text-sm font-medium">{invoice.number}</div>
-                                            {invoice.matter && <div className="text-xs text-muted-foreground">{invoice.matter}</div>}
+                                            {invoice.matter && <div className="text-muted-foreground text-xs">{invoice.matter}</div>}
                                         </td>
                                         <td className="px-4 py-2.5 font-mono">{money(invoice.total_cents)}</td>
                                         <td className="px-4 py-2.5">
-                                            <div className="flex items-center gap-2 whitespace-nowrap text-muted-foreground">
+                                            <div className="text-muted-foreground flex items-center gap-2 whitespace-nowrap">
                                                 <Calendar className="size-4" />
                                                 {date(invoice.issued_on)}
                                             </div>
                                         </td>
                                         <td className="px-4 py-2.5">
-                                            <div className="flex items-center gap-2 whitespace-nowrap text-muted-foreground">
+                                            <div className="text-muted-foreground flex items-center gap-2 whitespace-nowrap">
                                                 <Calendar className="size-4" />
                                                 {date(invoice.due_on)}
                                             </div>
@@ -218,7 +224,7 @@ export default function InvoicesIndex({
                                         </td>
                                         <td className="px-4 py-2.5">
                                             <div className="flex items-center justify-end gap-0.5">
-                                                <Button variant="ghost" size="icon" className="size-8 text-muted-foreground" title="View" asChild>
+                                                <Button variant="ghost" size="icon" className="text-muted-foreground size-8" title="View" asChild>
                                                     <a href={`/invoices/${invoice.id}`}>
                                                         <Eye className="size-4" />
                                                     </a>
@@ -228,7 +234,7 @@ export default function InvoicesIndex({
                                                         <Button
                                                             variant="ghost"
                                                             size="icon"
-                                                            className="size-8 text-muted-foreground"
+                                                            className="text-muted-foreground size-8"
                                                             title="Edit"
                                                             onClick={() => openEdit(invoice)}
                                                         >
@@ -237,7 +243,7 @@ export default function InvoicesIndex({
                                                         <Button
                                                             variant="ghost"
                                                             size="icon"
-                                                            className="size-8 text-muted-foreground"
+                                                            className="text-muted-foreground size-8"
                                                             title="Mark as sent"
                                                             onClick={() => router.patch(`/invoices/${invoice.id}/send`, {}, { preserveScroll: true })}
                                                         >
@@ -249,7 +255,7 @@ export default function InvoicesIndex({
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
-                                                        className="size-8 text-muted-foreground"
+                                                        className="text-muted-foreground size-8"
                                                         title="Copy link"
                                                         onClick={() => copyLink(invoice)}
                                                     >
@@ -259,10 +265,13 @@ export default function InvoicesIndex({
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    className="size-8 text-muted-foreground"
+                                                    className="text-muted-foreground size-8"
                                                     title="Delete"
                                                     onClick={() =>
-                                                        confirmAction({ title: `Delete ${invoice.number}?`, description: `Its time becomes unbilled again.` }).then((ok) => ok && router.delete(`/invoices/${invoice.id}`, { preserveScroll: true }))
+                                                        confirmAction({
+                                                            title: `Delete ${invoice.number}?`,
+                                                            description: `Its time becomes unbilled again.`,
+                                                        }).then((ok) => ok && router.delete(`/invoices/${invoice.id}`, { preserveScroll: true }))
                                                     }
                                                 >
                                                     <Trash2 className="size-4 text-rose-600" />
@@ -352,7 +361,13 @@ export default function InvoicesIndex({
                         ]}
                         error={edit.errors.status}
                     />
-                    <TextField label="Due date" type="date" value={edit.data.due_on} onChange={(v) => edit.setData('due_on', v)} error={edit.errors.due_on} />
+                    <TextField
+                        label="Due date"
+                        type="date"
+                        value={edit.data.due_on}
+                        onChange={(v) => edit.setData('due_on', v)}
+                        error={edit.errors.due_on}
+                    />
                     <TextareaField label="Notes" value={edit.data.notes} onChange={(v) => edit.setData('notes', v)} />
                 </FormDialog>
             </div>

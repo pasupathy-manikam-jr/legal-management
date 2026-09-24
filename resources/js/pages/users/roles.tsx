@@ -53,10 +53,13 @@ export default function Roles({
     const form = useForm<{ name: string; description: string; permissions: string[] }>({ name: '', description: '', permissions: [] });
 
     const apply = (patch: Record<string, string | number>) =>
-        router.get('/roles', { ...filters, per_page: perPage, sort: sort.column, direction: sort.direction, ...patch }, { preserveState: true, replace: true });
+        router.get(
+            '/roles',
+            { ...filters, per_page: perPage, sort: sort.column, direction: sort.direction, ...patch },
+            { preserveState: true, replace: true },
+        );
 
-    const toggleSort = (column: string) =>
-        apply({ sort: column, direction: sort.column === column && sort.direction === 'asc' ? 'desc' : 'asc' });
+    const toggleSort = (column: string) => apply({ sort: column, direction: sort.column === column && sort.direction === 'asc' ? 'desc' : 'asc' });
 
     function openCreate() {
         form.setData({ name: '', description: '', permissions: [] });
@@ -111,17 +114,17 @@ export default function Roles({
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-xl font-semibold">Roles</h1>
-                        <p className="text-xs text-muted-foreground">Define roles and control what each role can access within the system.</p>
+                        <p className="text-muted-foreground text-xs">Define roles and control what each role can access within the system.</p>
                     </div>
                     <Button onClick={openCreate}>
                         <Plus className="size-4" /> Add Role
                     </Button>
                 </div>
 
-                <div className="rounded-lg border bg-card shadow-sm">
+                <div className="bg-card rounded-lg border shadow-sm">
                     <div className="flex items-center justify-between gap-2 p-3">
                         <div className="relative w-64 min-w-40 shrink">
-                            <Search className="absolute top-2 left-2.5 size-4 text-muted-foreground" />
+                            <Search className="text-muted-foreground absolute top-2 left-2.5 size-4" />
                             <Input
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
@@ -130,12 +133,14 @@ export default function Roles({
                                 className="h-8 w-full px-9"
                             />
                         </div>
-
                     </div>
                 </div>
 
                 {notice && (
-                    <div role="alert" className="flex items-start gap-2 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-200">
+                    <div
+                        role="alert"
+                        className="flex items-start gap-2 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-200"
+                    >
                         <TriangleAlert className="mt-0.5 size-4 shrink-0" />
                         <span className="flex-1">{notice}</span>
                         <button type="button" onClick={() => setNotice(null)} aria-label="Dismiss" className="opacity-70 hover:opacity-100">
@@ -144,27 +149,27 @@ export default function Roles({
                     </div>
                 )}
 
-                <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
+                <div className="bg-card overflow-hidden rounded-lg border shadow-sm">
                     <div className="w-full overflow-x-auto">
                         <table className="w-full caption-bottom text-sm">
                             <thead>
                                 <tr className="border-b bg-[#F0F0F1] dark:bg-neutral-800">
-                                    <th className="w-12 px-4 py-2.5 text-left font-semibold text-muted-foreground">#</th>
+                                    <th className="text-muted-foreground w-12 px-4 py-2.5 text-left font-semibold">#</th>
                                     <SortableHead label="Name" column="name" sort={sort} onSort={toggleSort} />
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Permissions</th>
-                                    <th className="w-24 px-4 py-2.5 text-center font-semibold text-muted-foreground">Actions</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Permissions</th>
+                                    <th className="text-muted-foreground w-24 px-4 py-2.5 text-center font-semibold">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y">
                                 {roles.data.length === 0 && (
                                     <tr>
-                                        <td colSpan={4} className="py-16 text-center text-sm text-muted-foreground">
+                                        <td colSpan={4} className="text-muted-foreground py-16 text-center text-sm">
                                             No roles match this search.
                                         </td>
                                     </tr>
                                 )}
                                 {roles.data.map((role, index) => (
-                                    <tr key={role.id} className="transition-colors hover:bg-muted/40">
+                                    <tr key={role.id} className="hover:bg-muted/40 transition-colors">
                                         <td className="px-4 py-2.5 font-medium">{(roles.from ?? 1) + index}</td>
                                         <td className="px-4 py-2.5">
                                             <span className="font-semibold">{title(role.name)}</span>
@@ -178,26 +183,38 @@ export default function Roles({
                                                     <button
                                                         type="button"
                                                         onClick={() => setViewing(role)}
-                                                        className="inline-flex items-center rounded bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground hover:text-foreground"
+                                                        className="bg-muted text-muted-foreground hover:text-foreground inline-flex items-center rounded px-2 py-0.5 text-xs font-medium"
                                                     >
                                                         +{role.labels.length - CHIPS} more
                                                     </button>
                                                 )}
-                                                {role.labels.length === 0 && <span className="text-xs text-muted-foreground">No permissions</span>}
+                                                {role.labels.length === 0 && <span className="text-muted-foreground text-xs">No permissions</span>}
                                             </div>
                                         </td>
                                         <td className="px-4 py-2.5">
                                             <div className="flex items-center justify-end gap-0.5">
-                                                <Button variant="ghost" size="icon" className="size-8 text-muted-foreground" title="View" onClick={() => setViewing(role)}>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="text-muted-foreground size-8"
+                                                    title="View"
+                                                    onClick={() => setViewing(role)}
+                                                >
                                                     <Eye className="size-4" />
                                                 </Button>
-                                                <Button variant="ghost" size="icon" className="size-8 text-muted-foreground" title="Edit" onClick={() => openEdit(role)}>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="text-muted-foreground size-8"
+                                                    title="Edit"
+                                                    onClick={() => openEdit(role)}
+                                                >
                                                     <SquarePen className="size-4" />
                                                 </Button>
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    className="size-8 text-muted-foreground"
+                                                    className="text-muted-foreground size-8"
                                                     title="Delete"
                                                     onClick={() => remove(role)}
                                                 >
@@ -230,7 +247,11 @@ export default function Roles({
                     onSubmit={(e) => {
                         e.preventDefault();
                         const done = { onSuccess: () => setOpen(false), preserveScroll: true };
-                        editing ? form.put(`/roles/${editing.id}`, done) : form.post('/roles', done);
+                        if (editing) {
+                            form.put(`/roles/${editing.id}`, done);
+                        } else {
+                            form.post('/roles', done);
+                        }
                     }}
                     wide
                 >
@@ -242,10 +263,15 @@ export default function Roles({
                         disabled={editing?.system}
                         placeholder="Senior Associate"
                     />
-                    <TextField label="Description" value={form.data.description} onChange={(v) => form.setData('description', v)} error={form.errors.description} />
+                    <TextField
+                        label="Description"
+                        value={form.data.description}
+                        onChange={(v) => form.setData('description', v)}
+                        error={form.errors.description}
+                    />
 
                     {editing?.system && (
-                        <p className="text-xs text-muted-foreground sm:col-span-2">
+                        <p className="text-muted-foreground text-xs sm:col-span-2">
                             {title(editing.name)} is a built-in role. Its permissions can change; its name cannot.
                         </p>
                     )}
@@ -259,7 +285,11 @@ export default function Roles({
                                 <div key={group} className="rounded-lg border p-3">
                                     <div className="mb-2 flex items-center justify-between">
                                         <h3 className="text-sm font-semibold">{group}</h3>
-                                        <button type="button" onClick={() => toggleGroup(keys, !all)} className="text-xs text-muted-foreground hover:text-foreground">
+                                        <button
+                                            type="button"
+                                            onClick={() => toggleGroup(keys, !all)}
+                                            className="text-muted-foreground hover:text-foreground text-xs"
+                                        >
                                             {all ? 'Clear all' : 'Select all'}
                                         </button>
                                     </div>
@@ -287,7 +317,7 @@ export default function Roles({
                         </DialogHeader>
                         {viewing && (
                             <div className="flex flex-col gap-4">
-                                <p className="text-sm text-muted-foreground">
+                                <p className="text-muted-foreground text-sm">
                                     {viewing.description ?? 'No description.'} · {viewing.members} {viewing.members === 1 ? 'user' : 'users'} ·{' '}
                                     {viewing.permissions.length} of {Object.values(groups).flatMap((g) => Object.keys(g)).length} permissions
                                 </p>
@@ -299,7 +329,7 @@ export default function Roles({
                                             <h3 className="text-sm font-semibold">{group}</h3>
                                             <div className="mt-1.5 flex flex-wrap gap-1">
                                                 {granted.length === 0 ? (
-                                                    <span className="text-xs text-muted-foreground">None</span>
+                                                    <span className="text-muted-foreground text-xs">None</span>
                                                 ) : (
                                                     granted.map(([key, label]) => <Chip key={key}>{label}</Chip>)
                                                 )}

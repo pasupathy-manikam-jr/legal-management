@@ -38,7 +38,7 @@ export function InitialsAvatar({ name, className }: { name: string; className?: 
 /** Overlapping team avatars with a +N overflow chip. */
 export function AvatarStack({ names, max = 3 }: { names: string[]; max?: number }) {
     if (names.length === 0) {
-        return <span className="text-sm text-muted-foreground">—</span>;
+        return <span className="text-muted-foreground text-sm">—</span>;
     }
 
     const shown = names.slice(0, max);
@@ -48,12 +48,12 @@ export function AvatarStack({ names, max = 3 }: { names: string[]; max?: number 
         <div className="flex items-center">
             <div className="flex -space-x-2">
                 {shown.map((name) => (
-                    <InitialsAvatar key={name} name={name} className="size-7 ring-2 ring-card" />
+                    <InitialsAvatar key={name} name={name} className="ring-card size-7 ring-2" />
                 ))}
                 {extra > 0 && (
                     <span
                         title={names.slice(max).join(', ')}
-                        className="ml-1 flex size-7 items-center justify-center rounded-full bg-muted text-[10px] font-medium text-muted-foreground ring-2 ring-card"
+                        className="bg-muted text-muted-foreground ring-card ml-1 flex size-7 items-center justify-center rounded-full text-[10px] font-medium ring-2"
                     >
                         +{extra}
                     </span>

@@ -67,7 +67,11 @@ export default function Timesheet({
     options: { users: User[] };
 }) {
     function apply(patch: Record<string, string | number>) {
-        router.get('/billing/time-entries', { week: filters.week, member: filters.member ?? '', per_page: perPage, ...patch }, { preserveState: true, replace: true });
+        router.get(
+            '/billing/time-entries',
+            { week: filters.week, member: filters.member ?? '', per_page: perPage, ...patch },
+            { preserveState: true, replace: true },
+        );
     }
 
     return (
@@ -78,45 +82,51 @@ export default function Timesheet({
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-xl font-semibold">Time Sheet</h1>
-                        <p className="text-xs text-muted-foreground">Track weekly time entries per team member across cases.</p>
+                        <p className="text-muted-foreground text-xs">Track weekly time entries per team member across cases.</p>
                     </div>
                     <Button asChild>
                         <Link href="/time-entries">Add Time Sheet</Link>
                     </Button>
                 </div>
 
-                <div className="flex flex-col flex-wrap justify-between gap-3 rounded-lg border bg-card px-4 py-3 shadow-sm min-[896px]:flex-row min-[896px]:items-center">
+                <div className="bg-card flex flex-col flex-wrap justify-between gap-3 rounded-lg border px-4 py-3 shadow-sm min-[896px]:flex-row min-[896px]:items-center">
                     <div className="flex items-center gap-3">
                         <button
                             type="button"
                             onClick={() => apply({ week: period.previous })}
-                            className="rounded-md border p-1.5 transition-colors hover:bg-accent"
+                            className="hover:bg-accent rounded-md border p-1.5 transition-colors"
                             aria-label="Previous week"
                         >
-                            <ChevronLeft className="size-4 text-muted-foreground" />
+                            <ChevronLeft className="text-muted-foreground size-4" />
                         </button>
                         <h2 className="min-w-[140px] text-center text-base font-semibold">{period.label}</h2>
                         <button
                             type="button"
                             onClick={() => apply({ week: period.next })}
-                            className="rounded-md border p-1.5 transition-colors hover:bg-accent"
+                            className="hover:bg-accent rounded-md border p-1.5 transition-colors"
                             aria-label="Next week"
                         >
-                            <ChevronRight className="size-4 text-muted-foreground" />
+                            <ChevronRight className="text-muted-foreground size-4" />
                         </button>
                     </div>
 
                     <div className="flex items-center gap-2">
-                        <label className="text-sm font-medium text-muted-foreground" htmlFor="member">
+                        <label className="text-muted-foreground text-sm font-medium" htmlFor="member">
                             Team Member
                         </label>
-                        <Dropdown value={filters.member ?? ''} onChange={(v) => apply({ member: v })} placeholder="All Members" options={options.users.map((u) => ({ value: u.id, label: u.name }))} className="h-10 w-full" />
+                        <Dropdown
+                            value={filters.member ?? ''}
+                            onChange={(v) => apply({ member: v })}
+                            placeholder="All Members"
+                            options={options.users.map((u) => ({ value: u.id, label: u.name }))}
+                            className="h-10 w-full"
+                        />
                     </div>
                 </div>
 
-                <div className="rounded-lg border bg-card px-4 py-3 shadow-sm">
+                <div className="bg-card rounded-lg border px-4 py-3 shadow-sm">
                     <div className="flex flex-wrap justify-between gap-3">
-                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                        <div className="text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
                             {(Object.keys(STATE) as Cell['state'][]).map((key) => {
                                 const { label, icon: Icon, tone } = STATE[key];
 
@@ -137,7 +147,7 @@ export default function Timesheet({
                     </div>
                 </div>
 
-                <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
+                <div className="bg-card overflow-hidden rounded-lg border shadow-sm">
                     {/* Stacked cards on phones, where a seven-column grid cannot breathe. */}
                     <div className="divide-y md:hidden">
                         {rows.map((row) => (
@@ -147,16 +157,21 @@ export default function Timesheet({
                                         <InitialsAvatar name={row.name} />
                                         <div className="min-w-0">
                                             <p className="text-sm leading-tight font-semibold">{row.name}</p>
-                                            <p className="mt-0.5 truncate text-xs leading-tight text-muted-foreground">{row.email}</p>
+                                            <p className="text-muted-foreground mt-0.5 truncate text-xs leading-tight">{row.email}</p>
                                         </div>
                                     </div>
-                                    <span className="text-sm font-bold tabular-nums text-primary">{shortHours(row.minutes)}</span>
+                                    <span className="text-primary text-sm font-bold tabular-nums">{shortHours(row.minutes)}</span>
                                 </div>
 
                                 <div className="grid grid-cols-7 gap-1">
                                     {row.cells.map((cell, i) => (
                                         <div key={cell.date} className="flex flex-col items-center gap-0.5">
-                                            <span className={cn('text-[9px] font-semibold uppercase', days[i].isToday ? 'text-primary' : 'text-muted-foreground')}>
+                                            <span
+                                                className={cn(
+                                                    'text-[9px] font-semibold uppercase',
+                                                    days[i].isToday ? 'text-primary' : 'text-muted-foreground',
+                                                )}
+                                            >
                                                 {days[i].weekday.charAt(0)}
                                             </span>
                                             <span
@@ -179,12 +194,14 @@ export default function Timesheet({
                         <table className="w-full caption-bottom text-sm">
                             <thead>
                                 <tr className="border-b">
-                                    <th className="sticky left-0 z-20 border-r bg-card px-4 py-3.5 text-left text-xs font-semibold tracking-wider text-muted-foreground">
+                                    <th className="bg-card text-muted-foreground sticky left-0 z-20 border-r px-4 py-3.5 text-left text-xs font-semibold tracking-wider">
                                         Team Member
                                     </th>
                                     {days.map((day) => (
                                         <th key={day.date} className="min-w-[100px] border-x px-2 py-3 text-center">
-                                            <div className="mb-1.5 text-[10px] font-semibold tracking-widest text-muted-foreground">{day.weekday}</div>
+                                            <div className="text-muted-foreground mb-1.5 text-[10px] font-semibold tracking-widest">
+                                                {day.weekday}
+                                            </div>
                                             <div
                                                 className={cn(
                                                     'mx-auto flex size-8 items-center justify-center rounded-full text-sm leading-none font-bold',
@@ -195,7 +212,7 @@ export default function Timesheet({
                                             </div>
                                         </th>
                                     ))}
-                                    <th className="sticky right-0 z-20 w-[80px] min-w-[80px] border-l bg-card px-4 py-3.5 text-center text-xs font-semibold tracking-wider text-muted-foreground">
+                                    <th className="bg-card text-muted-foreground sticky right-0 z-20 w-[80px] min-w-[80px] border-l px-4 py-3.5 text-center text-xs font-semibold tracking-wider">
                                         Week
                                     </th>
                                 </tr>
@@ -203,19 +220,19 @@ export default function Timesheet({
                             <tbody className="divide-y">
                                 {rows.length === 0 && (
                                     <tr>
-                                        <td colSpan={9} className="py-12 text-center text-sm text-muted-foreground">
+                                        <td colSpan={9} className="text-muted-foreground py-12 text-center text-sm">
                                             No team members to show.
                                         </td>
                                     </tr>
                                 )}
                                 {rows.map((row) => (
-                                    <tr key={row.id} className="group transition-colors hover:bg-muted/40">
-                                        <td className="sticky left-0 z-10 border-r bg-card px-4 py-3 transition-colors group-hover:bg-muted/40">
+                                    <tr key={row.id} className="group hover:bg-muted/40 transition-colors">
+                                        <td className="bg-card group-hover:bg-muted/40 sticky left-0 z-10 border-r px-4 py-3 transition-colors">
                                             <div className="flex items-center gap-3">
                                                 <InitialsAvatar name={row.name} />
                                                 <div className="min-w-0 flex-1">
                                                     <p className="truncate text-sm leading-tight font-semibold">{row.name}</p>
-                                                    <p className="mt-0.5 truncate text-xs leading-tight text-muted-foreground">{row.email}</p>
+                                                    <p className="text-muted-foreground mt-0.5 truncate text-xs leading-tight">{row.email}</p>
                                                 </div>
                                             </div>
                                         </td>
@@ -224,8 +241,8 @@ export default function Timesheet({
                                                 <DayCell cell={cell} member={row.id} today={days[i].isToday} />
                                             </td>
                                         ))}
-                                        <td className="sticky right-0 z-10 w-[80px] min-w-[80px] border-l bg-card px-4 py-3 text-center transition-colors group-hover:bg-muted/40">
-                                            <p className="text-sm font-bold tabular-nums text-primary">{shortHours(row.minutes)}</p>
+                                        <td className="bg-card group-hover:bg-muted/40 sticky right-0 z-10 w-[80px] min-w-[80px] border-l px-4 py-3 text-center transition-colors">
+                                            <p className="text-primary text-sm font-bold tabular-nums">{shortHours(row.minutes)}</p>
                                         </td>
                                     </tr>
                                 ))}
@@ -250,7 +267,7 @@ export default function Timesheet({
 function DayCell({ cell, member, today }: { cell: Cell; member: number; today: boolean }) {
     const { label, icon: Icon, tone } = STATE[cell.state];
     const shell = cn(
-        'flex min-h-[64px] w-full flex-col items-center justify-center gap-1 rounded-lg px-1 py-2 ring-1 ring-primary/30 transition-all duration-150',
+        'ring-primary/30 flex min-h-[64px] w-full flex-col items-center justify-center gap-1 rounded-lg px-1 py-2 ring-1 transition-all duration-150',
         today && 'bg-primary/5',
     );
 
@@ -270,7 +287,7 @@ function DayCell({ cell, member, today }: { cell: Cell; member: number; today: b
         >
             <Icon className={cn('size-4', tone)} />
             <span className="text-[11px] leading-none font-semibold tabular-nums">{shortHours(cell.minutes)}</span>
-            {cell.entries > 1 && <span className="text-[9px] leading-none text-muted-foreground">{cell.entries} entries</span>}
+            {cell.entries > 1 && <span className="text-muted-foreground text-[9px] leading-none">{cell.entries} entries</span>}
         </Link>
     );
 }
@@ -282,7 +299,7 @@ function Stat({ icon: Icon, tone, label, value }: { icon: ComponentType<{ classN
                 <Icon className="size-4 text-white" />
             </div>
             <div>
-                <p className="mb-0.5 text-xs leading-none text-muted-foreground">{label}</p>
+                <p className="text-muted-foreground mb-0.5 text-xs leading-none">{label}</p>
                 <p className="text-sm leading-none font-bold">{value}</p>
             </div>
         </div>

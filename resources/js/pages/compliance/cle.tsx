@@ -1,7 +1,7 @@
-import { DataTableFooter } from '@/components/data-table-footer';
-import { FormDialog, SelectField, TextField, TextareaField } from '@/components/form-dialog';
 import { confirmAction } from '@/components/confirm-dialog';
+import { DataTableFooter } from '@/components/data-table-footer';
 import { Dropdown } from '@/components/dropdown';
+import { FormDialog, SelectField, TextField, TextareaField } from '@/components/form-dialog';
 import { CountTabs } from '@/components/page-toolbar';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -12,7 +12,21 @@ import { date } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { BreadcrumbItem, Paginated, User } from '@/types';
 import { Head, router, useForm } from '@inertiajs/react';
-import { Award, BookOpen, Calendar, CircleCheck, Clock, Download, Eye, LayoutGrid, Plus, Search, SquarePen, Trash2, TriangleAlert } from 'lucide-react';
+import {
+    Award,
+    BookOpen,
+    Calendar,
+    CircleCheck,
+    Clock,
+    Download,
+    Eye,
+    LayoutGrid,
+    Plus,
+    Search,
+    SquarePen,
+    Trash2,
+    TriangleAlert,
+} from 'lucide-react';
 import { useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'CLE Tracking', href: '/compliance/cle-tracking' }];
@@ -116,7 +130,11 @@ export default function CleTracking({
     function submit(e: React.FormEvent) {
         e.preventDefault();
         const done = { onSuccess: () => setOpen(false), preserveScroll: true };
-        editing ? form.put(`/compliance/cle-tracking/${editing.id}`, done) : form.post('/compliance/cle-tracking', done);
+        if (editing) {
+            form.put(`/compliance/cle-tracking/${editing.id}`, done);
+        } else {
+            form.post('/compliance/cle-tracking', done);
+        }
     }
 
     return (
@@ -127,17 +145,17 @@ export default function CleTracking({
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-xl font-semibold">CLE Tracking</h1>
-                        <p className="text-xs text-muted-foreground">Track continuing legal education credits and course completions.</p>
+                        <p className="text-muted-foreground text-xs">Track continuing legal education credits and course completions.</p>
                     </div>
                     <Button onClick={openCreate}>
                         <Plus className="size-4" /> Add CLE Tracking
                     </Button>
                 </div>
 
-                <div className="rounded-lg border bg-card shadow-sm">
+                <div className="bg-card rounded-lg border shadow-sm">
                     <div className="flex min-w-0 items-center gap-2 p-3">
                         <div className="relative w-64 min-w-40 shrink">
-                            <Search className="absolute top-2 left-2.5 size-4 text-muted-foreground" />
+                            <Search className="text-muted-foreground absolute top-2 left-2.5 size-4" />
                             <Input
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
@@ -147,7 +165,14 @@ export default function CleTracking({
                             />
                         </div>
 
-                        <Dropdown value={filters.member ?? ''} onChange={(v) => apply({ member: v })} placeholder="All Users" options={options.users.map((u) => ({ value: u.id, label: u.name }))} className="h-9 w-40" aria-label="User filter" />
+                        <Dropdown
+                            value={filters.member ?? ''}
+                            onChange={(v) => apply({ member: v })}
+                            placeholder="All Users"
+                            options={options.users.map((u) => ({ value: u.id, label: u.name }))}
+                            className="h-9 w-40"
+                            aria-label="User filter"
+                        />
                     </div>
 
                     <CountTabs
@@ -162,30 +187,30 @@ export default function CleTracking({
                     />
                 </div>
 
-                <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
+                <div className="bg-card overflow-hidden rounded-lg border shadow-sm">
                     <div className="w-full overflow-x-auto">
                         <table className="w-full caption-bottom text-sm">
                             <thead>
                                 <tr className="border-b bg-[#F0F0F1] dark:bg-neutral-800">
-                                    <th className="w-12 px-4 py-2.5 text-left font-semibold text-muted-foreground">#</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">User</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Course / Provider</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Credits</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Completion Date</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Status</th>
-                                    <th className="w-24 px-4 py-2.5 text-center font-semibold text-muted-foreground">Actions</th>
+                                    <th className="text-muted-foreground w-12 px-4 py-2.5 text-left font-semibold">#</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">User</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Course / Provider</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Credits</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Completion Date</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Status</th>
+                                    <th className="text-muted-foreground w-24 px-4 py-2.5 text-center font-semibold">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y">
                                 {records.data.length === 0 && (
                                     <tr>
-                                        <td colSpan={7} className="py-12 text-center text-sm text-muted-foreground">
+                                        <td colSpan={7} className="text-muted-foreground py-12 text-center text-sm">
                                             No credits logged.
                                         </td>
                                     </tr>
                                 )}
                                 {records.data.map((r, i) => (
-                                    <tr key={r.id} className="transition-colors hover:bg-muted/40">
+                                    <tr key={r.id} className="hover:bg-muted/40 transition-colors">
                                         <td className="px-4 py-2.5 font-medium tabular-nums">{(records.from ?? 1) + i}</td>
                                         <td className="px-4 py-2.5">
                                             <div className="flex items-center gap-3">
@@ -194,18 +219,18 @@ export default function CleTracking({
                                                 </Avatar>
                                                 <div className="min-w-0">
                                                     <div className="font-medium">{r.member ?? 'Unassigned'}</div>
-                                                    <div className="truncate text-sm text-muted-foreground">{r.email ?? '—'}</div>
+                                                    <div className="text-muted-foreground truncate text-sm">{r.email ?? '—'}</div>
                                                 </div>
                                             </div>
                                         </td>
                                         <td className="px-4 py-2.5">
                                             <div className="flex min-w-0 items-start gap-2.5">
-                                                <div className="mt-0.5 shrink-0 rounded-md bg-primary/10 p-1.5">
-                                                    <BookOpen className="size-3.5 text-primary" />
+                                                <div className="bg-primary/10 mt-0.5 shrink-0 rounded-md p-1.5">
+                                                    <BookOpen className="text-primary size-3.5" />
                                                 </div>
                                                 <div className="min-w-0">
                                                     <p className="truncate text-sm leading-tight font-medium">{r.title}</p>
-                                                    <p className="mt-0.5 text-xs text-muted-foreground">{r.provider ?? '—'}</p>
+                                                    <p className="text-muted-foreground mt-0.5 text-xs">{r.provider ?? '—'}</p>
                                                 </div>
                                             </div>
                                         </td>
@@ -216,7 +241,7 @@ export default function CleTracking({
                                                         <Award className="size-3 shrink-0 text-yellow-500" />
                                                         <span className="text-xs font-bold tabular-nums">
                                                             {r.credit_hours}
-                                                            <span className="font-normal text-muted-foreground">/{r.required_hours}</span>
+                                                            <span className="text-muted-foreground font-normal">/{r.required_hours}</span>
                                                         </span>
                                                     </div>
                                                     <span
@@ -228,11 +253,15 @@ export default function CleTracking({
                                                         {r.progress}%
                                                     </span>
                                                 </div>
-                                                <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                                                <div className="bg-muted h-1.5 w-full overflow-hidden rounded-full">
                                                     <div
                                                         className={cn(
                                                             'h-full rounded-full transition-all',
-                                                            r.progress === 100 ? 'bg-emerald-500' : r.progress >= 50 ? 'bg-yellow-500' : 'bg-orange-500',
+                                                            r.progress === 100
+                                                                ? 'bg-emerald-500'
+                                                                : r.progress >= 50
+                                                                  ? 'bg-yellow-500'
+                                                                  : 'bg-orange-500',
                                                         )}
                                                         style={{ width: `${r.progress}%` }}
                                                     />
@@ -240,7 +269,7 @@ export default function CleTracking({
                                             </div>
                                         </td>
                                         <td className="px-4 py-2.5">
-                                            <div className="flex items-center gap-2 whitespace-nowrap text-muted-foreground">
+                                            <div className="text-muted-foreground flex items-center gap-2 whitespace-nowrap">
                                                 <Calendar className="size-4" />
                                                 <span>{date(r.completed_on)}</span>
                                             </div>
@@ -257,16 +286,28 @@ export default function CleTracking({
                                         </td>
                                         <td className="px-4 py-2.5 text-right">
                                             <div className="flex items-center justify-end gap-1">
-                                                <Button variant="ghost" size="icon" className="size-8 text-muted-foreground" title="View" onClick={() => setViewing(r)}>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="text-muted-foreground size-8"
+                                                    title="View"
+                                                    onClick={() => setViewing(r)}
+                                                >
                                                     <Eye className="size-4" />
                                                 </Button>
-                                                <Button variant="ghost" size="icon" className="size-8 text-muted-foreground" title="Edit" onClick={() => openEdit(r)}>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="text-muted-foreground size-8"
+                                                    title="Edit"
+                                                    onClick={() => openEdit(r)}
+                                                >
                                                     <SquarePen className="size-4" />
                                                 </Button>
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    className="size-8 text-muted-foreground"
+                                                    className="text-muted-foreground size-8"
                                                     title={r.certificate_url ? 'Open certificate' : 'No certificate on file'}
                                                     disabled={!r.certificate_url}
                                                     asChild={!!r.certificate_url}
@@ -282,9 +323,13 @@ export default function CleTracking({
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    className="size-8 text-muted-foreground"
+                                                    className="text-muted-foreground size-8"
                                                     title="Delete"
-                                                    onClick={() => confirmAction({ title: `Delete ${r.title}?` }).then((ok) => ok && router.delete(`/compliance/cle-tracking/${r.id}`, { preserveScroll: true }))}
+                                                    onClick={() =>
+                                                        confirmAction({ title: `Delete ${r.title}?` }).then(
+                                                            (ok) => ok && router.delete(`/compliance/cle-tracking/${r.id}`, { preserveScroll: true }),
+                                                        )
+                                                    }
                                                 >
                                                     <Trash2 className="size-4 text-rose-600" />
                                                 </Button>
@@ -315,7 +360,13 @@ export default function CleTracking({
                     submitLabel={editing ? 'Save' : 'Add Credit'}
                     wide
                 >
-                    <TextField label="Course" value={form.data.title} onChange={(v) => form.setData('title', v)} error={form.errors.title} className="sm:col-span-2" />
+                    <TextField
+                        label="Course"
+                        value={form.data.title}
+                        onChange={(v) => form.setData('title', v)}
+                        error={form.errors.title}
+                        className="sm:col-span-2"
+                    />
                     <SelectField
                         label="User"
                         value={form.data.user_id}
@@ -403,7 +454,10 @@ export default function CleTracking({
                         {viewing && (
                             <div className="space-y-4 text-sm">
                                 <span
-                                    className={cn('inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset', STATUS_RING[viewing.status])}
+                                    className={cn(
+                                        'inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset',
+                                        STATUS_RING[viewing.status],
+                                    )}
                                 >
                                     {STATUS_LABEL[viewing.status]}
                                 </span>
@@ -417,7 +471,7 @@ export default function CleTracking({
                                 </dl>
                                 {viewing.notes && (
                                     <div>
-                                        <p className="mb-1 text-xs text-muted-foreground">Notes</p>
+                                        <p className="text-muted-foreground mb-1 text-xs">Notes</p>
                                         <p className="whitespace-pre-line">{viewing.notes}</p>
                                     </div>
                                 )}
@@ -433,9 +487,9 @@ export default function CleTracking({
 function Detail({ label, value, hint }: { label: string; value: string; hint?: string | null }) {
     return (
         <div>
-            <dt className="mb-1 text-xs text-muted-foreground">{label}</dt>
+            <dt className="text-muted-foreground mb-1 text-xs">{label}</dt>
             <dd>{value}</dd>
-            {hint && <dd className="truncate text-xs text-muted-foreground">{hint}</dd>}
+            {hint && <dd className="text-muted-foreground truncate text-xs">{hint}</dd>}
         </div>
     );
 }

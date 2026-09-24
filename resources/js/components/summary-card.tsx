@@ -41,11 +41,11 @@ export function SummaryCard({
     mono?: boolean;
 }) {
     return (
-        <div className="relative overflow-hidden rounded-lg border bg-card shadow-sm">
+        <div className="bg-card relative overflow-hidden rounded-lg border shadow-sm">
             <div className={cn('absolute top-0 right-0 size-20 rounded-bl-full', WEDGE[tone])} />
             <div className="relative flex items-start justify-between p-4">
                 <div>
-                    <p className="mb-1 text-sm font-medium text-muted-foreground">{label}</p>
+                    <p className="text-muted-foreground mb-1 text-sm font-medium">{label}</p>
                     <p className={cn('text-2xl font-bold tabular-nums', mono && 'font-mono')}>{value}</p>
                 </div>
                 <div className={cn('relative z-10 mt-0.5 rounded-xl p-2.5', WEDGE[tone])}>

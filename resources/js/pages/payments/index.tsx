@@ -1,6 +1,6 @@
 import { InitialsAvatar } from '@/components/avatar-stack';
-import { DataTableFooter } from '@/components/data-table-footer';
 import { confirmAction } from '@/components/confirm-dialog';
+import { DataTableFooter } from '@/components/data-table-footer';
 import { Dropdown } from '@/components/dropdown';
 import { FormDialog, SelectField, TextField } from '@/components/form-dialog';
 import { CountTabs } from '@/components/page-toolbar';
@@ -11,7 +11,22 @@ import AppLayout from '@/layouts/app-layout';
 import { date, money } from '@/lib/format';
 import type { BreadcrumbItem, Paginated } from '@/types';
 import { Head, Link, router, useForm } from '@inertiajs/react';
-import { Banknote, Building2, Calendar, CreditCard, Eye, FileCheck, Filter, Globe, LayoutGrid, Plus, RefreshCcw, Search, SquarePen, Trash2 } from 'lucide-react';
+import {
+    Banknote,
+    Building2,
+    Calendar,
+    CreditCard,
+    Eye,
+    FileCheck,
+    Filter,
+    Globe,
+    LayoutGrid,
+    Plus,
+    RefreshCcw,
+    Search,
+    SquarePen,
+    Trash2,
+} from 'lucide-react';
 import { useState, type ComponentType } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Payments', href: '/payments' }];
@@ -101,9 +116,11 @@ export default function PaymentsIndex({
         e.preventDefault();
         const done = { onSuccess: () => setOpen(false), preserveScroll: true };
 
-        editing
-            ? form.put(`/invoices/${editing.invoice_id}/payments/${editing.id}`, done)
-            : form.post(`/invoices/${form.data.invoice_id}/payments`, done);
+        if (editing) {
+            form.put(`/invoices/${editing.invoice_id}/payments/${editing.id}`, done);
+        } else {
+            form.post(`/invoices/${form.data.invoice_id}/payments`, done);
+        }
     }
 
     return (
@@ -114,7 +131,7 @@ export default function PaymentsIndex({
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-xl font-semibold">Payments</h1>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-muted-foreground text-xs">
                             View and manage payments received against client invoices. {money(totals.receivedCents)} received.
                         </p>
                     </div>
@@ -123,12 +140,12 @@ export default function PaymentsIndex({
                     </Button>
                 </div>
 
-                <div className="rounded-lg border bg-card shadow-sm">
+                <div className="bg-card rounded-lg border shadow-sm">
                     <div className="p-3">
                         <div className="flex items-center justify-between gap-2">
                             <div className="flex min-w-0 items-center gap-2">
                                 <div className="relative w-64 min-w-40 shrink">
-                                    <Search className="absolute top-2 left-2.5 size-4 text-muted-foreground" />
+                                    <Search className="text-muted-foreground absolute top-2 left-2.5 size-4" />
                                     <Input
                                         placeholder="Search..."
                                         value={search}
@@ -138,7 +155,13 @@ export default function PaymentsIndex({
                                     />
                                 </div>
 
-                                <Dropdown value={filters.invoice ?? ''} onChange={(v) => apply({ invoice: v })} placeholder="All Invoices" options={options.invoices.map((i) => ({ value: i.id, label: i.number }))} className="h-9 w-40" />
+                                <Dropdown
+                                    value={filters.invoice ?? ''}
+                                    onChange={(v) => apply({ invoice: v })}
+                                    placeholder="All Invoices"
+                                    options={options.invoices.map((i) => ({ value: i.id, label: i.number }))}
+                                    className="h-9 w-40"
+                                />
                             </div>
 
                             <div className="flex shrink-0 items-center gap-2">
@@ -146,7 +169,7 @@ export default function PaymentsIndex({
                                     <Button
                                         variant="ghost"
                                         size="sm"
-                                        className="h-9 text-muted-foreground"
+                                        className="text-muted-foreground h-9"
                                         onClick={() => {
                                             setSearch('');
                                             router.get('/payments');
@@ -155,7 +178,7 @@ export default function PaymentsIndex({
                                         <RefreshCcw className="size-4" /> Clear Filters
                                     </Button>
                                 )}
-                                <span className="flex h-8 items-center gap-1.5 rounded-md border px-2 text-sm text-muted-foreground">
+                                <span className="text-muted-foreground flex h-8 items-center gap-1.5 rounded-md border px-2 text-sm">
                                     <Filter className="size-4" /> Filters
                                 </span>
                             </div>
@@ -172,37 +195,39 @@ export default function PaymentsIndex({
                     />
                 </div>
 
-                <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
+                <div className="bg-card overflow-hidden rounded-lg border shadow-sm">
                     <div className="w-full overflow-x-auto">
                         <table className="w-full caption-bottom text-sm">
                             <thead>
                                 <tr className="border-b bg-[#F0F0F1] dark:bg-neutral-800">
-                                    <th className="w-12 px-4 py-2.5 text-left font-semibold text-muted-foreground">#</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Client</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Invoice Number</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Amount</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Method</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Date</th>
-                                    <th className="w-24 px-4 py-2.5 text-center font-semibold text-muted-foreground">Actions</th>
+                                    <th className="text-muted-foreground w-12 px-4 py-2.5 text-left font-semibold">#</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Client</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Invoice Number</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Amount</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Method</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Date</th>
+                                    <th className="text-muted-foreground w-24 px-4 py-2.5 text-center font-semibold">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {payments.data.length === 0 && (
                                     <tr>
-                                        <td colSpan={7} className="py-12 text-center text-sm text-muted-foreground">
+                                        <td colSpan={7} className="text-muted-foreground py-12 text-center text-sm">
                                             No payments match these filters.
                                         </td>
                                     </tr>
                                 )}
                                 {payments.data.map((p, i) => (
-                                    <tr key={p.id} className="border-b transition-colors last:border-0 hover:bg-muted/40">
+                                    <tr key={p.id} className="hover:bg-muted/40 border-b transition-colors last:border-0">
                                         <td className="px-4 py-2.5 font-medium tabular-nums">{(payments.from ?? 1) + i}</td>
                                         <td className="px-4 py-2.5">
                                             <div className="flex items-center gap-3">
                                                 <InitialsAvatar name={p.client_name} />
                                                 <div className="min-w-0">
                                                     <div className="text-sm font-medium">{p.client_name}</div>
-                                                    <div className="truncate text-xs text-muted-foreground">{p.client_email ?? p.reference ?? '—'}</div>
+                                                    <div className="text-muted-foreground truncate text-xs">
+                                                        {p.client_email ?? p.reference ?? '—'}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </td>
@@ -216,28 +241,47 @@ export default function PaymentsIndex({
                                             <RingPill value={p.method} label={METHOD[p.method]?.label ?? p.method} />
                                         </td>
                                         <td className="px-4 py-2.5">
-                                            <div className="flex items-center gap-2 whitespace-nowrap text-muted-foreground">
+                                            <div className="text-muted-foreground flex items-center gap-2 whitespace-nowrap">
                                                 <Calendar className="size-4" />
                                                 <span>{date(p.paid_on)}</span>
                                             </div>
                                         </td>
                                         <td className="px-4 py-2.5">
                                             <div className="flex items-center justify-end gap-1">
-                                                <Button variant="ghost" size="icon" className="size-8 text-muted-foreground" asChild title="View invoice">
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="text-muted-foreground size-8"
+                                                    asChild
+                                                    title="View invoice"
+                                                >
                                                     <Link href={`/invoices/${p.invoice_id}`}>
                                                         <Eye className="size-4" />
                                                     </Link>
                                                 </Button>
-                                                <Button variant="ghost" size="icon" className="size-8 text-muted-foreground" title="Edit" onClick={() => openEdit(p)}>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="text-muted-foreground size-8"
+                                                    title="Edit"
+                                                    onClick={() => openEdit(p)}
+                                                >
                                                     <SquarePen className="size-4" />
                                                 </Button>
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    className="size-8 text-muted-foreground"
+                                                    className="text-muted-foreground size-8"
                                                     title="Delete"
                                                     onClick={() =>
-                                                        confirmAction({ title: `Remove the ${money(p.amount_cents)} payment on ${p.invoice_number}?`, confirmLabel: 'Remove' }).then((ok) => ok && router.delete(`/invoices/${p.invoice_id}/payments/${p.id}`, { preserveScroll: true }))
+                                                        confirmAction({
+                                                            title: `Remove the ${money(p.amount_cents)} payment on ${p.invoice_number}?`,
+                                                            confirmLabel: 'Remove',
+                                                        }).then(
+                                                            (ok) =>
+                                                                ok &&
+                                                                router.delete(`/invoices/${p.invoice_id}/payments/${p.id}`, { preserveScroll: true }),
+                                                        )
                                                     }
                                                 >
                                                     <Trash2 className="size-4 text-rose-600" />
@@ -276,13 +320,29 @@ export default function PaymentsIndex({
                         const invoice = options.invoices.find((i) => String(i.id) === v);
                         form.setData({ ...form.data, invoice_id: v, amount: invoice ? String(invoice.balance_cents / 100) : form.data.amount });
                     }}
-                    options={options.invoices.map((i) => ({ value: i.id, label: `${i.number} — ${i.client ?? '—'} (${money(i.balance_cents)} due)` }))}
+                    options={options.invoices.map((i) => ({
+                        value: i.id,
+                        label: `${i.number} — ${i.client ?? '—'} (${money(i.balance_cents)} due)`,
+                    }))}
                     placeholder="Select an invoice"
                     error={form.errors.invoice_id}
                     className="sm:col-span-2"
                 />
-                <TextField label="Amount" type="number" step="0.01" value={form.data.amount} onChange={(v) => form.setData('amount', v)} error={form.errors.amount} />
-                <TextField label="Date" type="date" value={form.data.paid_on} onChange={(v) => form.setData('paid_on', v)} error={form.errors.paid_on} />
+                <TextField
+                    label="Amount"
+                    type="number"
+                    step="0.01"
+                    value={form.data.amount}
+                    onChange={(v) => form.setData('amount', v)}
+                    error={form.errors.amount}
+                />
+                <TextField
+                    label="Date"
+                    type="date"
+                    value={form.data.paid_on}
+                    onChange={(v) => form.setData('paid_on', v)}
+                    error={form.errors.paid_on}
+                />
                 <SelectField
                     label="Method"
                     value={form.data.method}
@@ -290,7 +350,12 @@ export default function PaymentsIndex({
                     options={options.methods.map((m) => ({ value: m, label: METHOD[m].label }))}
                     error={form.errors.method}
                 />
-                <TextField label="Reference" value={form.data.reference} onChange={(v) => form.setData('reference', v)} error={form.errors.reference} />
+                <TextField
+                    label="Reference"
+                    value={form.data.reference}
+                    onChange={(v) => form.setData('reference', v)}
+                    error={form.errors.reference}
+                />
             </FormDialog>
         </AppLayout>
     );

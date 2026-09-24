@@ -1,7 +1,7 @@
 import { AppContent } from '@/components/app-content';
-import { ConfirmDialogHost } from '@/components/confirm-dialog';
 import { AppHeader } from '@/components/app-header';
 import { AppShell } from '@/components/app-shell';
+import { ConfirmDialogHost } from '@/components/confirm-dialog';
 import { type BreadcrumbItem } from '@/types';
 
 interface AppHeaderLayoutProps {

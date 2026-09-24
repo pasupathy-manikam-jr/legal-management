@@ -8,7 +8,7 @@ export function PageToolbar({ title, subtitle, children }: { title: string; subt
         <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
                 <h1 className="text-xl font-semibold">{title}</h1>
-                {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
+                {subtitle && <p className="text-muted-foreground text-sm">{subtitle}</p>}
             </div>
             <div className="flex items-center gap-2">{children}</div>
         </div>
@@ -25,7 +25,7 @@ export function FilterTabs({
     onSelect: (v: string) => void;
 }) {
     return (
-        <div className="flex flex-wrap gap-1 rounded-lg bg-muted p-1">
+        <div className="bg-muted flex flex-wrap gap-1 rounded-lg p-1">
             {options.map((o) => (
                 <button
                     key={o.value}
@@ -33,8 +33,8 @@ export function FilterTabs({
                     onClick={() => onSelect(o.value)}
                     className={
                         value === o.value
-                            ? 'rounded-md bg-background px-3 py-1.5 text-xs font-medium shadow-sm'
-                            : 'rounded-md px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground'
+                            ? 'bg-background rounded-md px-3 py-1.5 text-xs font-medium shadow-sm'
+                            : 'text-muted-foreground hover:text-foreground rounded-md px-3 py-1.5 text-xs font-medium'
                     }
                 >
                     {o.label}
@@ -68,7 +68,9 @@ export function CountTabs({
                             onClick={() => onSelect(o.value)}
                             className={cn(
                                 'flex items-center gap-1.5 border-b-2 px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors',
-                                active ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:border-muted-foreground hover:text-foreground',
+                                active
+                                    ? 'border-primary text-primary'
+                                    : 'text-muted-foreground hover:border-muted-foreground hover:text-foreground border-transparent',
                             )}
                         >
                             {o.icon && <o.icon className="size-4" />}
@@ -97,11 +99,11 @@ export function FilterActions({ active, onClear }: { active: boolean; onClear: (
     return (
         <div className="flex shrink-0 items-center gap-2">
             {active && (
-                <Button variant="ghost" className="h-9 text-muted-foreground hover:bg-transparent hover:text-muted-foreground" onClick={onClear}>
+                <Button variant="ghost" className="text-muted-foreground hover:text-muted-foreground h-9 hover:bg-transparent" onClick={onClear}>
                     <RefreshCcw className="size-4" /> Clear Filters
                 </Button>
             )}
-            <span className="inline-flex h-8 cursor-default items-center gap-1.5 rounded-md border bg-background px-2 py-1 text-sm font-medium shadow-xs">
+            <span className="bg-background inline-flex h-8 cursor-default items-center gap-1.5 rounded-md border px-2 py-1 text-sm font-medium shadow-xs">
                 <Filter className="size-4" /> Filters
             </span>
         </div>

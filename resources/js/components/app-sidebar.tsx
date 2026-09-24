@@ -9,12 +9,12 @@ import {
     Building2,
     Calendar,
     CalendarDays,
-    Mail,
     ChartColumn,
     DollarSign,
     FileText,
     Image,
     LayoutGrid,
+    Mail,
     Scale,
     Search,
     Settings,
@@ -286,14 +286,14 @@ export function AppSidebar() {
                 </SidebarMenu>
 
                 <div className="relative px-2 pb-2 group-data-[collapsible=icon]:hidden">
-                    <Search className="absolute top-1/2 left-4.5 size-3.5 -translate-y-1/2 text-muted-foreground" />
+                    <Search className="text-muted-foreground absolute top-1/2 left-4.5 size-3.5 -translate-y-1/2" />
                     <input
                         type="search"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         placeholder="Search menu…"
                         aria-label="Search menu"
-                        className="w-full rounded-md border border-sidebar-border bg-sidebar-accent/40 py-1.5 pr-2 pl-7 text-sm outline-none placeholder:text-muted-foreground focus:border-ring focus:ring-1 focus:ring-ring"
+                        className="border-sidebar-border bg-sidebar-accent/40 placeholder:text-muted-foreground focus:border-ring focus:ring-ring w-full rounded-md border py-1.5 pr-2 pl-7 text-sm outline-none focus:ring-1"
                     />
                 </div>
             </SidebarHeader>
@@ -304,13 +304,13 @@ export function AppSidebar() {
 
             <SidebarFooter>
                 <div className="group-data-[collapsible=icon]:hidden">
-                    <div className="flex items-center gap-3 rounded-xl bg-sidebar-accent/60 px-3 py-2.5">
-                        <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-sidebar-primary/10">
-                            <Building2 className="size-4 text-sidebar-foreground/70" />
+                    <div className="bg-sidebar-accent/60 flex items-center gap-3 rounded-xl px-3 py-2.5">
+                        <div className="bg-sidebar-primary/10 flex size-8 shrink-0 items-center justify-center rounded-full">
+                            <Building2 className="text-sidebar-foreground/70 size-4" />
                         </div>
                         <div className="min-w-0 flex-1">
                             <p className="truncate text-sm font-medium">Whitmore &amp; Co.</p>
-                            <p className="truncate text-xs text-sidebar-foreground/60">Legal practice management</p>
+                            <p className="text-sidebar-foreground/60 truncate text-xs">Legal practice management</p>
                         </div>
                     </div>
                 </div>

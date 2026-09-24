@@ -32,7 +32,10 @@ export function money(cents: number | null | undefined): string {
     const fixed = Math.abs(amount).toFixed(currency.decimals);
     const [whole, fraction] = fixed.split('.');
 
-    const grouped = whole.replace(/\B(?=(\d{3})+(?!\d))/g, '\u0000').split('\u0000').join(currency.thousandsSeparator);
+    const grouped = whole
+        .replace(/\B(?=(\d{3})+(?!\d))/g, '\u0000')
+        .split('\u0000')
+        .join(currency.thousandsSeparator);
     const body = fraction ? `${grouped}${currency.decimalSeparator}${fraction}` : grouped;
     const gap = currency.space ? ' ' : '';
     const signed = amount < 0 ? '-' : '';

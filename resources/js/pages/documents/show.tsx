@@ -1,6 +1,6 @@
 import { InitialsAvatar } from '@/components/avatar-stack';
-import { Field, FormDialog, SelectField, TextareaField, TextField } from '@/components/form-dialog';
 import { confirmAction } from '@/components/confirm-dialog';
+import { Field, FormDialog, SelectField, TextareaField, TextField } from '@/components/form-dialog';
 import { TonePill } from '@/components/tone-pill';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -123,7 +123,13 @@ export default function DocumentShow({ document, versions, options }: { document
     function saveDetails(e: React.FormEvent) {
         e.preventDefault();
         // Tags are typed as one comma-separated line and saved as a list.
-        details.transform((data) => ({ ...data, tags: data.tags.split(',').map((t) => t.trim()).filter(Boolean) }));
+        details.transform((data) => ({
+            ...data,
+            tags: data.tags
+                .split(',')
+                .map((t) => t.trim())
+                .filter(Boolean),
+        }));
         details.put(base, { onSuccess: () => setEditing(false), preserveScroll: true });
     }
 
@@ -145,7 +151,7 @@ export default function DocumentShow({ document, versions, options }: { document
                 <div className="flex items-center justify-between gap-3">
                     <div className="min-w-0">
                         <h1 className="truncate text-xl font-semibold">{document.title}</h1>
-                        <p className="text-xs text-muted-foreground">View all versions of this document and manage version history.</p>
+                        <p className="text-muted-foreground text-xs">View all versions of this document and manage version history.</p>
                     </div>
                     <div className="flex shrink-0 items-center gap-2">
                         <Button onClick={() => setUploading(true)}>
@@ -160,13 +166,13 @@ export default function DocumentShow({ document, versions, options }: { document
                 </div>
 
                 <div className="space-y-5 rounded-xl border p-3 lg:p-6">
-                    <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
+                    <div className="bg-card overflow-hidden rounded-xl border shadow-sm">
                         <div className="h-1 w-full" style={{ backgroundColor: document.typeColor ?? 'var(--primary)' }} />
                         <div className="flex items-center gap-3 px-5 py-4">
                             <InitialsAvatar name={document.owner} className="size-10 text-sm" />
                             <div className="min-w-0">
                                 <h2 className="truncate text-base font-bold">{document.title}</h2>
-                                <p className="mt-0.5 text-xs text-muted-foreground">
+                                <p className="text-muted-foreground mt-0.5 text-xs">
                                     {document.owner} | {versions.length} {versions.length === 1 ? 'version' : 'versions'}
                                     {document.matter && ` | ${document.matter}`}
                                 </p>
@@ -175,7 +181,10 @@ export default function DocumentShow({ document, versions, options }: { document
                     </div>
 
                     {message && (
-                        <div role="alert" className="flex items-start gap-2 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-200">
+                        <div
+                            role="alert"
+                            className="flex items-start gap-2 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-200"
+                        >
                             <TriangleAlert className="mt-0.5 size-4 shrink-0" />
                             <span className="flex-1">{message}</span>
                             <button type="button" onClick={() => setNotice(null)} aria-label="Dismiss" className="opacity-70 hover:opacity-100">
@@ -185,7 +194,7 @@ export default function DocumentShow({ document, versions, options }: { document
                     )}
 
                     <div className="grid grid-cols-1 items-start gap-5 min-[1481px]:grid-cols-[70%_30%] min-[1481px]:pr-5">
-                        <div className="rounded-lg border bg-card p-5 shadow-sm">
+                        <div className="bg-card rounded-lg border p-5 shadow-sm">
                             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
                                 {versions.map((version) => {
                                     const Icon = iconFor(version.mime);
@@ -195,7 +204,9 @@ export default function DocumentShow({ document, versions, options }: { document
                                             key={version.id}
                                             className={cn(
                                                 'group flex flex-col items-center gap-1 rounded-xl border p-3 transition-all duration-200',
-                                                version.current ? 'border-primary/30 bg-primary/5 dark:bg-primary/10' : 'bg-card hover:border-primary/40 hover:bg-primary/5',
+                                                version.current
+                                                    ? 'border-primary/30 bg-primary/5 dark:bg-primary/10'
+                                                    : 'bg-card hover:border-primary/40 hover:bg-primary/5',
                                             )}
                                         >
                                             <a
@@ -206,21 +217,28 @@ export default function DocumentShow({ document, versions, options }: { document
                                                 title={`Open ${version.label}${version.uploader ? ` — uploaded by ${version.uploader}` : ''} · ${bytes(version.size)}`}
                                             >
                                                 <div className="relative flex w-full justify-center">
-                                                    <Icon className={cn('size-14 text-primary', !version.current && 'opacity-80')} />
+                                                    <Icon className={cn('text-primary size-14', !version.current && 'opacity-80')} />
                                                     {version.current && (
-                                                        <span className="absolute -top-1 -right-1 rounded-full bg-primary p-0.5 shadow">
+                                                        <span className="bg-primary absolute -top-1 -right-1 rounded-full p-0.5 shadow">
                                                             <CircleCheckBig className="size-2.5 text-white" />
                                                         </span>
                                                     )}
                                                 </div>
-                                                <p className={cn('text-[11px] leading-tight font-semibold', version.current ? 'text-primary' : 'text-foreground')}>{version.label}</p>
-                                                <p className="mb-1 text-[10px] text-muted-foreground">{version.created_on}</p>
+                                                <p
+                                                    className={cn(
+                                                        'text-[11px] leading-tight font-semibold',
+                                                        version.current ? 'text-primary' : 'text-foreground',
+                                                    )}
+                                                >
+                                                    {version.label}
+                                                </p>
+                                                <p className="text-muted-foreground mb-1 text-[10px]">{version.created_on}</p>
                                             </a>
                                             <div className="mt-auto flex w-full items-center justify-center gap-1 border-t pt-1.5">
                                                 <a
                                                     href={`${base}/versions/${version.id}/download`}
                                                     title="Download"
-                                                    className="inline-flex size-6 items-center justify-center rounded-md text-muted-foreground hover:bg-emerald-50 hover:text-emerald-600 dark:hover:bg-emerald-900/20"
+                                                    className="text-muted-foreground inline-flex size-6 items-center justify-center rounded-md hover:bg-emerald-50 hover:text-emerald-600 dark:hover:bg-emerald-900/20"
                                                 >
                                                     <Download className="size-4" />
                                                 </a>
@@ -229,8 +247,10 @@ export default function DocumentShow({ document, versions, options }: { document
                                                         <button
                                                             type="button"
                                                             title="Make current"
-                                                            onClick={() => router.patch(`${base}/versions/${version.id}/restore`, {}, { preserveScroll: true })}
-                                                            className="inline-flex size-6 items-center justify-center rounded-md text-muted-foreground hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20"
+                                                            onClick={() =>
+                                                                router.patch(`${base}/versions/${version.id}/restore`, {}, { preserveScroll: true })
+                                                            }
+                                                            className="text-muted-foreground inline-flex size-6 items-center justify-center rounded-md hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20"
                                                         >
                                                             <RotateCcw className="size-4" />
                                                         </button>
@@ -238,7 +258,7 @@ export default function DocumentShow({ document, versions, options }: { document
                                                             type="button"
                                                             title="Delete version"
                                                             onClick={() => removeVersion(version)}
-                                                            className="inline-flex size-6 items-center justify-center rounded-md text-muted-foreground hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20"
+                                                            className="text-muted-foreground inline-flex size-6 items-center justify-center rounded-md hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20"
                                                         >
                                                             <Trash2 className="size-4" />
                                                         </button>
@@ -252,41 +272,51 @@ export default function DocumentShow({ document, versions, options }: { document
                         </div>
 
                         <div className="min-[1481px]:sticky min-[1481px]:top-6">
-                            <div className="flex flex-col rounded-lg border bg-card shadow-sm">
-                                <div className="flex items-center justify-between gap-2 rounded-t-lg border-b bg-muted/40 px-5 py-3">
+                            <div className="bg-card flex flex-col rounded-lg border shadow-sm">
+                                <div className="bg-muted/40 flex items-center justify-between gap-2 rounded-t-lg border-b px-5 py-3">
                                     <h3 className="flex items-center gap-2 text-sm font-semibold">
-                                        <FileText className="size-4 text-muted-foreground" />
+                                        <FileText className="text-muted-foreground size-4" />
                                         Document Details
                                     </h3>
                                     <div className="flex items-center gap-0.5">
                                         {current && (
                                             <Button variant="ghost" size="icon" className="size-7" title="Open current version" asChild>
                                                 <a href={`${base}/versions/${current.id}/preview`} target="_blank" rel="noreferrer">
-                                                    <Eye className="size-4 text-muted-foreground" />
+                                                    <Eye className="text-muted-foreground size-4" />
                                                 </a>
                                             </Button>
                                         )}
                                         <Button variant="ghost" size="icon" className="size-7" title="Edit details" onClick={openEdit}>
-                                            <SquarePen className="size-4 text-muted-foreground" />
+                                            <SquarePen className="text-muted-foreground size-4" />
                                         </Button>
                                         {current && (
                                             <Button variant="ghost" size="icon" className="size-7" title="Download current version" asChild>
                                                 <a href={`${base}/versions/${current.id}/download`}>
-                                                    <Download className="size-4 text-muted-foreground" />
+                                                    <Download className="text-muted-foreground size-4" />
                                                 </a>
                                             </Button>
                                         )}
-                                        <Button variant="ghost" size="icon" className="size-7" title="Replace with a new version" onClick={() => setUploading(true)}>
-                                            <RefreshCw className="size-4 text-muted-foreground" />
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="size-7"
+                                            title="Replace with a new version"
+                                            onClick={() => setUploading(true)}
+                                        >
+                                            <RefreshCw className="text-muted-foreground size-4" />
                                         </Button>
                                         <Button
                                             variant="ghost"
                                             size="icon"
                                             className="size-7"
                                             title="Delete document"
-                                            onClick={() => confirmAction({ title: `Delete ${document.title} and all ${versions.length} versions?` }).then((ok) => ok && router.delete(base))}
+                                            onClick={() =>
+                                                confirmAction({ title: `Delete ${document.title} and all ${versions.length} versions?` }).then(
+                                                    (ok) => ok && router.delete(base),
+                                                )
+                                            }
                                         >
-                                            <Trash2 className="size-4 text-muted-foreground" />
+                                            <Trash2 className="text-muted-foreground size-4" />
                                         </Button>
                                     </div>
                                 </div>
@@ -299,7 +329,7 @@ export default function DocumentShow({ document, versions, options }: { document
                                                 {document.type}
                                             </TonePill>
                                         ) : (
-                                            <span className="text-xs text-muted-foreground">—</span>
+                                            <span className="text-muted-foreground text-xs">—</span>
                                         )}
                                     </Row>
                                     <Row label="Status">
@@ -310,9 +340,12 @@ export default function DocumentShow({ document, versions, options }: { document
                                     </Row>
                                     <Row label="Tags">
                                         <div className="flex max-w-60 flex-wrap justify-end gap-1">
-                                            {document.tags.length === 0 && <span className="text-xs text-muted-foreground">—</span>}
+                                            {document.tags.length === 0 && <span className="text-muted-foreground text-xs">—</span>}
                                             {document.tags.map((tag) => (
-                                                <span key={tag} className="inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-[11px] font-medium text-blue-600 dark:bg-blue-900 dark:text-blue-300">
+                                                <span
+                                                    key={tag}
+                                                    className="inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-[11px] font-medium text-blue-600 dark:bg-blue-900 dark:text-blue-300"
+                                                >
                                                     {tag}
                                                 </span>
                                             ))}
@@ -330,7 +363,9 @@ export default function DocumentShow({ document, versions, options }: { document
                                     <div className="border-t" />
                                     <div>
                                         <p className="mb-1.5 text-xs font-semibold tracking-wide">Description</p>
-                                        <p className="text-xs leading-relaxed whitespace-pre-wrap text-muted-foreground">{document.description || 'No description.'}</p>
+                                        <p className="text-muted-foreground text-xs leading-relaxed whitespace-pre-wrap">
+                                            {document.description || 'No description.'}
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -356,7 +391,7 @@ export default function DocumentShow({ document, versions, options }: { document
                         });
                     }}
                 >
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-muted-foreground text-sm">
                         The new file becomes the current version. {current ? `${current.label} stays in the history and can be restored.` : ''}
                     </p>
                     <Field label="File" error={upload.errors.file}>
@@ -369,7 +404,13 @@ export default function DocumentShow({ document, versions, options }: { document
                 </FormDialog>
 
                 <FormDialog open={editing} onOpenChange={setEditing} title="Edit Details" processing={details.processing} onSubmit={saveDetails} wide>
-                    <TextField label="Document Name" value={details.data.title} onChange={(v) => details.setData('title', v)} error={details.errors.title} className="sm:col-span-2" />
+                    <TextField
+                        label="Document Name"
+                        value={details.data.title}
+                        onChange={(v) => details.setData('title', v)}
+                        error={details.errors.title}
+                        className="sm:col-span-2"
+                    />
                     <SelectField
                         label="Client"
                         value={details.data.client_id}
@@ -413,7 +454,13 @@ export default function DocumentShow({ document, versions, options }: { document
                         ]}
                         error={details.errors.confidentiality}
                     />
-                    <TextField label="Tags" value={details.data.tags} onChange={(v) => details.setData('tags', v)} error={details.errors.tags} placeholder="legal, evidence, case 11" />
+                    <TextField
+                        label="Tags"
+                        value={details.data.tags}
+                        onChange={(v) => details.setData('tags', v)}
+                        error={details.errors.tags}
+                        placeholder="legal, evidence, case 11"
+                    />
                     <TextareaField
                         label="Description"
                         value={details.data.description}

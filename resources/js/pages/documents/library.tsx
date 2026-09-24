@@ -1,14 +1,14 @@
 import { DataTableFooter } from '@/components/data-table-footer';
+import { Dropdown } from '@/components/dropdown';
 import { Field, FormDialog, SelectField, TextareaField, TextField } from '@/components/form-dialog';
 import { CountTabs, FilterActions } from '@/components/page-toolbar';
-import { Dropdown } from '@/components/dropdown';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/app-layout';
 import { cn } from '@/lib/utils';
 import type { BreadcrumbItem, Paginated } from '@/types';
 import { Head, Link, router, useForm } from '@inertiajs/react';
-import { CircleCheckBig, Archive, Clock, Folder, LayoutGrid, Image as ImageIcon, PenLine, Plus, Search } from 'lucide-react';
+import { Archive, CircleCheckBig, Clock, Folder, Image as ImageIcon, LayoutGrid, PenLine, Plus, Search } from 'lucide-react';
 import { useRef, useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Documents', href: '/documents/library' }];
@@ -40,7 +40,15 @@ export default function DocumentLibrary({
     const picker = useRef<HTMLInputElement>(null);
 
     // Uploaded from the library, a document is the firm's own: there is no client to pick.
-    const form = useForm<{ title: string; description: string; type: string; stage: string; confidentiality: string; tags: string; file: File | null }>({
+    const form = useForm<{
+        title: string;
+        description: string;
+        type: string;
+        stage: string;
+        confidentiality: string;
+        tags: string;
+        file: File | null;
+    }>({
         title: '',
         description: '',
         type: '',
@@ -58,7 +66,13 @@ export default function DocumentLibrary({
 
     function upload(e: React.FormEvent) {
         e.preventDefault();
-        form.transform((data) => ({ ...data, tags: data.tags.split(',').map((t) => t.trim()).filter(Boolean) }));
+        form.transform((data) => ({
+            ...data,
+            tags: data.tags
+                .split(',')
+                .map((t) => t.trim())
+                .filter(Boolean),
+        }));
         form.post('/documents', { forceFormData: true, preserveScroll: true, onSuccess: () => setUploading(false) });
     }
 
@@ -75,18 +89,18 @@ export default function DocumentLibrary({
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-xl font-semibold">Documents</h1>
-                        <p className="text-xs text-muted-foreground">Browse and manage all uploaded documents.</p>
+                        <p className="text-muted-foreground text-xs">Browse and manage all uploaded documents.</p>
                     </div>
                     <Button onClick={openUpload}>
                         <Plus className="size-4" /> Upload Document
                     </Button>
                 </div>
 
-                <div className="rounded-lg border bg-card shadow-sm">
+                <div className="bg-card rounded-lg border shadow-sm">
                     <div className="flex items-center justify-between gap-2 p-3">
                         <div className="flex min-w-0 items-center gap-2">
                             <div className="relative w-64 min-w-40 shrink">
-                                <Search className="absolute top-2 left-2.5 size-4 text-muted-foreground" />
+                                <Search className="text-muted-foreground absolute top-2 left-2.5 size-4" />
                                 <Input
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
@@ -96,9 +110,24 @@ export default function DocumentLibrary({
                                 />
                             </div>
 
-                            <Dropdown value={filters.category ?? ''} onChange={(v) => apply({ category: v })} placeholder="All Categories" options={options.categories.map((category) => ({ value: category, label: category }))} className="h-9 w-40" aria-label="Category filter" />
+                            <Dropdown
+                                value={filters.category ?? ''}
+                                onChange={(v) => apply({ category: v })}
+                                placeholder="All Categories"
+                                options={options.categories.map((category) => ({ value: category, label: category }))}
+                                className="h-9 w-40"
+                                aria-label="Category filter"
+                            />
 
-                            <Dropdown value={filters.level ?? ''} onChange={(v) => apply({ level: v })} placeholder="All Levels" options={options.levels.map((level) => ({ value: level, label: level }))} className="h-9 w-40" aria-label="Level filter" capitalize />
+                            <Dropdown
+                                value={filters.level ?? ''}
+                                onChange={(v) => apply({ level: v })}
+                                placeholder="All Levels"
+                                options={options.levels.map((level) => ({ value: level, label: level }))}
+                                className="h-9 w-40"
+                                aria-label="Level filter"
+                                capitalize
+                            />
                         </div>
 
                         <FilterActions
@@ -124,7 +153,9 @@ export default function DocumentLibrary({
                 </div>
 
                 {documents.data.length === 0 ? (
-                    <div className="rounded-lg border bg-card py-16 text-center text-sm text-muted-foreground shadow-sm">No documents match this view.</div>
+                    <div className="bg-card text-muted-foreground rounded-lg border py-16 text-center text-sm shadow-sm">
+                        No documents match this view.
+                    </div>
                 ) : (
                     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
                         {documents.data.map((document) => (
@@ -132,7 +163,7 @@ export default function DocumentLibrary({
                                 key={document.id}
                                 href={`/documents/library/${document.id}`}
                                 title={[document.type, document.client].filter(Boolean).join(' · ') || undefined}
-                                className="group flex flex-col items-center rounded-lg border bg-card p-4 text-card-foreground shadow-sm transition-all duration-200 hover:border-primary/40 hover:bg-primary/5 hover:shadow-md dark:hover:bg-primary/10"
+                                className="group bg-card text-card-foreground hover:border-primary/40 hover:bg-primary/5 dark:hover:bg-primary/10 flex flex-col items-center rounded-lg border p-4 shadow-sm transition-all duration-200 hover:shadow-md"
                             >
                                 <Folder
                                     className={cn(
@@ -140,7 +171,7 @@ export default function DocumentLibrary({
                                         document.state === 'archived' ? 'text-muted-foreground' : 'text-primary',
                                     )}
                                 />
-                                <span className="mt-2 text-center text-sm font-medium transition-colors duration-200 group-hover:text-primary">
+                                <span className="group-hover:text-primary mt-2 text-center text-sm font-medium transition-colors duration-200">
                                     {document.title}
                                 </span>
                             </Link>
@@ -148,11 +179,18 @@ export default function DocumentLibrary({
                     </div>
                 )}
 
-                <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
+                <div className="bg-card overflow-hidden rounded-lg border shadow-sm">
                     <DataTableFooter from={documents.from} to={documents.to} total={documents.total} links={documents.links} perPage={perPage} />
                 </div>
 
-                <FormDialog open={uploading} onOpenChange={setUploading} title="Upload Document" processing={form.processing} submitLabel="Save" onSubmit={upload}>
+                <FormDialog
+                    open={uploading}
+                    onOpenChange={setUploading}
+                    title="Upload Document"
+                    processing={form.processing}
+                    submitLabel="Save"
+                    onSubmit={upload}
+                >
                     <TextField
                         label="Name"
                         value={form.data.title}
@@ -177,7 +215,13 @@ export default function DocumentLibrary({
                     />
                     <Field label="File" error={form.errors.file}>
                         <div className="flex gap-2">
-                            <Input readOnly value={form.data.file?.name ?? ''} placeholder="Select File" className="flex-1" onClick={() => picker.current?.click()} />
+                            <Input
+                                readOnly
+                                value={form.data.file?.name ?? ''}
+                                placeholder="Select File"
+                                className="flex-1"
+                                onClick={() => picker.current?.click()}
+                            />
                             <Button type="button" variant="outline" onClick={() => picker.current?.click()}>
                                 <ImageIcon className="size-4" /> Browse
                             </Button>

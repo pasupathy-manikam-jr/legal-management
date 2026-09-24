@@ -1,7 +1,7 @@
-import { DataTableFooter } from '@/components/data-table-footer';
-import { FormDialog, SelectField, TextField, TextareaField } from '@/components/form-dialog';
 import { confirmAction } from '@/components/confirm-dialog';
+import { DataTableFooter } from '@/components/data-table-footer';
 import { Dropdown } from '@/components/dropdown';
+import { FormDialog, SelectField, TextField, TextareaField } from '@/components/form-dialog';
 import { CountTabs } from '@/components/page-toolbar';
 import { RingPill, TonePill } from '@/components/tone-pill';
 import { Button } from '@/components/ui/button';
@@ -12,7 +12,25 @@ import { date } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { BreadcrumbItem, Paginated } from '@/types';
 import { Head, router, useForm } from '@inertiajs/react';
-import { Building2, Calendar, CircleCheck, CircleX, Eye, Grid3x3, Landmark, LayoutGrid, List, Lock, LockOpen, Phone, Plus, Scale, Search, SquarePen, Trash2 } from 'lucide-react';
+import {
+    Building2,
+    Calendar,
+    CircleCheck,
+    CircleX,
+    Eye,
+    Grid3x3,
+    Landmark,
+    LayoutGrid,
+    List,
+    Lock,
+    LockOpen,
+    Phone,
+    Plus,
+    Scale,
+    Search,
+    SquarePen,
+    Trash2,
+} from 'lucide-react';
 import { useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Courts', href: '/courts' }];
@@ -102,21 +120,25 @@ export default function Courts({
     function submit(e: React.FormEvent) {
         e.preventDefault();
         const done = { onSuccess: () => setOpen(false), preserveScroll: true };
-        editing ? form.put(`/courts/${editing.id}`, done) : form.post('/courts', done);
+        if (editing) {
+            form.put(`/courts/${editing.id}`, done);
+        } else {
+            form.post('/courts', done);
+        }
     }
 
     const actions = (court: Court) => (
         <div className="flex items-center gap-0.5">
-            <Button variant="ghost" size="icon" className="size-7 text-muted-foreground" title="View" onClick={() => setViewing(court)}>
+            <Button variant="ghost" size="icon" className="text-muted-foreground size-7" title="View" onClick={() => setViewing(court)}>
                 <Eye className="size-3.5" />
             </Button>
-            <Button variant="ghost" size="icon" className="size-7 text-muted-foreground" title="Edit" onClick={() => openEdit(court)}>
+            <Button variant="ghost" size="icon" className="text-muted-foreground size-7" title="Edit" onClick={() => openEdit(court)}>
                 <SquarePen className="size-3.5" />
             </Button>
             <Button
                 variant="ghost"
                 size="icon"
-                className="size-7 text-muted-foreground"
+                className="text-muted-foreground size-7"
                 title={court.active ? 'Retire' : 'Reactivate'}
                 onClick={() => router.patch(`/courts/${court.id}/toggle`, {}, { preserveScroll: true })}
             >
@@ -125,9 +147,13 @@ export default function Courts({
             <Button
                 variant="ghost"
                 size="icon"
-                className="size-7 text-muted-foreground"
+                className="text-muted-foreground size-7"
                 title="Delete"
-                onClick={() => confirmAction({ title: `Delete ${court.name}?` }).then((ok) => ok && router.delete(`/courts/${court.id}`, { preserveScroll: true }))}
+                onClick={() =>
+                    confirmAction({ title: `Delete ${court.name}?` }).then(
+                        (ok) => ok && router.delete(`/courts/${court.id}`, { preserveScroll: true }),
+                    )
+                }
             >
                 <Trash2 className="size-3.5 text-rose-600" />
             </Button>
@@ -142,18 +168,18 @@ export default function Courts({
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-xl font-semibold">Courts</h1>
-                        <p className="text-xs text-muted-foreground">Manage courts, jurisdictions, and filing details.</p>
+                        <p className="text-muted-foreground text-xs">Manage courts, jurisdictions, and filing details.</p>
                     </div>
                     <Button onClick={openCreate}>
                         <Plus className="size-4" /> Add Court
                     </Button>
                 </div>
 
-                <div className="rounded-lg border bg-card shadow-sm">
+                <div className="bg-card rounded-lg border shadow-sm">
                     <div className="flex items-center justify-between gap-2 p-3">
                         <div className="flex min-w-0 items-center gap-2">
                             <div className="relative w-64 min-w-40 shrink">
-                                <Search className="absolute top-2 left-2.5 size-4 text-muted-foreground" />
+                                <Search className="text-muted-foreground absolute top-2 left-2.5 size-4" />
                                 <Input
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
@@ -163,7 +189,15 @@ export default function Courts({
                                 />
                             </div>
 
-                            <Dropdown value={filters.type ?? ''} onChange={(v) => apply({ type: v })} placeholder="All Types" options={types.map((t) => ({ value: t.name, label: t.name }))} className="h-9 w-40" aria-label="Type filter" capitalize />
+                            <Dropdown
+                                value={filters.type ?? ''}
+                                onChange={(v) => apply({ type: v })}
+                                placeholder="All Types"
+                                options={types.map((t) => ({ value: t.name, label: t.name }))}
+                                className="h-9 w-40"
+                                aria-label="Type filter"
+                                capitalize
+                            />
                         </div>
 
                         <div className="mr-2 rounded-md border p-0.5">
@@ -200,24 +234,29 @@ export default function Courts({
                 </div>
 
                 {courts.data.length === 0 ? (
-                    <div className="rounded-lg border bg-card py-16 text-center text-sm text-muted-foreground shadow-sm">No courts match this view.</div>
+                    <div className="bg-card text-muted-foreground rounded-lg border py-16 text-center text-sm shadow-sm">
+                        No courts match this view.
+                    </div>
                 ) : view === 'grid' ? (
                     <div className="grid grid-cols-1 gap-6 py-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                         {courts.data.map((court) => (
-                            <div key={court.id} className="relative flex flex-col justify-between overflow-hidden rounded-lg border bg-card shadow-sm">
+                            <div
+                                key={court.id}
+                                className="bg-card relative flex flex-col justify-between overflow-hidden rounded-lg border shadow-sm"
+                            >
                                 <div className="flex items-center justify-between gap-4 px-5 pt-4">
-                                    <span className="inline-flex shrink-0 items-center rounded-md bg-muted px-2 py-1 text-xs font-medium ring-1 ring-inset ring-border">
+                                    <span className="bg-muted ring-border inline-flex shrink-0 items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset">
                                         {court.reference ?? '—'}
                                     </span>
                                     <RingPill value={court.active ? 'active' : 'inactive'} label={court.active ? 'Active' : 'Inactive'} />
                                 </div>
 
                                 <div className="flex flex-col items-center px-5 pt-4 pb-4 text-center">
-                                    <div className="mb-3 rounded-full bg-primary/10 p-3 text-primary ring-2 ring-primary/30">
+                                    <div className="bg-primary/10 text-primary ring-primary/30 mb-3 rounded-full p-3 ring-2">
                                         <Landmark className="size-8" />
                                     </div>
                                     <h3 className="line-clamp-2 max-w-full text-base font-semibold">{court.name}</h3>
-                                    <p className="mt-1 max-w-full truncate text-xs font-medium text-muted-foreground">{court.email ?? '—'}</p>
+                                    <p className="text-muted-foreground mt-1 max-w-full truncate text-xs font-medium">{court.email ?? '—'}</p>
                                 </div>
 
                                 <div className="space-y-3 border-t p-5 text-xs">
@@ -232,8 +271,8 @@ export default function Courts({
                                     </Detail>
                                 </div>
 
-                                <div className="flex items-center justify-between gap-2 border-t bg-muted/20 px-5 py-3">
-                                    <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                                <div className="bg-muted/20 flex items-center justify-between gap-2 border-t px-5 py-3">
+                                    <span className="text-muted-foreground flex items-center gap-1 text-xs">
                                         <Calendar className="size-3.5" />
                                         {date(court.created_at)}
                                     </span>
@@ -243,34 +282,34 @@ export default function Courts({
                         ))}
                     </div>
                 ) : (
-                    <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
+                    <div className="bg-card overflow-hidden rounded-lg border shadow-sm">
                         <div className="w-full overflow-x-auto">
                             <table className="w-full caption-bottom text-sm">
                                 <thead>
                                     <tr className="border-b bg-[#F0F0F1] dark:bg-neutral-800">
-                                        <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Reference</th>
-                                        <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Court</th>
-                                        <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Type</th>
-                                        <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Jurisdiction</th>
-                                        <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Phone</th>
-                                        <th className="px-4 py-2.5 text-right font-semibold text-muted-foreground">Cases</th>
-                                        <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Status</th>
-                                        <th className="w-24 px-4 py-2.5 text-center font-semibold text-muted-foreground">Actions</th>
+                                        <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Reference</th>
+                                        <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Court</th>
+                                        <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Type</th>
+                                        <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Jurisdiction</th>
+                                        <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Phone</th>
+                                        <th className="text-muted-foreground px-4 py-2.5 text-right font-semibold">Cases</th>
+                                        <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Status</th>
+                                        <th className="text-muted-foreground w-24 px-4 py-2.5 text-center font-semibold">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y">
                                     {courts.data.map((court) => (
-                                        <tr key={court.id} className="transition-colors hover:bg-muted/40">
+                                        <tr key={court.id} className="hover:bg-muted/40 transition-colors">
                                             <td className="px-4 py-2.5 font-mono text-xs">{court.reference ?? '—'}</td>
                                             <td className="px-4 py-2.5">
                                                 <div className="font-medium">{court.name}</div>
-                                                <div className="text-xs text-muted-foreground">{court.email ?? '—'}</div>
+                                                <div className="text-muted-foreground text-xs">{court.email ?? '—'}</div>
                                             </td>
                                             <td className="px-4 py-2.5">
                                                 <TonePill color={colorOf(court.type)}>{court.type}</TonePill>
                                             </td>
-                                            <td className="px-4 py-2.5 text-muted-foreground">{court.jurisdiction ?? '—'}</td>
-                                            <td className="px-4 py-2.5 text-muted-foreground">{court.phone ?? '—'}</td>
+                                            <td className="text-muted-foreground px-4 py-2.5">{court.jurisdiction ?? '—'}</td>
+                                            <td className="text-muted-foreground px-4 py-2.5">{court.phone ?? '—'}</td>
                                             <td className="px-4 py-2.5 text-right tabular-nums">{court.matters_count}</td>
                                             <td className="px-4 py-2.5">
                                                 <RingPill value={court.active ? 'active' : 'inactive'} label={court.active ? 'Active' : 'Inactive'} />
@@ -284,7 +323,7 @@ export default function Courts({
                     </div>
                 )}
 
-                <div className={cn('overflow-hidden rounded-lg border bg-card shadow-sm', view === 'grid' && 'mt-1')}>
+                <div className={cn('bg-card overflow-hidden rounded-lg border shadow-sm', view === 'grid' && 'mt-1')}>
                     <DataTableFooter
                         from={courts.from}
                         to={courts.to}
@@ -305,7 +344,13 @@ export default function Courts({
                     submitLabel={editing ? 'Save' : 'Add Court'}
                     wide
                 >
-                    <TextField label="Court name" value={form.data.name} onChange={(v) => form.setData('name', v)} error={form.errors.name} className="sm:col-span-2" />
+                    <TextField
+                        label="Court name"
+                        value={form.data.name}
+                        onChange={(v) => form.setData('name', v)}
+                        error={form.errors.name}
+                        className="sm:col-span-2"
+                    />
                     <SelectField
                         label="Court type"
                         value={form.data.type}
@@ -323,7 +368,13 @@ export default function Courts({
                     />
                     <TextField label="Bench" value={form.data.bench} onChange={(v) => form.setData('bench', v)} error={form.errors.bench} />
                     <TextField label="Phone" value={form.data.phone} onChange={(v) => form.setData('phone', v)} error={form.errors.phone} />
-                    <TextField label="Email" type="email" value={form.data.email} onChange={(v) => form.setData('email', v)} error={form.errors.email} />
+                    <TextField
+                        label="Email"
+                        type="email"
+                        value={form.data.email}
+                        onChange={(v) => form.setData('email', v)}
+                        error={form.errors.email}
+                    />
                     <SelectField
                         label="Status"
                         value={form.data.active}
@@ -344,7 +395,7 @@ export default function Courts({
                         {viewing && (
                             <div className="space-y-4 text-sm">
                                 <div className="flex flex-wrap gap-2">
-                                    <span className="inline-flex items-center rounded-md bg-muted px-2 py-1 text-xs font-medium ring-1 ring-inset ring-border">
+                                    <span className="bg-muted ring-border inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset">
                                         {viewing.reference ?? '—'}
                                     </span>
                                     <TonePill color={colorOf(viewing.type)}>{viewing.type}</TonePill>
@@ -360,7 +411,7 @@ export default function Courts({
                                 </dl>
                                 {viewing.address && (
                                     <div>
-                                        <p className="mb-1 text-xs text-muted-foreground">Address</p>
+                                        <p className="text-muted-foreground mb-1 text-xs">Address</p>
                                         <p className="whitespace-pre-line">{viewing.address}</p>
                                     </div>
                                 )}
@@ -376,8 +427,8 @@ export default function Courts({
 function Detail({ icon: Icon, label, children }: { icon: typeof Phone; label: string; children: React.ReactNode }) {
     return (
         <div className="flex min-w-0 items-center gap-2">
-            <Icon className="size-3.5 shrink-0 text-muted-foreground" />
-            <span className="shrink-0 font-medium text-muted-foreground">{label}:</span>
+            <Icon className="text-muted-foreground size-3.5 shrink-0" />
+            <span className="text-muted-foreground shrink-0 font-medium">{label}:</span>
             {children}
         </div>
     );
@@ -386,7 +437,7 @@ function Detail({ icon: Icon, label, children }: { icon: typeof Phone; label: st
 function Field({ label, value }: { label: string; value: string }) {
     return (
         <div>
-            <dt className="mb-1 text-xs text-muted-foreground">{label}</dt>
+            <dt className="text-muted-foreground mb-1 text-xs">{label}</dt>
             <dd className="capitalize">{value}</dd>
         </div>
     );

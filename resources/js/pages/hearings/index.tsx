@@ -1,7 +1,7 @@
 import { InitialsAvatar } from '@/components/avatar-stack';
-import { FormDialog, SelectField, TextField, TextareaField } from '@/components/form-dialog';
 import { confirmAction } from '@/components/confirm-dialog';
 import { Dropdown } from '@/components/dropdown';
+import { FormDialog, SelectField, TextField, TextareaField } from '@/components/form-dialog';
 import { MiniCalendar } from '@/components/mini-calendar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -167,7 +167,11 @@ export default function HearingsIndex({
     function submit(e: React.FormEvent) {
         e.preventDefault();
         const done = { onSuccess: () => setOpen(false), preserveScroll: true };
-        editing ? form.put(`/hearings/${editing.id}`, done) : form.post('/hearings', done);
+        if (editing) {
+            form.put(`/hearings/${editing.id}`, done);
+        } else {
+            form.post('/hearings', done);
+        }
     }
 
     const quickFilters = [
@@ -191,17 +195,17 @@ export default function HearingsIndex({
                 nextMonth={nextMonth}
             />
 
-            <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
+            <div className="bg-card overflow-hidden rounded-lg border shadow-sm">
                 <div className="flex items-center gap-2 border-b px-4 py-3">
                     <p className="text-sm font-semibold">Hearing Summary</p>
-                    <span className="text-xs text-muted-foreground">({date})</span>
+                    <span className="text-muted-foreground text-xs">({date})</span>
                 </div>
                 <div className="space-y-2.5 p-4">
                     {options.statuses.map((status) => (
                         <div key={status} className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
                                 <span className={cn('size-2.5 rounded-full', SUMMARY_DOT[status])} />
-                                <span className="text-sm capitalize text-muted-foreground">{label(status)}</span>
+                                <span className="text-muted-foreground text-sm capitalize">{label(status)}</span>
                             </div>
                             <span className="font-mono text-sm font-semibold tabular-nums">{counts[status] ?? 0}</span>
                         </div>
@@ -213,7 +217,7 @@ export default function HearingsIndex({
                 </div>
             </div>
 
-            <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
+            <div className="bg-card overflow-hidden rounded-lg border shadow-sm">
                 <div className="border-b px-4 py-3">
                     <p className="text-sm font-semibold">Quick Filters</p>
                 </div>
@@ -230,7 +234,7 @@ export default function HearingsIndex({
                                 onClick={() => apply({ date: iso, month: iso.slice(0, 7) })}
                                 className={cn(
                                     'flex w-full cursor-pointer items-center justify-between rounded-md px-3 py-2.5 text-sm transition-colors',
-                                    active ? 'bg-primary/10 font-medium text-primary' : 'hover:bg-accent hover:text-primary',
+                                    active ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-accent hover:text-primary',
                                 )}
                             >
                                 <span className="flex items-center gap-2">
@@ -254,19 +258,19 @@ export default function HearingsIndex({
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-xl font-semibold">Hearings</h1>
-                        <p className="text-xs text-muted-foreground">Manage case hearing schedules.</p>
+                        <p className="text-muted-foreground text-xs">Manage case hearing schedules.</p>
                     </div>
                     <Button onClick={openCreate}>
                         <Plus className="size-4" /> Add Hearing
                     </Button>
                 </div>
 
-                <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
+                <div className="bg-card overflow-hidden rounded-lg border shadow-sm">
                     <div className="w-full p-3">
                         <div className="flex items-center justify-between gap-2">
                             <div className="flex min-w-0 items-center gap-2">
                                 <div className="relative w-64 min-w-40 shrink">
-                                    <Search className="absolute top-2 left-2.5 size-4 text-muted-foreground" />
+                                    <Search className="text-muted-foreground absolute top-2 left-2.5 size-4" />
                                     <Input
                                         placeholder="Search..."
                                         value={search}
@@ -275,16 +279,27 @@ export default function HearingsIndex({
                                         className="h-8 w-full px-9"
                                     />
                                 </div>
-                                <Dropdown value={filters.court_id ?? ''} onChange={(v) => apply({ court_id: v })} placeholder="All Courts" options={options.courts.map((c) => ({ value: c.id, label: c.name }))} className="h-9 w-40" />
+                                <Dropdown
+                                    value={filters.court_id ?? ''}
+                                    onChange={(v) => apply({ court_id: v })}
+                                    placeholder="All Courts"
+                                    options={options.courts.map((c) => ({ value: c.id, label: c.name }))}
+                                    className="h-9 w-40"
+                                />
                             </div>
 
                             <div className="flex shrink-0 items-center gap-2">
                                 {hasFilters && (
-                                    <Button variant="ghost" size="sm" className="h-9 text-muted-foreground" onClick={() => router.get('/hearings', { date })}>
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="text-muted-foreground h-9"
+                                        onClick={() => router.get('/hearings', { date })}
+                                    >
                                         <RefreshCcw className="size-4" /> Clear Filters
                                     </Button>
                                 )}
-                                <span className="flex h-8 items-center gap-1.5 rounded-md border px-2 text-sm text-muted-foreground">
+                                <span className="text-muted-foreground flex h-8 items-center gap-1.5 rounded-md border px-2 text-sm">
                                     <Filter className="size-4" /> Filters
                                 </span>
                             </div>
@@ -304,7 +319,7 @@ export default function HearingsIndex({
                                             'flex cursor-pointer items-center gap-1.5 border-b-2 px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors',
                                             active
                                                 ? 'border-primary text-primary'
-                                                : 'border-transparent text-muted-foreground hover:border-muted-foreground hover:text-foreground',
+                                                : 'text-muted-foreground hover:border-muted-foreground hover:text-foreground border-transparent',
                                         )}
                                     >
                                         <tab.icon className="size-4" />
@@ -328,9 +343,9 @@ export default function HearingsIndex({
                     <div className="flex w-full shrink-0 flex-col gap-4 lg:hidden">{sidebar}</div>
 
                     <div className="min-w-0 flex-1">
-                        <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
-                            <div className="flex flex-wrap items-center gap-3 border-b bg-muted/40 px-5 py-4">
-                                <CalendarDays className="size-4 text-muted-foreground" />
+                        <div className="bg-card overflow-hidden rounded-lg border shadow-sm">
+                            <div className="bg-muted/40 flex flex-wrap items-center gap-3 border-b px-5 py-4">
+                                <CalendarDays className="text-muted-foreground size-4" />
                                 <span className="font-semibold">
                                     {date}
                                     {isToday && <span className="ms-1 font-bold">(Today)</span>}
@@ -339,7 +354,7 @@ export default function HearingsIndex({
                                     <Button variant="outline" size="sm" className="h-7" onClick={() => shift(-1)}>
                                         ‹
                                     </Button>
-                                    <span className="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs font-semibold text-primary ring-1 ring-inset ring-primary/20">
+                                    <span className="bg-primary/10 text-primary ring-primary/20 inline-flex items-center rounded-md px-2 py-1 text-xs font-semibold ring-1 ring-inset">
                                         {hearings.length} {hearings.length === 1 ? 'Hearing' : 'Hearings'}
                                     </span>
                                     <Button variant="outline" size="sm" className="h-7" onClick={() => shift(1)}>
@@ -350,14 +365,14 @@ export default function HearingsIndex({
 
                             <div className="divide-y overflow-y-auto lg:max-h-[calc(100vh-260px)]">
                                 {hearings.length === 0 && (
-                                    <p className="px-5 py-16 text-center text-sm text-muted-foreground">Nothing listed for this day.</p>
+                                    <p className="text-muted-foreground px-5 py-16 text-center text-sm">Nothing listed for this day.</p>
                                 )}
                                 {hearings.map((h) => (
-                                    <div key={h.id} className="flex items-stretch transition-colors hover:bg-muted/40">
+                                    <div key={h.id} className="hover:bg-muted/40 flex items-stretch transition-colors">
                                         <div className="relative me-4 flex w-16 shrink-0 flex-col items-end justify-start py-4 pe-4 sm:w-20">
-                                            <div className="absolute end-0 top-3 bottom-3 w-px bg-border" />
+                                            <div className="bg-border absolute end-0 top-3 bottom-3 w-px" />
                                             <span className="font-mono text-xs leading-tight font-bold tabular-nums">{h.time}</span>
-                                            <span className="mt-1 font-mono text-[10px] font-semibold text-muted-foreground">{h.duration}m</span>
+                                            <span className="text-muted-foreground mt-1 font-mono text-[10px] font-semibold">{h.duration}m</span>
                                         </div>
 
                                         <div className="min-w-0 flex-1 space-y-2 py-3 pe-3 sm:py-4 sm:pe-4">
@@ -373,48 +388,67 @@ export default function HearingsIndex({
                                                         {label(h.status)}
                                                     </span>
                                                     {h.type && (
-                                                        <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium capitalize text-blue-700 ring-1 ring-inset ring-blue-600/20 dark:bg-blue-950 dark:text-blue-300 dark:ring-blue-400/20">
+                                                        <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 capitalize ring-1 ring-blue-600/20 ring-inset dark:bg-blue-950 dark:text-blue-300 dark:ring-blue-400/20">
                                                             {h.type}
                                                         </span>
                                                     )}
                                                 </div>
 
                                                 <div className="flex shrink-0 items-center gap-0.5">
-                                                    <Button variant="ghost" size="icon" className="size-8 text-muted-foreground" asChild title="View case">
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="text-muted-foreground size-8"
+                                                        asChild
+                                                        title="View case"
+                                                    >
                                                         <Link href={`/matters/${h.matter_id}`}>
                                                             <Eye className="size-4" />
                                                         </Link>
                                                     </Button>
-                                                    <Button variant="ghost" size="icon" className="size-8 text-muted-foreground" title="Edit" onClick={() => openEdit(h)}>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="text-muted-foreground size-8"
+                                                        title="Edit"
+                                                        onClick={() => openEdit(h)}
+                                                    >
                                                         <SquarePen className="size-4" />
                                                     </Button>
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
-                                                        className="size-8 text-muted-foreground"
+                                                        className="text-muted-foreground size-8"
                                                         title="Delete"
-                                                        onClick={() => confirmAction({ title: 'Delete this hearing?' }).then((ok) => ok && router.delete(`/hearings/${h.id}`, { preserveScroll: true }))}
+                                                        onClick={() =>
+                                                            confirmAction({ title: 'Delete this hearing?' }).then(
+                                                                (ok) => ok && router.delete(`/hearings/${h.id}`, { preserveScroll: true }),
+                                                            )
+                                                        }
                                                     >
                                                         <Trash2 className="size-4 text-rose-600" />
                                                     </Button>
                                                 </div>
                                             </div>
 
-                                            <div className="flex items-center gap-1.5 pt-1 text-xs text-muted-foreground">
+                                            <div className="text-muted-foreground flex items-center gap-1.5 pt-1 text-xs">
                                                 <FileText className="size-3.5" />
                                                 <span className="font-medium">Case:</span>
-                                                <Link href={`/matters/${h.matter_id}`} className="truncate font-semibold text-primary hover:underline">
+                                                <Link
+                                                    href={`/matters/${h.matter_id}`}
+                                                    className="text-primary truncate font-semibold hover:underline"
+                                                >
                                                     {h.matter ?? '—'}
                                                 </Link>
                                             </div>
 
-                                            <div className="flex w-full items-center justify-between gap-4 pt-0.5 text-xs text-muted-foreground">
+                                            <div className="text-muted-foreground flex w-full items-center justify-between gap-4 pt-0.5 text-xs">
                                                 <div className="flex min-w-0 items-center gap-1.5">
                                                     <MapPin className="size-3.5" />
                                                     <span className="font-medium">Court:</span>
-                                                    <span className="truncate font-semibold text-foreground/80">{h.court ?? '—'}</span>
+                                                    <span className="text-foreground/80 truncate font-semibold">{h.court ?? '—'}</span>
                                                 </div>
-                                                {h.lead && <InitialsAvatar name={h.lead} className="size-6 text-[10px] ring-1 ring-border" />}
+                                                {h.lead && <InitialsAvatar name={h.lead} className="ring-border size-6 text-[10px] ring-1" />}
                                             </div>
                                         </div>
                                     </div>
@@ -435,7 +469,13 @@ export default function HearingsIndex({
                 processing={form.processing}
                 wide
             >
-                <TextField label="Title" value={form.data.title} onChange={(v) => form.setData('title', v)} error={form.errors.title} className="sm:col-span-2" />
+                <TextField
+                    label="Title"
+                    value={form.data.title}
+                    onChange={(v) => form.setData('title', v)}
+                    error={form.errors.title}
+                    className="sm:col-span-2"
+                />
                 <SelectField
                     label="Case"
                     value={form.data.matter_id}

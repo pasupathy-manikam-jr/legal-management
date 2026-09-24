@@ -1,5 +1,5 @@
-import { Head, Link, usePage } from '@inertiajs/react';
 import type { SharedData } from '@/types';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { Briefcase, Clock, FileText, Gavel, Receipt, Scale, ShieldCheck, Users } from 'lucide-react';
 
 const FEATURES = [
@@ -36,7 +36,10 @@ export default function Welcome() {
                             </Link>
                         ) : (
                             <>
-                                <Link href={route('login')} className="rounded-md px-4 py-2 font-medium hover:bg-neutral-100 dark:hover:bg-neutral-900">
+                                <Link
+                                    href={route('login')}
+                                    className="rounded-md px-4 py-2 font-medium hover:bg-neutral-100 dark:hover:bg-neutral-900"
+                                >
                                     Log in
                                 </Link>
                                 <Link
@@ -57,8 +60,8 @@ export default function Welcome() {
                             Run the whole practice from one file per case.
                         </h1>
                         <p className="mx-auto mt-5 max-w-2xl text-lg text-pretty text-neutral-600 dark:text-neutral-400">
-                            Cases, hearings, clients, tasks, billable time and invoices — kept together, so nothing is chased down by email
-                            the night before a hearing.
+                            Cases, hearings, clients, tasks, billable time and invoices — kept together, so nothing is chased down by email the night
+                            before a hearing.
                         </p>
                         <div className="mt-8 flex flex-wrap justify-center gap-3">
                             <Link
@@ -81,7 +84,10 @@ export default function Welcome() {
                     <section className="border-y border-neutral-200 bg-neutral-50 py-16 dark:border-neutral-800 dark:bg-neutral-900/40">
                         <div className="mx-auto grid max-w-6xl gap-6 px-4 sm:grid-cols-2 lg:grid-cols-3">
                             {FEATURES.map(({ icon: Icon, title, body }) => (
-                                <div key={title} className="rounded-xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-950">
+                                <div
+                                    key={title}
+                                    className="rounded-xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-950"
+                                >
                                     <Icon className="size-5 text-neutral-500" />
                                     <h2 className="mt-3 font-medium">{title}</h2>
                                     <p className="mt-1.5 text-sm text-neutral-600 dark:text-neutral-400">{body}</p>

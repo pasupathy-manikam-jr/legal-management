@@ -1,7 +1,7 @@
-import { DataTableFooter } from '@/components/data-table-footer';
-import { FormDialog, SelectField, TextField, TextareaField } from '@/components/form-dialog';
 import { confirmAction } from '@/components/confirm-dialog';
+import { DataTableFooter } from '@/components/data-table-footer';
 import { Dropdown } from '@/components/dropdown';
+import { FormDialog, SelectField, TextField, TextareaField } from '@/components/form-dialog';
 import { CountTabs } from '@/components/page-toolbar';
 import { SummaryCard } from '@/components/summary-card';
 import { RingPill, TonePill } from '@/components/tone-pill';
@@ -12,7 +12,22 @@ import AppLayout from '@/layouts/app-layout';
 import { date } from '@/lib/format';
 import type { BreadcrumbItem, Paginated, User } from '@/types';
 import { Head, router, useForm } from '@inertiajs/react';
-import { Archive, BookOpen, Calendar, CircleCheckBig, Ellipsis, FileText, Filter, LayoutGrid, Pencil, Plus, RefreshCcw, Search, Tag, Trash2 } from 'lucide-react';
+import {
+    Archive,
+    BookOpen,
+    Calendar,
+    CircleCheckBig,
+    Ellipsis,
+    FileText,
+    Filter,
+    LayoutGrid,
+    Pencil,
+    Plus,
+    RefreshCcw,
+    Search,
+    Tag,
+    Trash2,
+} from 'lucide-react';
 import { useState, type ComponentType } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Knowledge Articles', href: '/articles' }];
@@ -106,7 +121,11 @@ export default function KnowledgeArticles({
         };
 
         form.transform(done.transform);
-        editing ? form.put(`/articles/${editing.id}`, done) : form.post('/articles', done);
+        if (editing) {
+            form.put(`/articles/${editing.id}`, done);
+        } else {
+            form.post('/articles', done);
+        }
     }
 
     return (
@@ -117,7 +136,7 @@ export default function KnowledgeArticles({
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-xl font-semibold">Knowledge Article</h1>
-                        <p className="text-xs text-muted-foreground">Create and manage legal knowledge articles in one place.</p>
+                        <p className="text-muted-foreground text-xs">Create and manage legal knowledge articles in one place.</p>
                     </div>
                     <Button onClick={openCreate}>
                         <Plus className="size-4" /> New Article
@@ -131,12 +150,12 @@ export default function KnowledgeArticles({
                     <SummaryCard label="Archived" value={counts.archived ?? 0} icon={Archive} tone="amber" mono={false} />
                 </div>
 
-                <div className="rounded-lg border bg-card shadow-sm">
+                <div className="bg-card rounded-lg border shadow-sm">
                     <div className="p-3">
                         <div className="flex items-center justify-between gap-2">
                             <div className="flex min-w-0 items-center gap-2">
                                 <div className="relative w-64 min-w-40 shrink">
-                                    <Search className="absolute top-2 left-2.5 size-4 text-muted-foreground" />
+                                    <Search className="text-muted-foreground absolute top-2 left-2.5 size-4" />
                                     <Input
                                         placeholder="Search..."
                                         value={search}
@@ -146,7 +165,14 @@ export default function KnowledgeArticles({
                                     />
                                 </div>
 
-                                <Dropdown value={filters.category ?? ''} onChange={(v) => apply({ category: v })} placeholder="All Categories" options={categories.map((c) => ({ value: c.name, label: c.name }))} className="h-9 w-40" capitalize />
+                                <Dropdown
+                                    value={filters.category ?? ''}
+                                    onChange={(v) => apply({ category: v })}
+                                    placeholder="All Categories"
+                                    options={categories.map((c) => ({ value: c.name, label: c.name }))}
+                                    className="h-9 w-40"
+                                    capitalize
+                                />
                             </div>
 
                             <div className="flex shrink-0 items-center gap-2">
@@ -154,7 +180,7 @@ export default function KnowledgeArticles({
                                     <Button
                                         variant="ghost"
                                         size="sm"
-                                        className="h-9 text-muted-foreground"
+                                        className="text-muted-foreground h-9"
                                         onClick={() => {
                                             setSearch('');
                                             router.get('/articles');
@@ -163,7 +189,7 @@ export default function KnowledgeArticles({
                                         <RefreshCcw className="size-4" /> Clear Filters
                                     </Button>
                                 )}
-                                <span className="flex h-8 items-center gap-1.5 rounded-md border px-2 text-sm text-muted-foreground">
+                                <span className="text-muted-foreground flex h-8 items-center gap-1.5 rounded-md border px-2 text-sm">
                                     <Filter className="size-4" /> Filters
                                 </span>
                             </div>
@@ -182,7 +208,7 @@ export default function KnowledgeArticles({
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
                     {articles.data.length === 0 && (
-                        <p className="py-12 text-center text-sm text-muted-foreground sm:col-span-2 lg:col-span-3 2xl:col-span-4">
+                        <p className="text-muted-foreground py-12 text-center text-sm sm:col-span-2 lg:col-span-3 2xl:col-span-4">
                             No articles match these filters.
                         </p>
                     )}
@@ -190,7 +216,10 @@ export default function KnowledgeArticles({
                         const tags = a.tags ?? [];
 
                         return (
-                            <div key={a.id} className="group relative flex flex-col overflow-hidden rounded-lg border bg-card shadow-sm transition-shadow hover:shadow-md">
+                            <div
+                                key={a.id}
+                                className="group bg-card relative flex flex-col overflow-hidden rounded-lg border shadow-sm transition-shadow hover:shadow-md"
+                            >
                                 <div className="p-4 pb-3">
                                     <div className="flex items-start justify-between">
                                         <div className="min-w-0 flex-1 pr-2">
@@ -205,7 +234,7 @@ export default function KnowledgeArticles({
 
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
-                                                <Button variant="ghost" size="icon" className="size-7 shrink-0 text-muted-foreground">
+                                                <Button variant="ghost" size="icon" className="text-muted-foreground size-7 shrink-0">
                                                     <Ellipsis className="size-4" />
                                                 </Button>
                                             </DropdownMenuTrigger>
@@ -215,7 +244,11 @@ export default function KnowledgeArticles({
                                                 </DropdownMenuItem>
                                                 <DropdownMenuItem
                                                     className="text-rose-600 focus:text-rose-600"
-                                                    onClick={() => confirmAction({ title: `Delete ${a.title}?` }).then((ok) => ok && router.delete(`/articles/${a.id}`, { preserveScroll: true }))}
+                                                    onClick={() =>
+                                                        confirmAction({ title: `Delete ${a.title}?` }).then(
+                                                            (ok) => ok && router.delete(`/articles/${a.id}`, { preserveScroll: true }),
+                                                        )
+                                                    }
                                                 >
                                                     <Trash2 className="mr-2 size-4" /> Delete
                                                 </DropdownMenuItem>
@@ -225,11 +258,13 @@ export default function KnowledgeArticles({
                                 </div>
 
                                 <div className="flex flex-1 flex-col px-4 pt-0 pb-4">
-                                    <p className="mb-3 line-clamp-3 min-h-[54px] text-xs leading-relaxed text-muted-foreground">{a.summary ?? 'No summary yet.'}</p>
+                                    <p className="text-muted-foreground mb-3 line-clamp-3 min-h-[54px] text-xs leading-relaxed">
+                                        {a.summary ?? 'No summary yet.'}
+                                    </p>
 
                                     {tags.length > 0 && (
                                         <div className="mb-3 flex flex-wrap items-center gap-1">
-                                            <Tag className="size-3 shrink-0 text-muted-foreground" />
+                                            <Tag className="text-muted-foreground size-3 shrink-0" />
                                             {tags.slice(0, 3).map((t) => (
                                                 <span
                                                     key={t}
@@ -240,7 +275,7 @@ export default function KnowledgeArticles({
                                             ))}
                                             {tags.length > 3 && (
                                                 <span
-                                                    className="rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground"
+                                                    className="bg-muted text-muted-foreground rounded-full px-2 py-0.5 text-[11px] font-medium"
                                                     title={tags.slice(3).join(', ')}
                                                 >
                                                     +{tags.length - 3}
@@ -249,15 +284,15 @@ export default function KnowledgeArticles({
                                         </div>
                                     )}
 
-                                    <div className="mt-auto -mx-4 flex items-center justify-between border-t px-4 pt-3">
-                                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                                    <div className="-mx-4 mt-auto flex items-center justify-between border-t px-4 pt-3">
+                                        <div className="text-muted-foreground flex items-center gap-1.5 text-xs">
                                             <Calendar className="size-3.5" />
                                             <span>{date(a.published_at ?? a.updated_at)}</span>
                                         </div>
                                         {a.author && (
                                             <span
                                                 title={a.author.name}
-                                                className="flex size-7 items-center justify-center rounded-full bg-muted text-[10px] font-semibold text-muted-foreground"
+                                                className="bg-muted text-muted-foreground flex size-7 items-center justify-center rounded-full text-[10px] font-semibold"
                                             >
                                                 {a.author.name
                                                     .split(' ')
@@ -274,7 +309,7 @@ export default function KnowledgeArticles({
                     })}
                 </div>
 
-                <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
+                <div className="bg-card overflow-hidden rounded-xl border shadow-sm">
                     <DataTableFooter
                         from={articles.from}
                         to={articles.to}
@@ -294,7 +329,13 @@ export default function KnowledgeArticles({
                 processing={form.processing}
                 wide
             >
-                <TextField label="Title" value={form.data.title} onChange={(v) => form.setData('title', v)} error={form.errors.title} className="sm:col-span-2" />
+                <TextField
+                    label="Title"
+                    value={form.data.title}
+                    onChange={(v) => form.setData('title', v)}
+                    error={form.errors.title}
+                    className="sm:col-span-2"
+                />
                 <SelectField
                     label="Category"
                     value={form.data.category}

@@ -1,7 +1,7 @@
-import { DataTableFooter } from '@/components/data-table-footer';
-import { FormDialog, SelectField, TextField, TextareaField } from '@/components/form-dialog';
 import { confirmAction } from '@/components/confirm-dialog';
+import { DataTableFooter } from '@/components/data-table-footer';
 import { Dropdown } from '@/components/dropdown';
+import { FormDialog, SelectField, TextField, TextareaField } from '@/components/form-dialog';
 import { CountTabs } from '@/components/page-toolbar';
 import { RingPill } from '@/components/tone-pill';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -12,7 +12,24 @@ import { date } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { BreadcrumbItem, Paginated } from '@/types';
 import { Head, router, useForm } from '@inertiajs/react';
-import { Building2, Calendar, CircleCheck, CircleX, Gavel, Grid3x3, Info, LayoutGrid, List, Lock, LockOpen, Phone, Plus, Search, SquarePen, Trash2 } from 'lucide-react';
+import {
+    Building2,
+    Calendar,
+    CircleCheck,
+    CircleX,
+    Gavel,
+    Grid3x3,
+    Info,
+    LayoutGrid,
+    List,
+    Lock,
+    LockOpen,
+    Phone,
+    Plus,
+    Search,
+    SquarePen,
+    Trash2,
+} from 'lucide-react';
 import { useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Judges', href: '/judges' }];
@@ -118,18 +135,22 @@ export default function Judges({
     function submit(e: React.FormEvent) {
         e.preventDefault();
         const done = { onSuccess: () => setOpen(false), preserveScroll: true };
-        editing ? form.put(`/judges/${editing.id}`, done) : form.post('/judges', done);
+        if (editing) {
+            form.put(`/judges/${editing.id}`, done);
+        } else {
+            form.post('/judges', done);
+        }
     }
 
     const actions = (judge: Judge) => (
         <div className="flex items-center gap-0.5">
-            <Button variant="ghost" size="icon" className="size-7 text-muted-foreground" title="Edit" onClick={() => openEdit(judge)}>
+            <Button variant="ghost" size="icon" className="text-muted-foreground size-7" title="Edit" onClick={() => openEdit(judge)}>
                 <SquarePen className="size-3.5" />
             </Button>
             <Button
                 variant="ghost"
                 size="icon"
-                className="size-7 text-muted-foreground"
+                className="text-muted-foreground size-7"
                 title={judge.active ? 'Retire' : 'Reactivate'}
                 onClick={() => router.patch(`/judges/${judge.id}/toggle`, {}, { preserveScroll: true })}
             >
@@ -138,9 +159,13 @@ export default function Judges({
             <Button
                 variant="ghost"
                 size="icon"
-                className="size-7 text-muted-foreground"
+                className="text-muted-foreground size-7"
                 title="Delete"
-                onClick={() => confirmAction({ title: `Remove ${judge.name}?`, confirmLabel: 'Remove' }).then((ok) => ok && router.delete(`/judges/${judge.id}`, { preserveScroll: true }))}
+                onClick={() =>
+                    confirmAction({ title: `Remove ${judge.name}?`, confirmLabel: 'Remove' }).then(
+                        (ok) => ok && router.delete(`/judges/${judge.id}`, { preserveScroll: true }),
+                    )
+                }
             >
                 <Trash2 className="size-3.5 text-rose-600" />
             </Button>
@@ -155,35 +180,54 @@ export default function Judges({
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-xl font-semibold">Judges</h1>
-                        <p className="text-xs text-muted-foreground">Manage judges and their court assignments.</p>
+                        <p className="text-muted-foreground text-xs">Manage judges and their court assignments.</p>
                     </div>
                     <Button onClick={openCreate}>
                         <Plus className="size-4" /> Add Judge
                     </Button>
                 </div>
 
-                <div className="rounded-lg border bg-card shadow-sm">
+                <div className="bg-card rounded-lg border shadow-sm">
                     <div className="flex items-center justify-between gap-2 p-3">
                         <div className="flex min-w-0 items-center gap-2">
-                        <div className="relative w-64 min-w-40 shrink">
-                            <Search className="absolute top-2 left-2.5 size-4 text-muted-foreground" />
-                            <Input
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                                onKeyDown={(e) => e.key === 'Enter' && apply({ search })}
-                                placeholder="Search..."
-                                className="h-8 w-full px-9"
+                            <div className="relative w-64 min-w-40 shrink">
+                                <Search className="text-muted-foreground absolute top-2 left-2.5 size-4" />
+                                <Input
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                    onKeyDown={(e) => e.key === 'Enter' && apply({ search })}
+                                    placeholder="Search..."
+                                    className="h-8 w-full px-9"
+                                />
+                            </div>
+
+                            <Dropdown
+                                value={filters.court ?? ''}
+                                onChange={(v) => apply({ court: v })}
+                                placeholder="All Courts"
+                                options={options.courts.map((court) => ({ value: court.id, label: court.name }))}
+                                className="h-9 w-48"
+                                aria-label="Court filter"
                             />
                         </div>
 
-                        <Dropdown value={filters.court ?? ''} onChange={(v) => apply({ court: v })} placeholder="All Courts" options={options.courts.map((court) => ({ value: court.id, label: court.name }))} className="h-9 w-48" aria-label="Court filter" />
-                        </div>
-
                         <div className="mr-2 rounded-md border p-0.5">
-                            <Button variant={view === 'list' ? 'default' : 'ghost'} size="sm" className="h-7 px-2" title="List View" onClick={() => apply({ view: 'list' })}>
+                            <Button
+                                variant={view === 'list' ? 'default' : 'ghost'}
+                                size="sm"
+                                className="h-7 px-2"
+                                title="List View"
+                                onClick={() => apply({ view: 'list' })}
+                            >
                                 <List className="size-4" />
                             </Button>
-                            <Button variant={view === 'grid' ? 'default' : 'ghost'} size="sm" className="h-7 px-2" title="Grid View" onClick={() => apply({ view: 'grid' })}>
+                            <Button
+                                variant={view === 'grid' ? 'default' : 'ghost'}
+                                size="sm"
+                                className="h-7 px-2"
+                                title="Grid View"
+                                onClick={() => apply({ view: 'grid' })}
+                            >
                                 <Grid3x3 className="size-4" />
                             </Button>
                         </div>
@@ -201,13 +245,16 @@ export default function Judges({
                 </div>
 
                 {judges.data.length === 0 ? (
-                    <div className="rounded-lg border bg-card py-16 text-center text-sm text-muted-foreground shadow-sm">No judges recorded.</div>
+                    <div className="bg-card text-muted-foreground rounded-lg border py-16 text-center text-sm shadow-sm">No judges recorded.</div>
                 ) : view === 'grid' ? (
                     <div className="grid grid-cols-1 gap-6 py-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                         {judges.data.map((judge) => (
-                            <div key={judge.id} className="relative flex flex-col justify-between overflow-hidden rounded-lg border bg-card shadow-sm">
+                            <div
+                                key={judge.id}
+                                className="bg-card relative flex flex-col justify-between overflow-hidden rounded-lg border shadow-sm"
+                            >
                                 <div className="flex items-center justify-between gap-4 px-5 pt-4">
-                                    <span className="inline-flex shrink-0 items-center rounded-md bg-muted px-2 py-1 text-xs font-medium ring-1 ring-inset ring-border">
+                                    <span className="bg-muted ring-border inline-flex shrink-0 items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset">
                                         {judge.reference ?? '—'}
                                     </span>
                                     <RingPill value={judge.active ? 'active' : 'inactive'} label={judge.active ? 'Active' : 'Inactive'} />
@@ -215,10 +262,12 @@ export default function Judges({
 
                                 <div className="flex flex-col items-center px-5 pt-2 pb-4 text-center">
                                     <Avatar className="size-16">
-                                        <AvatarFallback className={cn('border text-xl font-semibold', avatarTone(judge.name))}>{initials(judge.name)}</AvatarFallback>
+                                        <AvatarFallback className={cn('border text-xl font-semibold', avatarTone(judge.name))}>
+                                            {initials(judge.name)}
+                                        </AvatarFallback>
                                     </Avatar>
                                     <h3 className="mt-3 max-w-full truncate text-base font-semibold">{judge.name}</h3>
-                                    <p className="mt-1 max-w-full truncate text-xs text-muted-foreground">{judge.email ?? '—'}</p>
+                                    <p className="text-muted-foreground mt-1 max-w-full truncate text-xs">{judge.email ?? '—'}</p>
                                 </div>
 
                                 <div className="space-y-3 border-t p-5 text-xs">
@@ -227,8 +276,8 @@ export default function Judges({
                                     <Line icon={Phone} label="Phone" value={judge.phone ?? '—'} />
                                 </div>
 
-                                <div className="flex items-center justify-between gap-2 border-t bg-muted/20 px-5 py-3">
-                                    <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                                <div className="bg-muted/20 flex items-center justify-between gap-2 border-t px-5 py-3">
+                                    <span className="text-muted-foreground flex items-center gap-1 text-xs">
                                         <Calendar className="size-3.5" />
                                         {date(judge.created_at)}
                                     </span>
@@ -238,59 +287,59 @@ export default function Judges({
                         ))}
                     </div>
                 ) : (
-                <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
-                    <div className="w-full overflow-x-auto">
-                        <table className="w-full caption-bottom text-sm">
-                            <thead>
-                                <tr className="border-b bg-[#F0F0F1] dark:bg-neutral-800">
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Reference</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Judge</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Court</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Contact</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Appointed</th>
-                                    <th className="px-4 py-2.5 text-right font-semibold text-muted-foreground">Hearings</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Status</th>
-                                    <th className="w-24 px-4 py-2.5 text-center font-semibold text-muted-foreground">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y">
-                                {judges.data.map((judge) => (
-                                    <tr key={judge.id} className="transition-colors hover:bg-muted/40">
-                                        <td className="px-4 py-2.5 font-mono text-xs">{judge.reference ?? '—'}</td>
-                                        <td className="px-4 py-2.5">
-                                            <div className="flex items-center gap-3">
-                                                <Avatar className="size-9">
-                                                    <AvatarFallback className="text-xs">{initials(judge.name)}</AvatarFallback>
-                                                </Avatar>
-                                                <div className="min-w-0">
-                                                    <div className="font-medium">{judge.name}</div>
-                                                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                                                        <Gavel className="size-3 shrink-0" />
-                                                        {judge.designation ?? '—'}
+                    <div className="bg-card overflow-hidden rounded-lg border shadow-sm">
+                        <div className="w-full overflow-x-auto">
+                            <table className="w-full caption-bottom text-sm">
+                                <thead>
+                                    <tr className="border-b bg-[#F0F0F1] dark:bg-neutral-800">
+                                        <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Reference</th>
+                                        <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Judge</th>
+                                        <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Court</th>
+                                        <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Contact</th>
+                                        <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Appointed</th>
+                                        <th className="text-muted-foreground px-4 py-2.5 text-right font-semibold">Hearings</th>
+                                        <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Status</th>
+                                        <th className="text-muted-foreground w-24 px-4 py-2.5 text-center font-semibold">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y">
+                                    {judges.data.map((judge) => (
+                                        <tr key={judge.id} className="hover:bg-muted/40 transition-colors">
+                                            <td className="px-4 py-2.5 font-mono text-xs">{judge.reference ?? '—'}</td>
+                                            <td className="px-4 py-2.5">
+                                                <div className="flex items-center gap-3">
+                                                    <Avatar className="size-9">
+                                                        <AvatarFallback className="text-xs">{initials(judge.name)}</AvatarFallback>
+                                                    </Avatar>
+                                                    <div className="min-w-0">
+                                                        <div className="font-medium">{judge.name}</div>
+                                                        <div className="text-muted-foreground flex items-center gap-1 text-xs">
+                                                            <Gavel className="size-3 shrink-0" />
+                                                            {judge.designation ?? '—'}
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td className="px-4 py-2.5 text-muted-foreground">{judge.court ?? 'Unassigned'}</td>
-                                        <td className="px-4 py-2.5 text-muted-foreground">
-                                            <div>{judge.email ?? '—'}</div>
-                                            {judge.phone && <div className="text-xs">{judge.phone}</div>}
-                                        </td>
-                                        <td className="px-4 py-2.5 whitespace-nowrap text-muted-foreground">{date(judge.appointed_on)}</td>
-                                        <td className="px-4 py-2.5 text-right tabular-nums">{judge.hearings_count}</td>
-                                        <td className="px-4 py-2.5">
-                                            <RingPill value={judge.active ? 'active' : 'inactive'} label={judge.active ? 'Active' : 'Inactive'} />
-                                        </td>
-                                        <td className="px-4 py-2.5 text-right">{actions(judge)}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                            </td>
+                                            <td className="text-muted-foreground px-4 py-2.5">{judge.court ?? 'Unassigned'}</td>
+                                            <td className="text-muted-foreground px-4 py-2.5">
+                                                <div>{judge.email ?? '—'}</div>
+                                                {judge.phone && <div className="text-xs">{judge.phone}</div>}
+                                            </td>
+                                            <td className="text-muted-foreground px-4 py-2.5 whitespace-nowrap">{date(judge.appointed_on)}</td>
+                                            <td className="px-4 py-2.5 text-right tabular-nums">{judge.hearings_count}</td>
+                                            <td className="px-4 py-2.5">
+                                                <RingPill value={judge.active ? 'active' : 'inactive'} label={judge.active ? 'Active' : 'Inactive'} />
+                                            </td>
+                                            <td className="px-4 py-2.5 text-right">{actions(judge)}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
                 )}
 
-                <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
+                <div className="bg-card overflow-hidden rounded-lg border shadow-sm">
                     <DataTableFooter
                         from={judges.from}
                         to={judges.to}
@@ -340,7 +389,13 @@ export default function Judges({
                         placeholder="Unassigned"
                         error={form.errors.court_id}
                     />
-                    <TextField label="Email" type="email" value={form.data.email} onChange={(v) => form.setData('email', v)} error={form.errors.email} />
+                    <TextField
+                        label="Email"
+                        type="email"
+                        value={form.data.email}
+                        onChange={(v) => form.setData('email', v)}
+                        error={form.errors.email}
+                    />
                     <TextField label="Phone" value={form.data.phone} onChange={(v) => form.setData('phone', v)} error={form.errors.phone} />
                     <TextField
                         label="Appointed"
@@ -368,8 +423,8 @@ export default function Judges({
 function Line({ icon: Icon, label, value }: { icon: typeof Phone; label: string; value: string }) {
     return (
         <div className="flex min-w-0 items-center gap-2">
-            <Icon className="size-3.5 shrink-0 text-muted-foreground" />
-            <span className="shrink-0 font-medium text-muted-foreground">{label}:</span>
+            <Icon className="text-muted-foreground size-3.5 shrink-0" />
+            <span className="text-muted-foreground shrink-0 font-medium">{label}:</span>
             <span className="truncate font-medium">{value}</span>
         </div>
     );

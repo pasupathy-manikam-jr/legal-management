@@ -1,7 +1,7 @@
-import { DataTableFooter } from '@/components/data-table-footer';
-import { FormDialog, SelectField, TextField, TextareaField } from '@/components/form-dialog';
 import { confirmAction } from '@/components/confirm-dialog';
+import { DataTableFooter } from '@/components/data-table-footer';
 import { Dropdown } from '@/components/dropdown';
+import { FormDialog, SelectField, TextField, TextareaField } from '@/components/form-dialog';
 import { CountTabs } from '@/components/page-toolbar';
 import { SummaryCard } from '@/components/summary-card';
 import { RingPill, TonePill } from '@/components/tone-pill';
@@ -144,7 +144,11 @@ export default function ComplianceRequirements({
     function submit(e: React.FormEvent) {
         e.preventDefault();
         const done = { onSuccess: () => setOpen(false), preserveScroll: true };
-        editing ? form.put(`/compliance/requirements/${editing.id}`, done) : form.post('/compliance/requirements', done);
+        if (editing) {
+            form.put(`/compliance/requirements/${editing.id}`, done);
+        } else {
+            form.post('/compliance/requirements', done);
+        }
     }
 
     return (
@@ -155,7 +159,7 @@ export default function ComplianceRequirements({
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-xl font-semibold">Compliance Requirements</h1>
-                        <p className="text-xs text-muted-foreground">Track and manage compliance requirements.</p>
+                        <p className="text-muted-foreground text-xs">Track and manage compliance requirements.</p>
                     </div>
                     <Button onClick={openCreate}>
                         <Plus className="size-4" /> Add Compliance Requirement
@@ -169,10 +173,10 @@ export default function ComplianceRequirements({
                     <SummaryCard label="Overdue" value={counts.overdue ?? 0} icon={TriangleAlert} tone="amber" mono={false} />
                 </div>
 
-                <div className="rounded-lg border bg-card shadow-sm">
+                <div className="bg-card rounded-lg border shadow-sm">
                     <div className="flex min-w-0 items-center gap-2 p-3">
                         <div className="relative w-64 min-w-40 shrink">
-                            <Search className="absolute top-2 left-2.5 size-4 text-muted-foreground" />
+                            <Search className="text-muted-foreground absolute top-2 left-2.5 size-4" />
                             <Input
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
@@ -182,9 +186,25 @@ export default function ComplianceRequirements({
                             />
                         </div>
 
-                        <Dropdown value={filters.category ?? ''} onChange={(v) => apply({ category: v })} placeholder="All Categories" options={options.categories.map((c) => ({ value: c.name, label: c.name }))} className="h-9 w-40" aria-label="Category filter" capitalize />
+                        <Dropdown
+                            value={filters.category ?? ''}
+                            onChange={(v) => apply({ category: v })}
+                            placeholder="All Categories"
+                            options={options.categories.map((c) => ({ value: c.name, label: c.name }))}
+                            className="h-9 w-40"
+                            aria-label="Category filter"
+                            capitalize
+                        />
 
-                        <Dropdown value={filters.priority ?? ''} onChange={(v) => apply({ priority: v })} placeholder="All Priorities" options={options.priorities.map((p) => ({ value: p, label: p }))} className="h-9 w-40" aria-label="Priority filter" capitalize />
+                        <Dropdown
+                            value={filters.priority ?? ''}
+                            onChange={(v) => apply({ priority: v })}
+                            placeholder="All Priorities"
+                            options={options.priorities.map((p) => ({ value: p, label: p }))}
+                            className="h-9 w-40"
+                            aria-label="Priority filter"
+                            capitalize
+                        />
                     </div>
 
                     <CountTabs
@@ -201,24 +221,24 @@ export default function ComplianceRequirements({
                     />
                 </div>
 
-                <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
+                <div className="bg-card overflow-hidden rounded-lg border shadow-sm">
                     <div className="w-full overflow-x-auto">
                         <table className="w-full caption-bottom text-sm">
                             <thead>
                                 <tr className="border-b bg-[#F0F0F1] dark:bg-neutral-800">
-                                    <th className="w-12 px-4 py-2.5 text-left font-semibold text-muted-foreground">#</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Requirement</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Category</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Deadline</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Status</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Priority</th>
-                                    <th className="w-24 px-4 py-2.5 text-center font-semibold text-muted-foreground">Actions</th>
+                                    <th className="text-muted-foreground w-12 px-4 py-2.5 text-left font-semibold">#</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Requirement</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Category</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Deadline</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Status</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Priority</th>
+                                    <th className="text-muted-foreground w-24 px-4 py-2.5 text-center font-semibold">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y">
                                 {requirements.data.length === 0 && (
                                     <tr>
-                                        <td colSpan={7} className="py-12 text-center text-sm text-muted-foreground">
+                                        <td colSpan={7} className="text-muted-foreground py-12 text-center text-sm">
                                             Nothing recorded.
                                         </td>
                                     </tr>
@@ -227,16 +247,18 @@ export default function ComplianceRequirements({
                                     const Icon = STATE_ICON[r.state] ?? Clock;
 
                                     return (
-                                        <tr key={r.id} className="transition-colors hover:bg-muted/40">
+                                        <tr key={r.id} className="hover:bg-muted/40 transition-colors">
                                             <td className="px-4 py-2.5 font-medium tabular-nums">{(requirements.from ?? 1) + i}</td>
                                             <td className="px-4 py-2.5">
                                                 <div className="flex max-w-xs items-center gap-3">
-                                                    <div className={`mt-0.5 shrink-0 rounded-md p-1.5 ring-1 ring-inset ${STATE_RING[r.state] ?? STATE_RING.pending}`}>
+                                                    <div
+                                                        className={`mt-0.5 shrink-0 rounded-md p-1.5 ring-1 ring-inset ${STATE_RING[r.state] ?? STATE_RING.pending}`}
+                                                    >
                                                         <Icon className="size-3.5" />
                                                     </div>
                                                     <div className="min-w-0">
                                                         <p className="text-sm leading-snug font-medium">{r.title}</p>
-                                                        <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
+                                                        <p className="text-muted-foreground mt-1 flex items-center gap-1 text-xs">
                                                             <UserIcon className="size-3 shrink-0" />
                                                             {r.owner ?? 'Unassigned'}
                                                         </p>
@@ -247,12 +269,14 @@ export default function ComplianceRequirements({
                                                 {r.category ? (
                                                     <TonePill color={colorOf(r.category)}>{r.category}</TonePill>
                                                 ) : (
-                                                    <span className="text-xs text-muted-foreground">—</span>
+                                                    <span className="text-muted-foreground text-xs">—</span>
                                                 )}
                                             </td>
                                             <td className="px-4 py-2.5">
                                                 {r.due_on ? (
-                                                    <div className={`flex flex-col gap-1 ${r.days_overdue === null ? 'text-muted-foreground' : 'text-red-500'}`}>
+                                                    <div
+                                                        className={`flex flex-col gap-1 ${r.days_overdue === null ? 'text-muted-foreground' : 'text-red-500'}`}
+                                                    >
                                                         <div className="flex items-center gap-2 whitespace-nowrap">
                                                             <Calendar className="size-4" />
                                                             <span>{date(r.due_on)}</span>
@@ -265,7 +289,7 @@ export default function ComplianceRequirements({
                                                         )}
                                                     </div>
                                                 ) : (
-                                                    <span className="text-xs text-muted-foreground">—</span>
+                                                    <span className="text-muted-foreground text-xs">—</span>
                                                 )}
                                             </td>
                                             <td className="px-4 py-2.5">
@@ -280,28 +304,45 @@ export default function ComplianceRequirements({
                                             </td>
                                             <td className="px-4 py-2.5 text-right">
                                                 <div className="flex items-center justify-end gap-1">
-                                                    <Button variant="ghost" size="icon" className="size-8 text-muted-foreground" title="View" onClick={() => setViewing(r)}>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="text-muted-foreground size-8"
+                                                        title="View"
+                                                        onClick={() => setViewing(r)}
+                                                    >
                                                         <Eye className="size-4" />
                                                     </Button>
-                                                    <Button variant="ghost" size="icon" className="size-8 text-muted-foreground" title="Edit" onClick={() => openEdit(r)}>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="text-muted-foreground size-8"
+                                                        title="Edit"
+                                                        onClick={() => openEdit(r)}
+                                                    >
                                                         <SquarePen className="size-4" />
                                                     </Button>
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
-                                                        className="size-8 text-muted-foreground"
+                                                        className="text-muted-foreground size-8"
                                                         title="Move to next status"
-                                                        onClick={() => router.patch(`/compliance/requirements/${r.id}/status`, {}, { preserveScroll: true })}
+                                                        onClick={() =>
+                                                            router.patch(`/compliance/requirements/${r.id}/status`, {}, { preserveScroll: true })
+                                                        }
                                                     >
                                                         <RefreshCw className="size-4" />
                                                     </Button>
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
-                                                        className="size-8 text-muted-foreground"
+                                                        className="text-muted-foreground size-8"
                                                         title="Delete"
                                                         onClick={() =>
-                                                            confirmAction({ title: `Delete ${r.title}?` }).then((ok) => ok && router.delete(`/compliance/requirements/${r.id}`, { preserveScroll: true }))
+                                                            confirmAction({ title: `Delete ${r.title}?` }).then(
+                                                                (ok) =>
+                                                                    ok && router.delete(`/compliance/requirements/${r.id}`, { preserveScroll: true }),
+                                                            )
                                                         }
                                                     >
                                                         <Trash2 className="size-4 text-rose-600" />
@@ -334,7 +375,13 @@ export default function ComplianceRequirements({
                     submitLabel={editing ? 'Save' : 'Add Requirement'}
                     wide
                 >
-                    <TextField label="Title" value={form.data.title} onChange={(v) => form.setData('title', v)} error={form.errors.title} className="sm:col-span-2" />
+                    <TextField
+                        label="Title"
+                        value={form.data.title}
+                        onChange={(v) => form.setData('title', v)}
+                        error={form.errors.title}
+                        className="sm:col-span-2"
+                    />
                     <SelectField
                         label="Category"
                         value={form.data.category}
@@ -370,7 +417,13 @@ export default function ComplianceRequirements({
                         onChange={(v) => form.setData('status', v)}
                         options={options.statuses.map((s) => ({ value: s, label: s.replace('_', ' ') }))}
                     />
-                    <TextField label="Deadline" type="date" value={form.data.due_on} onChange={(v) => form.setData('due_on', v)} error={form.errors.due_on} />
+                    <TextField
+                        label="Deadline"
+                        type="date"
+                        value={form.data.due_on}
+                        onChange={(v) => form.setData('due_on', v)}
+                        error={form.errors.due_on}
+                    />
                     <TextField
                         label="Last reviewed"
                         type="date"
@@ -378,7 +431,12 @@ export default function ComplianceRequirements({
                         onChange={(v) => form.setData('last_reviewed_on', v)}
                         error={form.errors.last_reviewed_on}
                     />
-                    <TextareaField label="What is required" value={form.data.requirement} onChange={(v) => form.setData('requirement', v)} className="sm:col-span-2" />
+                    <TextareaField
+                        label="What is required"
+                        value={form.data.requirement}
+                        onChange={(v) => form.setData('requirement', v)}
+                        className="sm:col-span-2"
+                    />
                 </FormDialog>
 
                 <Dialog open={!!viewing} onOpenChange={(next) => !next && setViewing(null)}>
@@ -389,7 +447,9 @@ export default function ComplianceRequirements({
                         {viewing && (
                             <div className="space-y-4 text-sm">
                                 <div className="flex flex-wrap gap-2">
-                                    <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${STATE_RING[viewing.state]}`}>
+                                    <span
+                                        className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${STATE_RING[viewing.state]}`}
+                                    >
                                         {STATE_LABEL[viewing.state]}
                                     </span>
                                     <RingPill value={viewing.priority} />
@@ -398,12 +458,16 @@ export default function ComplianceRequirements({
                                 <dl className="grid grid-cols-2 gap-3">
                                     <Detail label="Owner" value={viewing.owner ?? 'Unassigned'} hint={viewing.owner_title} />
                                     <Detail label="Frequency" value={viewing.frequency ?? '—'} />
-                                    <Detail label="Deadline" value={date(viewing.due_on)} hint={viewing.days_overdue ? `${viewing.days_overdue} days overdue` : null} />
+                                    <Detail
+                                        label="Deadline"
+                                        value={date(viewing.due_on)}
+                                        hint={viewing.days_overdue ? `${viewing.days_overdue} days overdue` : null}
+                                    />
                                     <Detail label="Last reviewed" value={date(viewing.last_reviewed_on)} />
                                 </dl>
                                 {viewing.requirement && (
                                     <div>
-                                        <p className="mb-1 text-xs text-muted-foreground">What is required</p>
+                                        <p className="text-muted-foreground mb-1 text-xs">What is required</p>
                                         <p className="whitespace-pre-line">{viewing.requirement}</p>
                                     </div>
                                 )}
@@ -419,7 +483,7 @@ export default function ComplianceRequirements({
 function Detail({ label, value, hint }: { label: string; value: string; hint?: string | null }) {
     return (
         <div>
-            <dt className="mb-1 text-xs text-muted-foreground">{label}</dt>
+            <dt className="text-muted-foreground mb-1 text-xs">{label}</dt>
             <dd className="capitalize">{value}</dd>
             {hint && <dd className="text-xs text-rose-600">{hint}</dd>}
         </div>

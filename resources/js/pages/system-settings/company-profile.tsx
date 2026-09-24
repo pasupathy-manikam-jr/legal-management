@@ -13,13 +13,7 @@ const breadcrumbs: BreadcrumbItem[] = [{ title: 'Company Profile', href: '/compa
 
 type Profile = Record<string, string>;
 
-export default function CompanyProfile({
-    profile,
-    options,
-}: {
-    profile: Profile;
-    options: { businessTypes: string[]; practiceSizes: string[] };
-}) {
+export default function CompanyProfile({ profile, options }: { profile: Profile; options: { businessTypes: string[]; practiceSizes: string[] } }) {
     const [open, setOpen] = useState(false);
     const form = useForm<Profile>({ ...profile });
 
@@ -42,7 +36,7 @@ export default function CompanyProfile({
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-xl font-semibold">Company Profile</h1>
-                        <p className="text-xs text-muted-foreground">Detailed view of advocate, firm, and professional information.</p>
+                        <p className="text-muted-foreground text-xs">Detailed view of advocate, firm, and professional information.</p>
                     </div>
                     <Button onClick={openEdit}>
                         <SquarePen className="size-4" /> Edit Profile
@@ -113,7 +107,12 @@ export default function CompanyProfile({
                     wide
                 >
                     <TextField label="Firm Name" value={form.data.firm_name} onChange={set('firm_name')} error={form.errors.firm_name} />
-                    <TextField label="Advocate Name" value={form.data.advocate_name} onChange={set('advocate_name')} error={form.errors.advocate_name} />
+                    <TextField
+                        label="Advocate Name"
+                        value={form.data.advocate_name}
+                        onChange={set('advocate_name')}
+                        error={form.errors.advocate_name}
+                    />
                     <SelectField
                         label="Business Type"
                         value={form.data.business_type}
@@ -135,14 +134,25 @@ export default function CompanyProfile({
                         onChange={set('years_experience')}
                         error={form.errors.years_experience}
                     />
-                    <TextField label="Established" type="date" value={form.data.established_on} onChange={set('established_on')} error={form.errors.established_on} />
+                    <TextField
+                        label="Established"
+                        type="date"
+                        value={form.data.established_on}
+                        onChange={set('established_on')}
+                        error={form.errors.established_on}
+                    />
                     <TextField
                         label="Bar Registration No."
                         value={form.data.bar_registration_no}
                         onChange={set('bar_registration_no')}
                         error={form.errors.bar_registration_no}
                     />
-                    <TextField label="Registration No." value={form.data.registration_no} onChange={set('registration_no')} error={form.errors.registration_no} />
+                    <TextField
+                        label="Registration No."
+                        value={form.data.registration_no}
+                        onChange={set('registration_no')}
+                        error={form.errors.registration_no}
+                    />
                     <TextField label="Email" type="email" value={form.data.firm_email} onChange={set('firm_email')} error={form.errors.firm_email} />
                     <TextField label="Phone" value={form.data.firm_phone} onChange={set('firm_phone')} error={form.errors.firm_phone} />
                     <TextField label="Website" value={form.data.firm_website} onChange={set('firm_website')} error={form.errors.firm_website} />
@@ -153,8 +163,20 @@ export default function CompanyProfile({
                         onChange={set('consultation_fee')}
                         error={form.errors.consultation_fee}
                     />
-                    <TextField label="Office Hours" value={form.data.office_hours} onChange={set('office_hours')} error={form.errors.office_hours} className="sm:col-span-2" />
-                    <TextareaField label="Address" value={form.data.firm_address} onChange={set('firm_address')} error={form.errors.firm_address} className="sm:col-span-2" />
+                    <TextField
+                        label="Office Hours"
+                        value={form.data.office_hours}
+                        onChange={set('office_hours')}
+                        error={form.errors.office_hours}
+                        className="sm:col-span-2"
+                    />
+                    <TextareaField
+                        label="Address"
+                        value={form.data.firm_address}
+                        onChange={set('firm_address')}
+                        error={form.errors.firm_address}
+                        className="sm:col-span-2"
+                    />
                     <TextField label="Law Degree" value={form.data.law_degree} onChange={set('law_degree')} error={form.errors.law_degree} />
                     <TextField label="University" value={form.data.university} onChange={set('university')} error={form.errors.university} />
                     <TextField
@@ -223,10 +245,10 @@ function Panel({
     bodyClassName?: string;
 }) {
     return (
-        <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
+        <div className="bg-card text-card-foreground rounded-lg border shadow-sm">
             <div className="flex flex-col space-y-1.5 border-b px-5 py-3 lg:px-6 lg:py-4">
                 <h3 className="flex items-center gap-2 text-sm font-semibold tracking-tight">
-                    <Icon className="size-4 text-muted-foreground" />
+                    <Icon className="text-muted-foreground size-4" />
                     {title}
                 </h3>
             </div>
@@ -242,7 +264,7 @@ function Grid({ children }: { children: ReactNode }) {
 function Value({ label, value, wide }: { label: string; value?: string; wide?: boolean }) {
     return (
         <div className={cn('min-w-0 space-y-0.5', wide && 'sm:col-span-2')}>
-            <p className="text-xs text-muted-foreground">{label}</p>
+            <p className="text-muted-foreground text-xs">{label}</p>
             <p className="text-sm font-medium break-all sm:break-words">{value?.trim() ? value : '—'}</p>
         </div>
     );

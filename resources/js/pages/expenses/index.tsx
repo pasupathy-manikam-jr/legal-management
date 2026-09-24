@@ -1,6 +1,6 @@
 import { InitialsAvatar } from '@/components/avatar-stack';
-import { DataTableFooter } from '@/components/data-table-footer';
 import { confirmAction } from '@/components/confirm-dialog';
+import { DataTableFooter } from '@/components/data-table-footer';
 import { Dropdown } from '@/components/dropdown';
 import { FormDialog, SelectField, TextField } from '@/components/form-dialog';
 import { SummaryCard } from '@/components/summary-card';
@@ -12,7 +12,21 @@ import { date, money } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { BreadcrumbItem, Paginated, User } from '@/types';
 import { Head, Link, router, useForm } from '@inertiajs/react';
-import { Calendar, CircleCheckBig, CircleDollarSign, CircleX, Clock, Eye, FileText, Filter, Plus, RefreshCcw, Search, SquarePen, Trash2 } from 'lucide-react';
+import {
+    Calendar,
+    CircleCheckBig,
+    CircleDollarSign,
+    CircleX,
+    Clock,
+    Eye,
+    FileText,
+    Filter,
+    Plus,
+    RefreshCcw,
+    Search,
+    SquarePen,
+    Trash2,
+} from 'lucide-react';
 import { useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Expenses', href: '/expenses' }];
@@ -116,7 +130,11 @@ export default function ExpensesIndex({
     function submit(e: React.FormEvent) {
         e.preventDefault();
         const done = { onSuccess: () => setOpen(false), preserveScroll: true };
-        editing ? form.put(`/expenses/${editing.id}`, done) : form.post('/expenses', done);
+        if (editing) {
+            form.put(`/expenses/${editing.id}`, done);
+        } else {
+            form.post('/expenses', done);
+        }
     }
 
     function setStatus(expense: Expense, next: string) {
@@ -131,7 +149,7 @@ export default function ExpensesIndex({
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-xl font-semibold">Expenses</h1>
-                        <p className="text-xs text-muted-foreground">Track and approve employee expenses grouped by case.</p>
+                        <p className="text-muted-foreground text-xs">Track and approve employee expenses grouped by case.</p>
                     </div>
                     <Button onClick={openCreate}>
                         <Plus className="size-4" /> Add Expense
@@ -144,11 +162,11 @@ export default function ExpensesIndex({
                     <SummaryCard label="Approved" value={money(totals.approvedCents)} icon={FileText} tone="emerald" />
                 </div>
 
-                <div className="rounded-lg border bg-card p-3 shadow-sm">
+                <div className="bg-card rounded-lg border p-3 shadow-sm">
                     <div className="flex items-center justify-between gap-2">
                         <div className="flex min-w-0 items-center gap-2">
                             <div className="relative w-64 min-w-40 shrink">
-                                <Search className="absolute top-2 left-2.5 size-4 text-muted-foreground" />
+                                <Search className="text-muted-foreground absolute top-2 left-2.5 size-4" />
                                 <Input
                                     placeholder="Search expenses..."
                                     value={search}
@@ -158,9 +176,25 @@ export default function ExpensesIndex({
                                 />
                             </div>
 
-                            <Dropdown value={filters.category ?? ''} onChange={(v) => apply({ category: v })} placeholder="All Categories" options={options.categories.map((c) => ({ value: c, label: c }))} className="h-9 w-40" capitalize />
+                            <Dropdown
+                                value={filters.category ?? ''}
+                                onChange={(v) => apply({ category: v })}
+                                placeholder="All Categories"
+                                options={options.categories.map((c) => ({ value: c, label: c }))}
+                                className="h-9 w-40"
+                                capitalize
+                            />
 
-                            <Dropdown value={filters.billable ?? ''} onChange={(v) => apply({ billable: v })} placeholder="All Bill Types" options={[{ value: 'yes', label: 'Billable' }, { value: 'no', label: 'Non-Billable' }]} className="h-9 w-40" />
+                            <Dropdown
+                                value={filters.billable ?? ''}
+                                onChange={(v) => apply({ billable: v })}
+                                placeholder="All Bill Types"
+                                options={[
+                                    { value: 'yes', label: 'Billable' },
+                                    { value: 'no', label: 'Non-Billable' },
+                                ]}
+                                className="h-9 w-40"
+                            />
                         </div>
 
                         <div className="flex shrink-0 items-center gap-2">
@@ -168,7 +202,7 @@ export default function ExpensesIndex({
                                 <Button
                                     variant="ghost"
                                     size="sm"
-                                    className="h-9 text-muted-foreground"
+                                    className="text-muted-foreground h-9"
                                     onClick={() => {
                                         setSearch('');
                                         router.get('/expenses');
@@ -177,7 +211,7 @@ export default function ExpensesIndex({
                                     <RefreshCcw className="size-4" /> Clear Filters
                                 </Button>
                             )}
-                            <span className="flex h-8 items-center gap-1.5 rounded-md border px-2 text-sm text-muted-foreground">
+                            <span className="text-muted-foreground flex h-8 items-center gap-1.5 rounded-md border px-2 text-sm">
                                 <Filter className="size-4" /> Filters
                             </span>
                         </div>
@@ -185,12 +219,14 @@ export default function ExpensesIndex({
                 </div>
 
                 <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-[350px_1fr]">
-                    <div className="hidden overflow-hidden rounded-lg border bg-card shadow-sm lg:sticky lg:top-4 lg:block">
+                    <div className="bg-card hidden overflow-hidden rounded-lg border shadow-sm lg:sticky lg:top-4 lg:block">
                         <div className="border-b px-4 py-3">
-                            <p className="text-xs font-semibold text-muted-foreground">Cases</p>
+                            <p className="text-muted-foreground text-xs font-semibold">Cases</p>
                         </div>
                         <div className="max-h-[550px] divide-y overflow-auto">
-                            {cases.length === 0 && <p className="px-4 py-6 text-center text-sm text-muted-foreground">No expenses match these filters.</p>}
+                            {cases.length === 0 && (
+                                <p className="text-muted-foreground px-4 py-6 text-center text-sm">No expenses match these filters.</p>
+                            )}
                             {cases.map((c) => {
                                 const active = c.id === selected;
 
@@ -201,16 +237,23 @@ export default function ExpensesIndex({
                                         onClick={() => apply({ matter: c.id })}
                                         className={cn(
                                             'flex w-full items-center gap-3 px-4 py-3 text-left transition-colors',
-                                            active ? 'border-r-2 border-r-primary bg-primary/5' : 'hover:bg-muted/50',
+                                            active ? 'border-r-primary bg-primary/5 border-r-2' : 'hover:bg-muted/50',
                                         )}
                                     >
-                                        <div className={cn('flex size-8 shrink-0 items-center justify-center rounded-lg', active ? 'bg-primary/10' : 'bg-muted')}>
+                                        <div
+                                            className={cn(
+                                                'flex size-8 shrink-0 items-center justify-center rounded-lg',
+                                                active ? 'bg-primary/10' : 'bg-muted',
+                                            )}
+                                        >
                                             <FileText className={cn('size-4', active ? 'text-primary' : 'text-muted-foreground')} />
                                         </div>
                                         <div className="min-w-0 flex-1">
                                             <p className={cn('truncate text-sm leading-tight font-semibold', active && 'text-primary')}>{c.label}</p>
                                             <div className="mt-0.5 flex items-center gap-2">
-                                                <span className="font-mono text-[11px] tabular-nums text-muted-foreground">{money(c.total_cents)}</span>
+                                                <span className="text-muted-foreground font-mono text-[11px] tabular-nums">
+                                                    {money(c.total_cents)}
+                                                </span>
                                                 {c.pending > 0 && (
                                                     <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-amber-600 dark:text-amber-400">
                                                         <Clock className="size-2.5" />
@@ -234,15 +277,15 @@ export default function ExpensesIndex({
                     </div>
 
                     <div className="min-w-0">
-                        <div className="mb-4 rounded-lg border bg-card p-4 shadow-sm">
+                        <div className="bg-card mb-4 rounded-lg border p-4 shadow-sm">
                             <div className="flex flex-col justify-between gap-3 xl:flex-row xl:items-center">
                                 <div className="flex min-w-0 items-center gap-3">
-                                    <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-                                        <FileText className="size-4 text-primary" />
+                                    <div className="bg-primary/10 flex size-8 shrink-0 items-center justify-center rounded-lg">
+                                        <FileText className="text-primary size-4" />
                                     </div>
                                     <div className="min-w-0">
                                         <p className="text-sm leading-tight font-semibold">{current?.label ?? 'No case selected'}</p>
-                                        <p className="mt-0.5 text-xs text-muted-foreground">
+                                        <p className="text-muted-foreground mt-0.5 text-xs">
                                             Total : <span className="font-mono">{money(caseTotal)}</span> ·{' '}
                                             <span className="text-emerald-600 dark:text-emerald-400">
                                                 Billable : <span className="font-mono">{money(caseSummary.billableCents)}</span>
@@ -252,7 +295,7 @@ export default function ExpensesIndex({
                                     </div>
                                 </div>
 
-                                <div className="inline-flex flex-wrap items-center justify-center gap-1 rounded-md bg-muted p-1">
+                                <div className="bg-muted inline-flex flex-wrap items-center justify-center gap-1 rounded-md p-1">
                                     {options.statuses.map((s) => (
                                         <button
                                             key={s}
@@ -260,11 +303,18 @@ export default function ExpensesIndex({
                                             onClick={() => apply({ status: s })}
                                             className={cn(
                                                 'inline-flex h-7 items-center gap-1.5 rounded-sm px-3 text-xs font-medium capitalize transition-all',
-                                                status === s ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground',
+                                                status === s
+                                                    ? 'bg-primary text-primary-foreground shadow-sm'
+                                                    : 'text-muted-foreground hover:text-foreground',
                                             )}
                                         >
                                             {s}
-                                            <span className={cn('inline-flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-bold', STATUS_BADGE[s])}>
+                                            <span
+                                                className={cn(
+                                                    'inline-flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-bold',
+                                                    STATUS_BADGE[s],
+                                                )}
+                                            >
                                                 {caseSummary.counts[s] ?? 0}
                                             </span>
                                         </button>
@@ -273,37 +323,39 @@ export default function ExpensesIndex({
                             </div>
                         </div>
 
-                        <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
+                        <div className="bg-card overflow-hidden rounded-lg border shadow-sm">
                             <div className="w-full overflow-x-auto">
                                 <table className="w-full caption-bottom text-sm">
                                     <thead>
                                         <tr className="border-b bg-[#F0F0F1] dark:bg-neutral-800">
-                                            <th className="w-12 px-4 py-2.5 text-left font-semibold text-muted-foreground">#</th>
-                                            <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Submitted By</th>
-                                            <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Category</th>
-                                            <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Date</th>
-                                            <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Billable</th>
-                                            <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Amount</th>
-                                            <th className="w-24 px-4 py-2.5 text-center font-semibold text-muted-foreground">Actions</th>
+                                            <th className="text-muted-foreground w-12 px-4 py-2.5 text-left font-semibold">#</th>
+                                            <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Submitted By</th>
+                                            <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Category</th>
+                                            <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Date</th>
+                                            <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Billable</th>
+                                            <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Amount</th>
+                                            <th className="text-muted-foreground w-24 px-4 py-2.5 text-center font-semibold">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {expenses.data.length === 0 && (
                                             <tr>
-                                                <td colSpan={7} className="py-12 text-center text-sm text-muted-foreground">
+                                                <td colSpan={7} className="text-muted-foreground py-12 text-center text-sm">
                                                     Nothing {status} on this case.
                                                 </td>
                                             </tr>
                                         )}
                                         {expenses.data.map((x, i) => (
-                                            <tr key={x.id} className="border-b transition-colors last:border-0 hover:bg-muted/40">
+                                            <tr key={x.id} className="hover:bg-muted/40 border-b transition-colors last:border-0">
                                                 <td className="px-4 py-2.5 font-medium tabular-nums">{(expenses.from ?? 1) + i}</td>
                                                 <td className="px-4 py-2.5">
                                                     <div className="flex items-center gap-3">
                                                         <InitialsAvatar name={x.user?.name ?? x.description} />
                                                         <div className="min-w-0">
                                                             <div className="text-sm font-medium">{x.user?.name ?? '—'}</div>
-                                                            <div className="truncate text-xs text-muted-foreground">{x.user?.email ?? x.description}</div>
+                                                            <div className="text-muted-foreground truncate text-xs">
+                                                                {x.user?.email ?? x.description}
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -311,7 +363,7 @@ export default function ExpensesIndex({
                                                     {x.category ? <RingPill value="low" label={x.category} className="capitalize" /> : '—'}
                                                 </td>
                                                 <td className="px-4 py-2.5">
-                                                    <div className="flex items-center gap-2 whitespace-nowrap text-muted-foreground">
+                                                    <div className="text-muted-foreground flex items-center gap-2 whitespace-nowrap">
                                                         <Calendar className="size-4" />
                                                         <span>{date(x.incurred_on)}</span>
                                                     </div>
@@ -325,7 +377,7 @@ export default function ExpensesIndex({
                                                         <Button
                                                             variant="ghost"
                                                             size="icon"
-                                                            className="size-8 text-muted-foreground"
+                                                            className="text-muted-foreground size-8"
                                                             title="Approve"
                                                             disabled={x.status === 'approved' || !!x.invoice_id}
                                                             onClick={() => setStatus(x, 'approved')}
@@ -335,7 +387,7 @@ export default function ExpensesIndex({
                                                         <Button
                                                             variant="ghost"
                                                             size="icon"
-                                                            className="size-8 text-muted-foreground"
+                                                            className="text-muted-foreground size-8"
                                                             title="Reject"
                                                             disabled={x.status === 'rejected' || !!x.invoice_id}
                                                             onClick={() => setStatus(x, 'rejected')}
@@ -343,7 +395,13 @@ export default function ExpensesIndex({
                                                             <CircleX className="size-4" />
                                                         </Button>
                                                         {x.matter_id && (
-                                                            <Button variant="ghost" size="icon" className="size-8 text-muted-foreground" asChild title="View case">
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                className="text-muted-foreground size-8"
+                                                                asChild
+                                                                title="View case"
+                                                            >
                                                                 <Link href={`/matters/${x.matter_id}`}>
                                                                     <Eye className="size-4" />
                                                                 </Link>
@@ -352,7 +410,7 @@ export default function ExpensesIndex({
                                                         <Button
                                                             variant="ghost"
                                                             size="icon"
-                                                            className="size-8 text-muted-foreground"
+                                                            className="text-muted-foreground size-8"
                                                             title="Edit"
                                                             disabled={!!x.invoice_id}
                                                             onClick={() => openEdit(x)}
@@ -362,10 +420,14 @@ export default function ExpensesIndex({
                                                         <Button
                                                             variant="ghost"
                                                             size="icon"
-                                                            className="size-8 text-muted-foreground"
+                                                            className="text-muted-foreground size-8"
                                                             title="Delete"
                                                             disabled={!!x.invoice_id}
-                                                            onClick={() => confirmAction({ title: 'Remove this expense?', confirmLabel: 'Remove' }).then((ok) => ok && router.delete(`/expenses/${x.id}`, { preserveScroll: true }))}
+                                                            onClick={() =>
+                                                                confirmAction({ title: 'Remove this expense?', confirmLabel: 'Remove' }).then(
+                                                                    (ok) => ok && router.delete(`/expenses/${x.id}`, { preserveScroll: true }),
+                                                                )
+                                                            }
                                                         >
                                                             <Trash2 className="size-4 text-rose-600" />
                                                         </Button>
@@ -426,8 +488,21 @@ export default function ExpensesIndex({
                     options={options.categories.map((c) => ({ value: c, label: c }))}
                     placeholder="—"
                 />
-                <TextField label="Amount" type="number" step="0.01" value={form.data.amount} onChange={(v) => form.setData('amount', v)} error={form.errors.amount} />
-                <TextField label="Date" type="date" value={form.data.incurred_on} onChange={(v) => form.setData('incurred_on', v)} error={form.errors.incurred_on} />
+                <TextField
+                    label="Amount"
+                    type="number"
+                    step="0.01"
+                    value={form.data.amount}
+                    onChange={(v) => form.setData('amount', v)}
+                    error={form.errors.amount}
+                />
+                <TextField
+                    label="Date"
+                    type="date"
+                    value={form.data.incurred_on}
+                    onChange={(v) => form.setData('incurred_on', v)}
+                    error={form.errors.incurred_on}
+                />
                 <SelectField
                     label="Status"
                     value={form.data.status}

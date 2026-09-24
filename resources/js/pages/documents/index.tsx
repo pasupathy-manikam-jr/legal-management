@@ -1,7 +1,7 @@
-import { DataTableFooter } from '@/components/data-table-footer';
-import { Field, FormDialog, SelectField, TextField } from '@/components/form-dialog';
 import { confirmAction } from '@/components/confirm-dialog';
+import { DataTableFooter } from '@/components/data-table-footer';
 import { Dropdown } from '@/components/dropdown';
+import { Field, FormDialog, SelectField, TextField } from '@/components/form-dialog';
 import { CountTabs, FilterActions } from '@/components/page-toolbar';
 import { SortableHead } from '@/components/sortable-head';
 import { RingPill, TonePill } from '@/components/tone-pill';
@@ -77,8 +77,7 @@ export default function DocumentsIndex({
 
     const sortParams = () => ({ sort: sort.column, direction: sort.direction, per_page: perPage });
 
-    const toggleSort = (column: string) =>
-        apply({ sort: column, direction: sort.column === column && sort.direction === 'asc' ? 'desc' : 'asc' });
+    const toggleSort = (column: string) => apply({ sort: column, direction: sort.column === column && sort.direction === 'asc' ? 'desc' : 'asc' });
 
     const filtered = filters.search || filters.client || filters.type;
 
@@ -127,18 +126,18 @@ export default function DocumentsIndex({
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-xl font-semibold">Documents</h1>
-                        <p className="text-xs text-muted-foreground">Upload and manage documents for your clients.</p>
+                        <p className="text-muted-foreground text-xs">Upload and manage documents for your clients.</p>
                     </div>
                     <Button onClick={openCreate}>
                         <Plus className="size-4" /> Add Document
                     </Button>
                 </div>
 
-                <div className="rounded-lg border bg-card shadow-sm">
+                <div className="bg-card rounded-lg border shadow-sm">
                     <div className="flex items-center justify-between gap-2 p-3">
                         <div className="flex min-w-0 items-center gap-2">
                             <div className="relative w-64 min-w-40 shrink">
-                                <Search className="absolute top-2 left-2.5 size-4 text-muted-foreground" />
+                                <Search className="text-muted-foreground absolute top-2 left-2.5 size-4" />
                                 <Input
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
@@ -148,9 +147,23 @@ export default function DocumentsIndex({
                                 />
                             </div>
 
-                            <Dropdown value={filters.client ?? ''} onChange={(v) => apply({ client: v })} placeholder="All Clients" options={options.clients.map((client) => ({ value: client.id, label: client.name }))} className="h-9 w-40" aria-label="Client filter" />
+                            <Dropdown
+                                value={filters.client ?? ''}
+                                onChange={(v) => apply({ client: v })}
+                                placeholder="All Clients"
+                                options={options.clients.map((client) => ({ value: client.id, label: client.name }))}
+                                className="h-9 w-40"
+                                aria-label="Client filter"
+                            />
 
-                            <Dropdown value={filters.type ?? ''} onChange={(v) => apply({ type: v })} placeholder="All Types" options={options.types.map((type) => ({ value: type, label: type }))} className="h-9 w-40" aria-label="Type filter" />
+                            <Dropdown
+                                value={filters.type ?? ''}
+                                onChange={(v) => apply({ type: v })}
+                                placeholder="All Types"
+                                options={options.types.map((type) => ({ value: type, label: type }))}
+                                className="h-9 w-40"
+                                aria-label="Type filter"
+                            />
                         </div>
 
                         <FilterActions
@@ -173,30 +186,30 @@ export default function DocumentsIndex({
                     />
                 </div>
 
-                <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
+                <div className="bg-card overflow-hidden rounded-lg border shadow-sm">
                     <div className="w-full overflow-x-auto">
                         <table className="w-full caption-bottom text-sm">
                             <thead>
                                 <tr className="border-b bg-[#F0F0F1] dark:bg-neutral-800">
-                                    <th className="w-12 px-4 py-2.5 text-left font-semibold text-muted-foreground">#</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Client</th>
+                                    <th className="text-muted-foreground w-12 px-4 py-2.5 text-left font-semibold">#</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Client</th>
                                     <SortableHead label="Document Name" column="title" sort={sort} onSort={toggleSort} />
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Type</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Status</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Type</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Status</th>
                                     <SortableHead label="Uploaded" column="created_at" sort={sort} onSort={toggleSort} />
-                                    <th className="w-24 px-4 py-2.5 text-center font-semibold text-muted-foreground">Actions</th>
+                                    <th className="text-muted-foreground w-24 px-4 py-2.5 text-center font-semibold">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y">
                                 {documents.data.length === 0 && (
                                     <tr>
-                                        <td colSpan={7} className="py-16 text-center text-sm text-muted-foreground">
+                                        <td colSpan={7} className="text-muted-foreground py-16 text-center text-sm">
                                             No documents filed yet.
                                         </td>
                                     </tr>
                                 )}
                                 {documents.data.map((document, index) => (
-                                    <tr key={document.id} className="transition-colors hover:bg-muted/40">
+                                    <tr key={document.id} className="hover:bg-muted/40 transition-colors">
                                         <td className="px-4 py-2.5 font-medium">{(documents.from ?? 1) + index}</td>
                                         <td className="px-4 py-2.5">
                                             <div className="flex items-center gap-3">
@@ -205,13 +218,13 @@ export default function DocumentsIndex({
                                                 </Avatar>
                                                 <div className="min-w-0">
                                                     <div className="text-sm font-medium">{document.client ?? '—'}</div>
-                                                    <div className="truncate text-xs text-muted-foreground">{document.client_email ?? '—'}</div>
+                                                    <div className="text-muted-foreground truncate text-xs">{document.client_email ?? '—'}</div>
                                                 </div>
                                             </div>
                                         </td>
                                         <td className="px-4 py-2.5">
                                             <div className="text-sm font-medium">{document.title}</div>
-                                            {document.matter && <div className="text-xs text-muted-foreground">{document.matter}</div>}
+                                            {document.matter && <div className="text-muted-foreground text-xs">{document.matter}</div>}
                                         </td>
                                         <td className="px-4 py-2.5">
                                             {document.type ? (
@@ -227,14 +240,14 @@ export default function DocumentsIndex({
                                             />
                                         </td>
                                         <td className="px-4 py-2.5">
-                                            <div className="flex items-center gap-2 whitespace-nowrap text-muted-foreground">
+                                            <div className="text-muted-foreground flex items-center gap-2 whitespace-nowrap">
                                                 <Calendar className="size-4" />
                                                 {date(document.uploaded_on)}
                                             </div>
                                         </td>
                                         <td className="px-4 py-2.5">
                                             <div className="flex items-center justify-end gap-0.5">
-                                                <Button variant="ghost" size="icon" className="size-8 text-muted-foreground" title="View" asChild>
+                                                <Button variant="ghost" size="icon" className="text-muted-foreground size-8" title="View" asChild>
                                                     <a href={`/documents/${document.id}/preview`} target="_blank" rel="noreferrer">
                                                         <Eye className="size-4" />
                                                     </a>
@@ -242,13 +255,13 @@ export default function DocumentsIndex({
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    className="size-8 text-muted-foreground"
+                                                    className="text-muted-foreground size-8"
                                                     title="Edit"
                                                     onClick={() => openEdit(document)}
                                                 >
                                                     <SquarePen className="size-4" />
                                                 </Button>
-                                                <Button variant="ghost" size="icon" className="size-8 text-muted-foreground" title="Download" asChild>
+                                                <Button variant="ghost" size="icon" className="text-muted-foreground size-8" title="Download" asChild>
                                                     <a href={`/documents/${document.id}/download`}>
                                                         <Download className="size-4" />
                                                     </a>
@@ -256,7 +269,7 @@ export default function DocumentsIndex({
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    className="size-8 text-muted-foreground"
+                                                    className="text-muted-foreground size-8"
                                                     title={document.archived ? 'Restore' : 'Archive'}
                                                     onClick={() => router.patch(`/documents/${document.id}/archive`, {}, { preserveScroll: true })}
                                                 >
@@ -265,10 +278,12 @@ export default function DocumentsIndex({
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    className="size-8 text-muted-foreground"
+                                                    className="text-muted-foreground size-8"
                                                     title="Delete"
                                                     onClick={() =>
-                                                        confirmAction({ title: `Delete ${document.title}?` }).then((ok) => ok && router.delete(`/documents/${document.id}`, { preserveScroll: true }))
+                                                        confirmAction({ title: `Delete ${document.title}?` }).then(
+                                                            (ok) => ok && router.delete(`/documents/${document.id}`, { preserveScroll: true }),
+                                                        )
                                                     }
                                                 >
                                                     <Trash2 className="size-4 text-rose-600" />

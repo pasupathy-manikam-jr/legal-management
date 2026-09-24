@@ -51,7 +51,7 @@ export default function ClientShow({
                                 <h1 className="text-xl font-semibold">{client.name}</h1>
                                 <RingPill value={active ? 'active' : 'inactive'} label={active ? 'Active' : 'Inactive'} />
                             </div>
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-muted-foreground text-xs">
                                 {client.type ?? 'Client'}
                                 {client.company && ` · ${client.company}`}
                             </p>
@@ -86,7 +86,7 @@ export default function ClientShow({
                         {client.notes && (
                             <>
                                 <h2 className="mt-5 mb-2 text-sm font-semibold">Notes</h2>
-                                <p className="text-sm whitespace-pre-line text-muted-foreground">{client.notes}</p>
+                                <p className="text-muted-foreground text-sm whitespace-pre-line">{client.notes}</p>
                             </>
                         )}
                     </Card>
@@ -150,7 +150,7 @@ export default function ClientShow({
                                         </TableCell>
                                         <TableCell className="whitespace-nowrap">{date(i.issued_on)}</TableCell>
                                         <TableCell className="text-right font-mono tabular-nums">{money(i.subtotal_cents + i.tax_cents)}</TableCell>
-                                        <TableCell className="text-xs capitalize text-muted-foreground">{i.status}</TableCell>
+                                        <TableCell className="text-muted-foreground text-xs capitalize">{i.status}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
@@ -160,14 +160,16 @@ export default function ClientShow({
                     <Card className="gap-0 p-0">
                         <h2 className="border-b px-5 py-4 text-sm font-semibold">Recent communication</h2>
                         <div className="flex flex-col">
-                            {(client.messages?.length ?? 0) === 0 && <p className="px-5 py-10 text-center text-sm text-muted-foreground">Nothing logged.</p>}
+                            {(client.messages?.length ?? 0) === 0 && (
+                                <p className="text-muted-foreground px-5 py-10 text-center text-sm">Nothing logged.</p>
+                            )}
                             {client.messages?.map((m) => (
                                 <div key={m.id} className="border-b px-5 py-3 last:border-0">
                                     <div className="flex items-center justify-between gap-2">
                                         <span className="font-medium">{m.subject}</span>
-                                        <span className="text-xs text-muted-foreground">{dateTime(m.occurred_at)}</span>
+                                        <span className="text-muted-foreground text-xs">{dateTime(m.occurred_at)}</span>
                                     </div>
-                                    <p className="mt-0.5 text-xs text-muted-foreground">
+                                    <p className="text-muted-foreground mt-0.5 text-xs">
                                         <span className="capitalize">{m.direction}</span> · <span className="capitalize">{m.channel}</span>
                                         {m.user && ` · ${m.user.name}`}
                                     </p>
@@ -184,9 +186,9 @@ export default function ClientShow({
 function Detail({ icon: Icon, label, value }: { icon: typeof Mail; label: string; value?: string | null }) {
     return (
         <div className="flex items-start gap-2.5">
-            <Icon className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+            <Icon className="text-muted-foreground mt-0.5 size-4 shrink-0" />
             <div>
-                <dt className="text-xs text-muted-foreground">{label}</dt>
+                <dt className="text-muted-foreground text-xs">{label}</dt>
                 <dd className="whitespace-pre-line">{value || '—'}</dd>
             </div>
         </div>

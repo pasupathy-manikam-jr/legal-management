@@ -72,7 +72,15 @@ export function LineChart({ rows, series, height = 300 }: { rows: Row[]; series:
                             strokeLinejoin="round"
                         />
                         {rows.map((r, i) => (
-                            <circle key={String(r.label)} cx={x(i)} cy={y(Number(r[s.key]) || 0)} r={4} fill={s.color} stroke={s.color} strokeWidth={2} />
+                            <circle
+                                key={String(r.label)}
+                                cx={x(i)}
+                                cy={y(Number(r[s.key]) || 0)}
+                                r={4}
+                                fill={s.color}
+                                stroke={s.color}
+                                strokeWidth={2}
+                            />
                         ))}
                     </g>
                 ))}
@@ -92,8 +100,8 @@ export function LineChart({ rows, series, height = 300 }: { rows: Row[]; series:
             </svg>
 
             {hover !== null && (
-                <p className="text-center text-xs text-muted-foreground">
-                    <span className="font-medium text-foreground">{rows[hover].label}</span>
+                <p className="text-muted-foreground text-center text-xs">
+                    <span className="text-foreground font-medium">{rows[hover].label}</span>
                     {series.map((s) => (
                         <span key={s.key} className="ml-3" style={{ color: s.color }}>
                             {s.label} {rows[hover][s.key] ?? 0}

@@ -1,7 +1,7 @@
-import { DataTableFooter } from '@/components/data-table-footer';
-import { FormDialog, SelectField, TextField, TextareaField } from '@/components/form-dialog';
 import { confirmAction } from '@/components/confirm-dialog';
+import { DataTableFooter } from '@/components/data-table-footer';
 import { Dropdown } from '@/components/dropdown';
+import { FormDialog, SelectField, TextField, TextareaField } from '@/components/form-dialog';
 import { CountTabs } from '@/components/page-toolbar';
 import { SummaryCard } from '@/components/summary-card';
 import { RingPill } from '@/components/tone-pill';
@@ -133,7 +133,11 @@ export default function LegalPrecedents({
     function submit(e: React.FormEvent) {
         e.preventDefault();
         const done = { onSuccess: () => setOpen(false), preserveScroll: true };
-        editing ? form.put(`/precedents/${editing.id}`, done) : form.post('/precedents', done);
+        if (editing) {
+            form.put(`/precedents/${editing.id}`, done);
+        } else {
+            form.post('/precedents', done);
+        }
     }
 
     return (
@@ -144,7 +148,7 @@ export default function LegalPrecedents({
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-xl font-semibold">Legal Precedents</h1>
-                        <p className="text-xs text-muted-foreground">Manage and analyse precedent cases with search and filtering.</p>
+                        <p className="text-muted-foreground text-xs">Manage and analyse precedent cases with search and filtering.</p>
                     </div>
                     <Button onClick={openCreate}>
                         <Plus className="size-4" /> Add Legal Precedent
@@ -158,12 +162,12 @@ export default function LegalPrecedents({
                     <SummaryCard label="Avg. Relevance" value={totals.avgRelevance} icon={TrendingUp} tone="amber" mono={false} />
                 </div>
 
-                <div className="rounded-lg border bg-card shadow-sm">
+                <div className="bg-card rounded-lg border shadow-sm">
                     <div className="p-3">
                         <div className="flex items-center justify-between gap-2">
                             <div className="flex min-w-0 items-center gap-2">
                                 <div className="relative w-64 min-w-40 shrink">
-                                    <Search className="absolute top-2 left-2.5 size-4 text-muted-foreground" />
+                                    <Search className="text-muted-foreground absolute top-2 left-2.5 size-4" />
                                     <Input
                                         placeholder="Search..."
                                         value={search}
@@ -173,9 +177,22 @@ export default function LegalPrecedents({
                                     />
                                 </div>
 
-                                <Dropdown value={filters.category ?? ''} onChange={(v) => apply({ category: v })} placeholder="All Categories" options={options.categories.map((c) => ({ value: c, label: c }))} className="h-9 w-40" capitalize />
+                                <Dropdown
+                                    value={filters.category ?? ''}
+                                    onChange={(v) => apply({ category: v })}
+                                    placeholder="All Categories"
+                                    options={options.categories.map((c) => ({ value: c, label: c }))}
+                                    className="h-9 w-40"
+                                    capitalize
+                                />
 
-                                <Dropdown value={filters.score ?? ''} onChange={(v) => apply({ score: v })} placeholder="All Scores" options={options.scores.map((s) => ({ value: s, label: SCORE_LABEL[s] }))} className="h-9 w-40" />
+                                <Dropdown
+                                    value={filters.score ?? ''}
+                                    onChange={(v) => apply({ score: v })}
+                                    placeholder="All Scores"
+                                    options={options.scores.map((s) => ({ value: s, label: SCORE_LABEL[s] }))}
+                                    className="h-9 w-40"
+                                />
                             </div>
 
                             <div className="flex shrink-0 items-center gap-2">
@@ -183,7 +200,7 @@ export default function LegalPrecedents({
                                     <Button
                                         variant="ghost"
                                         size="sm"
-                                        className="h-9 text-muted-foreground"
+                                        className="text-muted-foreground h-9"
                                         onClick={() => {
                                             setSearch('');
                                             router.get('/precedents');
@@ -192,7 +209,7 @@ export default function LegalPrecedents({
                                         <RefreshCcw className="size-4" /> Clear Filters
                                     </Button>
                                 )}
-                                <span className="flex h-8 items-center gap-1.5 rounded-md border px-2 text-sm text-muted-foreground">
+                                <span className="text-muted-foreground flex h-8 items-center gap-1.5 rounded-md border px-2 text-sm">
                                     <Filter className="size-4" /> Filters
                                 </span>
                             </div>
@@ -209,25 +226,25 @@ export default function LegalPrecedents({
                     />
                 </div>
 
-                <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
+                <div className="bg-card overflow-hidden rounded-lg border shadow-sm">
                     <div className="w-full overflow-x-auto">
                         <table className="w-full caption-bottom text-sm">
                             <thead>
                                 <tr className="border-b bg-[#F0F0F1] dark:bg-neutral-800">
-                                    <th className="w-12 px-4 py-2.5 text-left font-semibold text-muted-foreground">#</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Case Name</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Jurisdiction</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Category</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Relevance</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Decision Date</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Status</th>
-                                    <th className="w-24 px-4 py-2.5 text-center font-semibold text-muted-foreground">Actions</th>
+                                    <th className="text-muted-foreground w-12 px-4 py-2.5 text-left font-semibold">#</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Case Name</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Jurisdiction</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Category</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Relevance</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Decision Date</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Status</th>
+                                    <th className="text-muted-foreground w-24 px-4 py-2.5 text-center font-semibold">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {precedents.data.length === 0 && (
                                     <tr>
-                                        <td colSpan={8} className="py-12 text-center text-sm text-muted-foreground">
+                                        <td colSpan={8} className="text-muted-foreground py-12 text-center text-sm">
                                             No precedents match these filters.
                                         </td>
                                     </tr>
@@ -236,11 +253,11 @@ export default function LegalPrecedents({
                                     const tone = scoreTone(p.relevance);
 
                                     return (
-                                        <tr key={p.id} className="border-b transition-colors last:border-0 hover:bg-muted/40">
+                                        <tr key={p.id} className="hover:bg-muted/40 border-b transition-colors last:border-0">
                                             <td className="px-4 py-2.5 font-medium tabular-nums">{(precedents.from ?? 1) + i}</td>
                                             <td className="px-4 py-2.5">
                                                 <div className="font-medium">{p.case_name}</div>
-                                                <div className="text-sm text-muted-foreground">{p.citation}</div>
+                                                <div className="text-muted-foreground text-sm">{p.citation}</div>
                                             </td>
                                             <td className="px-4 py-2.5 text-sm">{p.jurisdiction ?? p.court ?? '—'}</td>
                                             <td className="px-4 py-2.5 capitalize">{p.category ?? '—'}</td>
@@ -249,17 +266,22 @@ export default function LegalPrecedents({
                                                     <div className="flex items-center justify-between gap-1">
                                                         <span className="text-xs font-bold tabular-nums">
                                                             {Math.round(p.relevance / 10)}
-                                                            <span className="font-normal text-muted-foreground">/10</span>
+                                                            <span className="text-muted-foreground font-normal">/10</span>
                                                         </span>
-                                                        <span className={cn('text-[10px] font-semibold tabular-nums', tone.text)}>{p.relevance}%</span>
+                                                        <span className={cn('text-[10px] font-semibold tabular-nums', tone.text)}>
+                                                            {p.relevance}%
+                                                        </span>
                                                     </div>
-                                                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
-                                                        <div className={cn('h-full rounded-full transition-all', tone.bar)} style={{ width: `${p.relevance}%` }} />
+                                                    <div className="bg-muted h-1.5 w-full overflow-hidden rounded-full">
+                                                        <div
+                                                            className={cn('h-full rounded-full transition-all', tone.bar)}
+                                                            style={{ width: `${p.relevance}%` }}
+                                                        />
                                                     </div>
                                                 </div>
                                             </td>
                                             <td className="px-4 py-2.5">
-                                                <div className="flex items-center gap-2 whitespace-nowrap text-muted-foreground">
+                                                <div className="text-muted-foreground flex items-center gap-2 whitespace-nowrap">
                                                     <Calendar className="size-4" />
                                                     <span>{p.decided_on ? date(p.decided_on) : '—'}</span>
                                                 </div>
@@ -270,19 +292,31 @@ export default function LegalPrecedents({
                                             <td className="px-4 py-2.5">
                                                 <div className="flex items-center justify-end gap-1">
                                                     {p.matter_id && (
-                                                        <Button variant="ghost" size="icon" className="size-8 text-muted-foreground" asChild title="View case">
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            className="text-muted-foreground size-8"
+                                                            asChild
+                                                            title="View case"
+                                                        >
                                                             <Link href={`/matters/${p.matter_id}`}>
                                                                 <Eye className="size-4" />
                                                             </Link>
                                                         </Button>
                                                     )}
-                                                    <Button variant="ghost" size="icon" className="size-8 text-muted-foreground" title="Edit" onClick={() => openEdit(p)}>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="text-muted-foreground size-8"
+                                                        title="Edit"
+                                                        onClick={() => openEdit(p)}
+                                                    >
                                                         <SquarePen className="size-4" />
                                                     </Button>
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
-                                                        className="size-8 text-muted-foreground"
+                                                        className="text-muted-foreground size-8"
                                                         title="Move to the next status"
                                                         onClick={() => router.patch(`/precedents/${p.id}/status`, {}, { preserveScroll: true })}
                                                     >
@@ -291,9 +325,13 @@ export default function LegalPrecedents({
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
-                                                        className="size-8 text-muted-foreground"
+                                                        className="text-muted-foreground size-8"
                                                         title="Delete"
-                                                        onClick={() => confirmAction({ title: `Delete ${p.case_name}?` }).then((ok) => ok && router.delete(`/precedents/${p.id}`, { preserveScroll: true }))}
+                                                        onClick={() =>
+                                                            confirmAction({ title: `Delete ${p.case_name}?` }).then(
+                                                                (ok) => ok && router.delete(`/precedents/${p.id}`, { preserveScroll: true }),
+                                                            )
+                                                        }
                                                     >
                                                         <Trash2 className="size-4 text-rose-600" />
                                                     </Button>

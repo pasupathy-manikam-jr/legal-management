@@ -1,6 +1,6 @@
 import { InitialsAvatar } from '@/components/avatar-stack';
-import { DataTableFooter } from '@/components/data-table-footer';
 import { confirmAction } from '@/components/confirm-dialog';
+import { DataTableFooter } from '@/components/data-table-footer';
 import { Dropdown } from '@/components/dropdown';
 import { FormDialog, SelectField, TextField, TextareaField } from '@/components/form-dialog';
 import { RingPill } from '@/components/tone-pill';
@@ -64,7 +64,11 @@ export default function ClientsIndex({
     function submit(e: React.FormEvent) {
         e.preventDefault();
         const done = { onSuccess: () => setOpen(false), preserveScroll: true };
-        editing ? form.put(`/clients/${editing.id}`, done) : form.post('/clients', done);
+        if (editing) {
+            form.put(`/clients/${editing.id}`, done);
+        } else {
+            form.post('/clients', done);
+        }
     }
 
     return (
@@ -75,18 +79,18 @@ export default function ClientsIndex({
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-xl font-semibold">Clients</h1>
-                        <p className="text-xs text-muted-foreground">Manage client profiles and contact details.</p>
+                        <p className="text-muted-foreground text-xs">Manage client profiles and contact details.</p>
                     </div>
                     <Button onClick={openCreate}>
                         <Plus className="size-4" /> Add Client
                     </Button>
                 </div>
 
-                <div className="rounded-lg border bg-card p-3 shadow-sm">
+                <div className="bg-card rounded-lg border p-3 shadow-sm">
                     <div className="flex items-center justify-between gap-2">
                         <div className="flex min-w-0 items-center gap-2">
                             <div className="relative w-64 min-w-40 shrink">
-                                <Search className="absolute top-2 left-2.5 size-4 text-muted-foreground" />
+                                <Search className="text-muted-foreground absolute top-2 left-2.5 size-4" />
                                 <Input
                                     placeholder="Search..."
                                     value={search}
@@ -96,42 +100,55 @@ export default function ClientsIndex({
                                 />
                             </div>
 
-                            <Dropdown value={filters.type ?? ''} onChange={(v) => apply({ type: v })} placeholder="All Types" options={options.types.map((t) => ({ value: t, label: t }))} className="h-9 w-40" />
+                            <Dropdown
+                                value={filters.type ?? ''}
+                                onChange={(v) => apply({ type: v })}
+                                placeholder="All Types"
+                                options={options.types.map((t) => ({ value: t, label: t }))}
+                                className="h-9 w-40"
+                            />
 
-                            <Dropdown value={filters.status ?? ''} onChange={(v) => apply({ status: v })} placeholder="All Status" options={options.statuses.map((s) => ({ value: s, label: s }))} className="h-9 w-40" capitalize />
+                            <Dropdown
+                                value={filters.status ?? ''}
+                                onChange={(v) => apply({ status: v })}
+                                placeholder="All Status"
+                                options={options.statuses.map((s) => ({ value: s, label: s }))}
+                                className="h-9 w-40"
+                                capitalize
+                            />
                         </div>
 
                         <div className="flex shrink-0 items-center gap-2">
                             {hasFilters && (
-                                <Button variant="ghost" size="sm" className="h-9 text-muted-foreground" onClick={() => router.get('/clients')}>
+                                <Button variant="ghost" size="sm" className="text-muted-foreground h-9" onClick={() => router.get('/clients')}>
                                     <RefreshCcw className="size-4" /> Clear Filters
                                 </Button>
                             )}
-                            <span className="flex h-8 items-center gap-1.5 rounded-md border px-2 text-sm text-muted-foreground">
+                            <span className="text-muted-foreground flex h-8 items-center gap-1.5 rounded-md border px-2 text-sm">
                                 <Filter className="size-4" /> Filters
                             </span>
                         </div>
                     </div>
                 </div>
 
-                <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
+                <div className="bg-card overflow-hidden rounded-lg border shadow-sm">
                     <div className="w-full overflow-x-auto">
                         <table className="w-full caption-bottom text-sm">
                             <thead>
                                 <tr className="border-b bg-[#F0F0F1] dark:bg-neutral-800">
-                                    <th className="w-12 px-4 py-2.5 text-left font-semibold text-muted-foreground">#</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Client</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Phone</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Type</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Cases</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Status</th>
-                                    <th className="w-24 px-4 py-2.5 text-center font-semibold text-muted-foreground">Actions</th>
+                                    <th className="text-muted-foreground w-12 px-4 py-2.5 text-left font-semibold">#</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Client</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Phone</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Type</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Cases</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Status</th>
+                                    <th className="text-muted-foreground w-24 px-4 py-2.5 text-center font-semibold">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {clients.data.length === 0 && (
                                     <tr>
-                                        <td colSpan={7} className="py-12 text-center text-sm text-muted-foreground">
+                                        <td colSpan={7} className="text-muted-foreground py-12 text-center text-sm">
                                             No clients match these filters.
                                         </td>
                                     </tr>
@@ -140,7 +157,7 @@ export default function ClientsIndex({
                                     const active = c.active ?? true;
 
                                     return (
-                                        <tr key={c.id} className="border-b transition-colors last:border-0 hover:bg-muted/40">
+                                        <tr key={c.id} className="hover:bg-muted/40 border-b transition-colors last:border-0">
                                             <td className="px-4 py-2.5 font-medium tabular-nums">{(clients.from ?? 1) + i}</td>
                                             <td className="px-4 py-2.5">
                                                 <div className="flex items-center gap-3">
@@ -149,30 +166,36 @@ export default function ClientsIndex({
                                                         <Link href={`/clients/${c.id}`} className="font-medium hover:underline">
                                                             {c.name}
                                                         </Link>
-                                                        <div className="truncate text-sm text-muted-foreground">{c.email ?? c.company ?? '—'}</div>
+                                                        <div className="text-muted-foreground truncate text-sm">{c.email ?? c.company ?? '—'}</div>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="px-4 py-2.5 text-muted-foreground">{c.phone ?? '—'}</td>
-                                            <td className="px-4 py-2.5 text-muted-foreground">{c.type ?? '—'}</td>
-                                            <td className="px-4 py-2.5 tabular-nums text-muted-foreground">{c.matters_count ?? 0}</td>
+                                            <td className="text-muted-foreground px-4 py-2.5">{c.phone ?? '—'}</td>
+                                            <td className="text-muted-foreground px-4 py-2.5">{c.type ?? '—'}</td>
+                                            <td className="text-muted-foreground px-4 py-2.5 tabular-nums">{c.matters_count ?? 0}</td>
                                             <td className="px-4 py-2.5">
                                                 <RingPill value={active ? 'active' : 'inactive'} label={active ? 'Active' : 'Inactive'} />
                                             </td>
                                             <td className="px-4 py-2.5">
                                                 <div className="flex items-center justify-end gap-1">
-                                                    <Button variant="ghost" size="icon" className="size-8 text-muted-foreground" asChild title="View">
+                                                    <Button variant="ghost" size="icon" className="text-muted-foreground size-8" asChild title="View">
                                                         <Link href={`/clients/${c.id}`}>
                                                             <Eye className="size-4" />
                                                         </Link>
                                                     </Button>
-                                                    <Button variant="ghost" size="icon" className="size-8 text-muted-foreground" title="Edit" onClick={() => openEdit(c)}>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="text-muted-foreground size-8"
+                                                        title="Edit"
+                                                        onClick={() => openEdit(c)}
+                                                    >
                                                         <SquarePen className="size-4" />
                                                     </Button>
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
-                                                        className="size-8 text-muted-foreground"
+                                                        className="text-muted-foreground size-8"
                                                         title={active ? 'Archive client' : 'Reactivate client'}
                                                         onClick={() => router.patch(`/clients/${c.id}/toggle-status`, {}, { preserveScroll: true })}
                                                     >
@@ -181,10 +204,12 @@ export default function ClientsIndex({
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
-                                                        className="size-8 text-muted-foreground"
+                                                        className="text-muted-foreground size-8"
                                                         title="Delete"
                                                         onClick={() =>
-                                                            confirmAction({ title: `Delete ${c.name}?`, description: `Their cases go too.` }).then((ok) => ok && router.delete(`/clients/${c.id}`, { preserveScroll: true }))
+                                                            confirmAction({ title: `Delete ${c.name}?`, description: `Their cases go too.` }).then(
+                                                                (ok) => ok && router.delete(`/clients/${c.id}`, { preserveScroll: true }),
+                                                            )
                                                         }
                                                     >
                                                         <Trash2 className="size-4 text-rose-600" />

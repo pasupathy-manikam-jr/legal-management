@@ -1,6 +1,6 @@
+import { confirmAction } from '@/components/confirm-dialog';
 import { FormDialog, SelectField, TextField } from '@/components/form-dialog';
 import { PageToolbar } from '@/components/page-toolbar';
-import { confirmAction } from '@/components/confirm-dialog';
 import { StatCard } from '@/components/stat-card';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -82,7 +82,11 @@ export default function TimeEntriesIndex({
     function submit(ev: React.FormEvent) {
         ev.preventDefault();
         const done = { onSuccess: () => setOpen(false), preserveScroll: true };
-        editing ? form.put(`/time-entries/${editing.id}`, done) : form.post('/time-entries', done);
+        if (editing) {
+            form.put(`/time-entries/${editing.id}`, done);
+        } else {
+            form.post('/time-entries', done);
+        }
     }
 
     return (
@@ -105,7 +109,11 @@ export default function TimeEntriesIndex({
                         variant={filters.billable === 'unbilled' ? 'default' : 'outline'}
                         size="sm"
                         onClick={() =>
-                            router.get('/time-entries', { billable: filters.billable === 'unbilled' ? '' : 'unbilled' }, { preserveState: true, replace: true })
+                            router.get(
+                                '/time-entries',
+                                { billable: filters.billable === 'unbilled' ? '' : 'unbilled' },
+                                { preserveState: true, replace: true },
+                            )
                         }
                     >
                         Unbilled only
@@ -135,7 +143,7 @@ export default function TimeEntriesIndex({
                                         <Link href={`/matters/${e.matter_id}`} className="font-medium hover:underline">
                                             {e.matter?.reference}
                                         </Link>
-                                        <div className="text-xs text-muted-foreground">{e.matter?.client?.name}</div>
+                                        <div className="text-muted-foreground text-xs">{e.matter?.client?.name}</div>
                                     </TableCell>
                                     <TableCell className="max-w-sm">{e.description}</TableCell>
                                     <TableCell className="text-muted-foreground">{e.user?.name}</TableCell>
@@ -158,7 +166,11 @@ export default function TimeEntriesIndex({
                                             variant="ghost"
                                             size="icon"
                                             disabled={!!e.invoice_id}
-                                            onClick={() => confirmAction({ title: 'Delete this entry?' }).then((ok) => ok && router.delete(`/time-entries/${e.id}`, { preserveScroll: true }))}
+                                            onClick={() =>
+                                                confirmAction({ title: 'Delete this entry?' }).then(
+                                                    (ok) => ok && router.delete(`/time-entries/${e.id}`, { preserveScroll: true }),
+                                                )
+                                            }
                                         >
                                             <Trash2 className="size-4 text-rose-600" />
                                         </Button>
@@ -169,7 +181,14 @@ export default function TimeEntriesIndex({
                     </Table>
                 </Card>
 
-                <FormDialog open={open} onOpenChange={setOpen} title={editing ? 'Edit entry' : 'Log time'} onSubmit={submit} processing={form.processing} wide>
+                <FormDialog
+                    open={open}
+                    onOpenChange={setOpen}
+                    title={editing ? 'Edit entry' : 'Log time'}
+                    onSubmit={submit}
+                    processing={form.processing}
+                    wide
+                >
                     <SelectField
                         label="Case"
                         value={form.data.matter_id}
@@ -187,7 +206,13 @@ export default function TimeEntriesIndex({
                         placeholder="Select…"
                         error={form.errors.user_id}
                     />
-                    <TextField label="Date" type="date" value={form.data.worked_on} onChange={(v) => form.setData('worked_on', v)} error={form.errors.worked_on} />
+                    <TextField
+                        label="Date"
+                        type="date"
+                        value={form.data.worked_on}
+                        onChange={(v) => form.setData('worked_on', v)}
+                        error={form.errors.worked_on}
+                    />
                     <TextField
                         label="Minutes"
                         type="number"
@@ -195,7 +220,14 @@ export default function TimeEntriesIndex({
                         onChange={(v) => form.setData('minutes', v)}
                         error={form.errors.minutes}
                     />
-                    <TextField label="Rate / hour" type="number" step="0.01" value={form.data.rate} onChange={(v) => form.setData('rate', v)} error={form.errors.rate} />
+                    <TextField
+                        label="Rate / hour"
+                        type="number"
+                        step="0.01"
+                        value={form.data.rate}
+                        onChange={(v) => form.setData('rate', v)}
+                        error={form.errors.rate}
+                    />
                     <SelectField
                         label="Billable"
                         value={form.data.billable ? '1' : '0'}

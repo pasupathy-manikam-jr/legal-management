@@ -78,10 +78,10 @@ export default function CalendarPage({
             <div className="flex flex-1 flex-col gap-4 px-3 pt-4 pb-12 lg:px-8">
                 <div>
                     <h1 className="text-xl font-semibold">Calendar</h1>
-                    <p className="text-xs text-muted-foreground">Manage your calendar and events.</p>
+                    <p className="text-muted-foreground text-xs">Manage your calendar and events.</p>
                 </div>
 
-                <div className="rounded-lg border bg-card p-4 shadow-sm">
+                <div className="bg-card rounded-lg border p-4 shadow-sm">
                     <div className="flex flex-wrap items-center justify-between gap-3">
                         <div className="flex flex-wrap items-center gap-4">
                             <div className="flex items-center gap-2">
@@ -116,11 +116,11 @@ export default function CalendarPage({
 
                 <div className="grid grid-cols-1 gap-6 min-[1500px]:grid-cols-4">
                     <div className="min-[1500px]:col-span-3">
-                        <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
+                        <div className="bg-card overflow-hidden rounded-lg border shadow-sm">
                             {view !== 'day' && (
                                 <div className="grid grid-cols-7 border-b">
                                     {weekdays.map((w) => (
-                                        <div key={w} className="bg-muted/50 p-3 text-center font-medium text-muted-foreground">
+                                        <div key={w} className="bg-muted/50 text-muted-foreground p-3 text-center font-medium">
                                             {w}
                                         </div>
                                     ))}
@@ -168,7 +168,11 @@ export default function CalendarPage({
                                                                     {e.title}
                                                                 </span>
                                                             </div>
-                                                            {e.detail && <div className="mt-0.5 block truncate text-xs leading-tight opacity-75">{e.detail}</div>}
+                                                            {e.detail && (
+                                                                <div className="mt-0.5 block truncate text-xs leading-tight opacity-75">
+                                                                    {e.detail}
+                                                                </div>
+                                                            )}
                                                         </Link>
                                                     );
                                                 })}
@@ -181,16 +185,16 @@ export default function CalendarPage({
                     </div>
 
                     <div className="space-y-6">
-                        <div className="rounded-lg border bg-card shadow-sm">
+                        <div className="bg-card rounded-lg border shadow-sm">
                             <div className="p-6">
                                 <h3 className="text-lg leading-none font-semibold tracking-tight">Upcoming Events</h3>
                             </div>
                             <div className="space-y-3 p-6 pt-0">
-                                {upcoming.length === 0 && <p className="text-sm text-muted-foreground">No upcoming events</p>}
+                                {upcoming.length === 0 && <p className="text-muted-foreground text-sm">No upcoming events</p>}
                                 {upcoming.map((h) => (
                                     <Link key={h.id} href={h.matter ? `/matters/${h.matter_id}` : '/hearings'} className="block hover:underline">
                                         <p className="text-sm font-medium">{h.title ?? h.type ?? 'Hearing'}</p>
-                                        <p className="text-xs text-muted-foreground">
+                                        <p className="text-muted-foreground text-xs">
                                             {dateTime(h.scheduled_at)}
                                             {h.court ? ` · ${h.court.name}` : ''}
                                         </p>
@@ -199,7 +203,7 @@ export default function CalendarPage({
                             </div>
                         </div>
 
-                        <div className="rounded-lg border bg-card shadow-sm">
+                        <div className="bg-card rounded-lg border shadow-sm">
                             <div className="p-6">
                                 <h3 className="text-lg leading-none font-semibold tracking-tight">This Month</h3>
                             </div>

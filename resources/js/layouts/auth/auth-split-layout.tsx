@@ -37,7 +37,7 @@ export default function AuthSplitLayout({ children, title, description }: AuthLa
                     </Link>
                     <div className="mb-6 flex flex-col gap-1.5">
                         <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
-                        {description && <p className="text-sm text-muted-foreground">{description}</p>}
+                        {description && <p className="text-muted-foreground text-sm">{description}</p>}
                     </div>
                     {children}
                 </div>

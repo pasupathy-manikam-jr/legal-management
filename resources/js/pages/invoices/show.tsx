@@ -1,6 +1,6 @@
+import { confirmAction } from '@/components/confirm-dialog';
 import { FormDialog, SelectField, TextField } from '@/components/form-dialog';
 import { StatCard } from '@/components/stat-card';
-import { confirmAction } from '@/components/confirm-dialog';
 import { StatusBadge } from '@/components/status-badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -62,7 +62,7 @@ export default function InvoiceShow({
                             <h1 className="font-mono text-xl font-semibold">{invoice.number}</h1>
                             <StatusBadge value={invoice.status} />
                         </div>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-muted-foreground text-sm">
                             {invoice.client?.name}
                             {invoice.matter && (
                                 <>
@@ -90,7 +90,11 @@ export default function InvoiceShow({
                 <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                     <StatCard label="Issued" value={date(invoice.issued_on)} />
                     <StatCard label="Due" value={date(invoice.due_on)} />
-                    <StatCard label="Total" value={money(totals.total_cents)} hint={`${money(invoice.subtotal_cents)} + ${money(invoice.tax_cents)} tax`} />
+                    <StatCard
+                        label="Total"
+                        value={money(totals.total_cents)}
+                        hint={`${money(invoice.subtotal_cents)} + ${money(invoice.tax_cents)} tax`}
+                    />
                     <StatCard label="Balance" value={money(totals.balance_cents)} hint={`${money(invoice.paid_cents)} paid`} />
                 </div>
 
@@ -145,10 +149,10 @@ export default function InvoiceShow({
                     </div>
 
                     {(payTo || invoiceFooter) && (
-                        <div className="mt-4 border-t pt-3 text-xs text-muted-foreground">
+                        <div className="text-muted-foreground mt-4 border-t pt-3 text-xs">
                             {payTo && (
                                 <>
-                                    <p className="font-medium text-foreground">Payment details</p>
+                                    <p className="text-foreground font-medium">Payment details</p>
                                     <p className="mt-1 whitespace-pre-line">{payTo}</p>
                                 </>
                             )}
@@ -174,7 +178,7 @@ export default function InvoiceShow({
                             {invoice.payments?.map((p) => (
                                 <TableRow key={p.id}>
                                     <TableCell>{date(p.paid_on)}</TableCell>
-                                    <TableCell className="capitalize text-muted-foreground">{p.method}</TableCell>
+                                    <TableCell className="text-muted-foreground capitalize">{p.method}</TableCell>
                                     <TableCell className="text-muted-foreground">{p.reference ?? '—'}</TableCell>
                                     <TableCell className="text-right tabular-nums">{money(p.amount_cents)}</TableCell>
                                     <TableCell className="text-right">
@@ -182,7 +186,9 @@ export default function InvoiceShow({
                                             variant="ghost"
                                             size="icon"
                                             onClick={() =>
-                                                confirmAction({ title: 'Remove this payment?', confirmLabel: 'Remove' }).then((ok) => ok && router.delete(`/invoices/${invoice.id}/payments/${p.id}`, { preserveScroll: true }))
+                                                confirmAction({ title: 'Remove this payment?', confirmLabel: 'Remove' }).then(
+                                                    (ok) => ok && router.delete(`/invoices/${invoice.id}/payments/${p.id}`, { preserveScroll: true }),
+                                                )
                                             }
                                         >
                                             <Trash2 className="size-4 text-rose-600" />
@@ -205,8 +211,21 @@ export default function InvoiceShow({
                     pay.post(`/invoices/${invoice.id}/payments`, { onSuccess: () => setPayOpen(false), preserveScroll: true });
                 }}
             >
-                <TextField label="Paid on" type="date" value={pay.data.paid_on} onChange={(v) => pay.setData('paid_on', v)} error={pay.errors.paid_on} />
-                <TextField label="Amount" type="number" step="0.01" value={pay.data.amount} onChange={(v) => pay.setData('amount', v)} error={pay.errors.amount} />
+                <TextField
+                    label="Paid on"
+                    type="date"
+                    value={pay.data.paid_on}
+                    onChange={(v) => pay.setData('paid_on', v)}
+                    error={pay.errors.paid_on}
+                />
+                <TextField
+                    label="Amount"
+                    type="number"
+                    step="0.01"
+                    value={pay.data.amount}
+                    onChange={(v) => pay.setData('amount', v)}
+                    error={pay.errors.amount}
+                />
                 <SelectField
                     label="Method"
                     value={pay.data.method}
@@ -242,7 +261,13 @@ export default function InvoiceShow({
                         { value: 'void', label: 'Cancelled (releases its time)' },
                     ]}
                 />
-                <TextField label="Due on" type="date" value={edit.data.due_on} onChange={(v) => edit.setData('due_on', v)} error={edit.errors.due_on} />
+                <TextField
+                    label="Due on"
+                    type="date"
+                    value={edit.data.due_on}
+                    onChange={(v) => edit.setData('due_on', v)}
+                    error={edit.errors.due_on}
+                />
             </FormDialog>
         </AppLayout>
     );

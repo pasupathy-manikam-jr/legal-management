@@ -1,6 +1,6 @@
+import { confirmAction } from '@/components/confirm-dialog';
 import { DataTableFooter } from '@/components/data-table-footer';
 import { FormDialog, SelectField, TextField, TextareaField } from '@/components/form-dialog';
-import { confirmAction } from '@/components/confirm-dialog';
 import { CountTabs } from '@/components/page-toolbar';
 import { RingPill } from '@/components/tone-pill';
 import { Button } from '@/components/ui/button';
@@ -105,7 +105,11 @@ export default function RegulatoryBodies({
     function submit(e: React.FormEvent) {
         e.preventDefault();
         const done = { onSuccess: () => setOpen(false), preserveScroll: true };
-        editing ? form.put(`/compliance/regulatory-bodies/${editing.id}`, done) : form.post('/compliance/regulatory-bodies', done);
+        if (editing) {
+            form.put(`/compliance/regulatory-bodies/${editing.id}`, done);
+        } else {
+            form.post('/compliance/regulatory-bodies', done);
+        }
     }
 
     return (
@@ -116,17 +120,17 @@ export default function RegulatoryBodies({
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-xl font-semibold">Regulatory Bodies</h1>
-                        <p className="text-xs text-muted-foreground">Manage regulatory authorities and their contact information.</p>
+                        <p className="text-muted-foreground text-xs">Manage regulatory authorities and their contact information.</p>
                     </div>
                     <Button onClick={openCreate}>
                         <Plus className="size-4" /> Add Regulatory Body
                     </Button>
                 </div>
 
-                <div className="rounded-lg border bg-card shadow-sm">
+                <div className="bg-card rounded-lg border shadow-sm">
                     <div className="flex min-w-0 items-center gap-2 p-3">
                         <div className="relative w-64 min-w-40 shrink">
-                            <Search className="absolute top-2 left-2.5 size-4 text-muted-foreground" />
+                            <Search className="text-muted-foreground absolute top-2 left-2.5 size-4" />
                             <Input
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
@@ -148,34 +152,34 @@ export default function RegulatoryBodies({
                     />
                 </div>
 
-                <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
+                <div className="bg-card overflow-hidden rounded-lg border shadow-sm">
                     <div className="w-full overflow-x-auto">
                         <table className="w-full caption-bottom text-sm">
                             <thead>
                                 <tr className="border-b bg-[#F0F0F1] dark:bg-neutral-800">
-                                    <th className="w-12 px-4 py-2.5 text-left font-semibold text-muted-foreground">#</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Name</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Jurisdiction</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Contact Phone</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Website</th>
-                                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground">Status</th>
-                                    <th className="w-24 px-4 py-2.5 text-center font-semibold text-muted-foreground">Actions</th>
+                                    <th className="text-muted-foreground w-12 px-4 py-2.5 text-left font-semibold">#</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Name</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Jurisdiction</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Contact Phone</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Website</th>
+                                    <th className="text-muted-foreground px-4 py-2.5 text-left font-semibold">Status</th>
+                                    <th className="text-muted-foreground w-24 px-4 py-2.5 text-center font-semibold">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y">
                                 {bodies.data.length === 0 && (
                                     <tr>
-                                        <td colSpan={7} className="py-12 text-center text-sm text-muted-foreground">
+                                        <td colSpan={7} className="text-muted-foreground py-12 text-center text-sm">
                                             No regulatory bodies recorded.
                                         </td>
                                     </tr>
                                 )}
                                 {bodies.data.map((b, i) => (
-                                    <tr key={b.id} className="transition-colors hover:bg-muted/40">
+                                    <tr key={b.id} className="hover:bg-muted/40 transition-colors">
                                         <td className="px-4 py-2.5 font-medium tabular-nums">{(bodies.from ?? 1) + i}</td>
                                         <td className="px-4 py-2.5">
                                             <div className="font-medium">{b.name}</div>
-                                            <div className="text-sm text-muted-foreground">{b.contact_email ?? '—'}</div>
+                                            <div className="text-muted-foreground text-sm">{b.contact_email ?? '—'}</div>
                                         </td>
                                         <td className="px-4 py-2.5">
                                             {b.jurisdiction ? (
@@ -189,17 +193,22 @@ export default function RegulatoryBodies({
                                                     <span className="min-w-0 truncate">{b.jurisdiction}</span>
                                                 </span>
                                             ) : (
-                                                <span className="text-xs text-muted-foreground">—</span>
+                                                <span className="text-muted-foreground text-xs">—</span>
                                             )}
                                         </td>
                                         <td className="px-4 py-2.5">{b.phone ?? '—'}</td>
                                         <td className="px-4 py-2.5">
                                             {b.website ? (
-                                                <a href={b.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                                                <a
+                                                    href={b.website}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-blue-600 hover:underline"
+                                                >
                                                     {b.website}
                                                 </a>
                                             ) : (
-                                                <span className="text-xs text-muted-foreground">—</span>
+                                                <span className="text-muted-foreground text-xs">—</span>
                                             )}
                                         </td>
                                         <td className="px-4 py-2.5">
@@ -207,27 +216,47 @@ export default function RegulatoryBodies({
                                         </td>
                                         <td className="px-4 py-2.5 text-right">
                                             <div className="flex items-center justify-end gap-1">
-                                                <Button variant="ghost" size="icon" className="size-8 text-muted-foreground" title="View" onClick={() => setViewing(b)}>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="text-muted-foreground size-8"
+                                                    title="View"
+                                                    onClick={() => setViewing(b)}
+                                                >
                                                     <Eye className="size-4" />
                                                 </Button>
-                                                <Button variant="ghost" size="icon" className="size-8 text-muted-foreground" title="Edit" onClick={() => openEdit(b)}>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="text-muted-foreground size-8"
+                                                    title="Edit"
+                                                    onClick={() => openEdit(b)}
+                                                >
                                                     <SquarePen className="size-4" />
                                                 </Button>
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    className="size-8 text-muted-foreground"
+                                                    className="text-muted-foreground size-8"
                                                     title={b.active ? 'Retire' : 'Reactivate'}
-                                                    onClick={() => router.patch(`/compliance/regulatory-bodies/${b.id}/toggle`, {}, { preserveScroll: true })}
+                                                    onClick={() =>
+                                                        router.patch(`/compliance/regulatory-bodies/${b.id}/toggle`, {}, { preserveScroll: true })
+                                                    }
                                                 >
                                                     {b.active ? <Lock className="size-4" /> : <LockOpen className="size-4" />}
                                                 </Button>
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    className="size-8 text-muted-foreground"
+                                                    className="text-muted-foreground size-8"
                                                     title="Delete"
-                                                    onClick={() => confirmAction({ title: `Delete ${b.name}?` }).then((ok) => ok && router.delete(`/compliance/regulatory-bodies/${b.id}`, { preserveScroll: true }))}
+                                                    onClick={() =>
+                                                        confirmAction({ title: `Delete ${b.name}?` }).then(
+                                                            (ok) =>
+                                                                ok &&
+                                                                router.delete(`/compliance/regulatory-bodies/${b.id}`, { preserveScroll: true }),
+                                                        )
+                                                    }
                                                 >
                                                     <Trash2 className="size-4 text-rose-600" />
                                                 </Button>
@@ -258,8 +287,19 @@ export default function RegulatoryBodies({
                     submitLabel={editing ? 'Save' : 'Add Body'}
                     wide
                 >
-                    <TextField label="Name" value={form.data.name} onChange={(v) => form.setData('name', v)} error={form.errors.name} className="sm:col-span-2" />
-                    <TextField label="Short name" value={form.data.short_name} onChange={(v) => form.setData('short_name', v)} error={form.errors.short_name} />
+                    <TextField
+                        label="Name"
+                        value={form.data.name}
+                        onChange={(v) => form.setData('name', v)}
+                        error={form.errors.name}
+                        className="sm:col-span-2"
+                    />
+                    <TextField
+                        label="Short name"
+                        value={form.data.short_name}
+                        onChange={(v) => form.setData('short_name', v)}
+                        error={form.errors.short_name}
+                    />
                     <SelectField
                         label="Type"
                         value={form.data.type}
@@ -289,7 +329,13 @@ export default function RegulatoryBodies({
                         onChange={(v) => form.setData('contact_email', v)}
                         error={form.errors.contact_email}
                     />
-                    <TextField label="Website" type="url" value={form.data.website} onChange={(v) => form.setData('website', v)} error={form.errors.website} />
+                    <TextField
+                        label="Website"
+                        type="url"
+                        value={form.data.website}
+                        onChange={(v) => form.setData('website', v)}
+                        error={form.errors.website}
+                    />
                     <SelectField
                         label="Status"
                         value={form.data.active}
@@ -332,7 +378,7 @@ export default function RegulatoryBodies({
                                 </dl>
                                 {viewing.notes && (
                                     <div>
-                                        <p className="mb-1 text-xs text-muted-foreground">Notes</p>
+                                        <p className="text-muted-foreground mb-1 text-xs">Notes</p>
                                         <p className="whitespace-pre-line">{viewing.notes}</p>
                                     </div>
                                 )}
@@ -348,7 +394,7 @@ export default function RegulatoryBodies({
 function Detail({ label, value }: { label: string; value: string }) {
     return (
         <div>
-            <dt className="mb-1 text-xs text-muted-foreground">{label}</dt>
+            <dt className="text-muted-foreground mb-1 text-xs">{label}</dt>
             <dd className="truncate capitalize">{value}</dd>
         </div>
     );

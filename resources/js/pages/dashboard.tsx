@@ -4,10 +4,10 @@ import { Dropdown } from '@/components/dropdown';
 import { HeroBanner, TintedStat } from '@/components/hero-banner';
 import { EmptyRow, ListCard, ListRow } from '@/components/list-card';
 import AppLayout from '@/layouts/app-layout';
-import { date, hours, money } from '@/lib/format';
+import { hours, money } from '@/lib/format';
 import type { BreadcrumbItem } from '@/types';
 import { Head, Link, router } from '@inertiajs/react';
-import { Banknote, Briefcase, CalendarDays, Clock, ListTodo, RefreshCw, Target, Users, Wallet } from 'lucide-react';
+import { Banknote, Briefcase, CalendarDays, Clock, RefreshCw, Target, Users, Wallet } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Dashboard', href: '/dashboard' }];
 
@@ -75,17 +75,17 @@ export default function Dashboard({ firm, stats, today, revenue, upcomingHearing
                 <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
                         <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
-                        <p className="text-sm text-muted-foreground">Welcome to your firm dashboard.</p>
+                        <p className="text-muted-foreground text-sm">Welcome to your firm dashboard.</p>
                     </div>
                     <button
                         onClick={() => router.reload()}
-                        className="flex items-center gap-2 rounded-lg border bg-card px-4 py-2 text-sm font-medium transition-colors hover:bg-accent"
+                        className="bg-card hover:bg-accent flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-colors"
                     >
                         <RefreshCw className="size-4" /> Refresh
                     </button>
                 </div>
 
-                <div className="flex flex-col gap-5 rounded-2xl border bg-card p-5">
+                <div className="bg-card flex flex-col gap-5 rounded-2xl border p-5">
                     <HeroBanner
                         greeting={firm.greeting}
                         firmName={firm.name ?? 'Your firm'}
@@ -131,7 +131,11 @@ export default function Dashboard({ firm, stats, today, revenue, upcomingHearing
                     </div>
 
                     <div className="grid gap-4 lg:grid-cols-2">
-                        <ListCard title="Today's Timesheets" subtitle={`${hours(today.timesheetMinutes)} logged today`} viewAll="/billing/time-entries">
+                        <ListCard
+                            title="Today's Timesheets"
+                            subtitle={`${hours(today.timesheetMinutes)} logged today`}
+                            viewAll="/billing/time-entries"
+                        >
                             {today.timesheets.length === 0 && <EmptyRow>No time logged today.</EmptyRow>}
                             {today.timesheets.map((e) => (
                                 <ListRow
@@ -142,7 +146,9 @@ export default function Dashboard({ firm, stats, today, revenue, upcomingHearing
                                     meta={e.meta}
                                     value={e.minutes ? `${(e.minutes / 60).toFixed(2)} hrs` : undefined}
                                     pill={e.billable ? (e.amount_cents ? money(e.amount_cents) : undefined) : 'Non-billable'}
-                                    pillTone={e.billable ? 'border-emerald-300 text-emerald-700 dark:border-emerald-800 dark:text-emerald-300' : undefined}
+                                    pillTone={
+                                        e.billable ? 'border-emerald-300 text-emerald-700 dark:border-emerald-800 dark:text-emerald-300' : undefined
+                                    }
                                 />
                             ))}
                         </ListCard>
@@ -164,17 +170,22 @@ export default function Dashboard({ firm, stats, today, revenue, upcomingHearing
                         </ListCard>
                     </div>
 
-                    <section className="overflow-hidden rounded-2xl border bg-card">
+                    <section className="bg-card overflow-hidden rounded-2xl border">
                         <header className="flex flex-wrap items-center justify-between gap-3 border-b px-5 py-4">
                             <div>
                                 <h2 className="font-semibold">Monthly Revenue</h2>
-                                <p className="mt-0.5 text-sm text-muted-foreground">Payments received per month — {revenue.year}</p>
+                                <p className="text-muted-foreground mt-0.5 text-sm">Payments received per month — {revenue.year}</p>
                             </div>
                             <div className="flex items-center gap-2">
-                                <span className="rounded-lg border border-emerald-300 bg-emerald-50 px-3 py-1.5 font-mono text-sm font-semibold tabular-nums text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+                                <span className="rounded-lg border border-emerald-300 bg-emerald-50 px-3 py-1.5 font-mono text-sm font-semibold text-emerald-700 tabular-nums dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
                                     {money(revenue.totalCents)}
                                 </span>
-                                <Dropdown value={revenue.year} onChange={(v) => router.get('/dashboard', { year: v }, { preserveScroll: true })} options={(revenue.years.length ? revenue.years : [revenue.year]).map((y) => ({ value: y, label: y }))} className="h-9 w-auto" />
+                                <Dropdown
+                                    value={revenue.year}
+                                    onChange={(v) => router.get('/dashboard', { year: v }, { preserveScroll: true })}
+                                    options={(revenue.years.length ? revenue.years : [revenue.year]).map((y) => ({ value: y, label: y }))}
+                                    className="h-9 w-auto"
+                                />
                             </div>
                         </header>
                         <div className="px-3 py-4">
@@ -206,11 +217,11 @@ export default function Dashboard({ firm, stats, today, revenue, upcomingHearing
                             ))}
                         </ListCard>
 
-                        <section className="overflow-hidden rounded-2xl border bg-card lg:col-span-2">
+                        <section className="bg-card overflow-hidden rounded-2xl border lg:col-span-2">
                             <header className="flex items-start justify-between gap-3 border-b px-5 py-4">
                                 <div>
                                     <h2 className="font-semibold">Collections</h2>
-                                    <p className="mt-0.5 text-sm text-muted-foreground">Billed against received</p>
+                                    <p className="text-muted-foreground mt-0.5 text-sm">Billed against received</p>
                                 </div>
                                 <span className="rounded-lg border border-emerald-300 px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:border-emerald-800 dark:text-emerald-300">
                                     {collections.rate}%
@@ -228,7 +239,7 @@ export default function Dashboard({ firm, stats, today, revenue, upcomingHearing
                                             <span className="text-muted-foreground">{row.label}</span>
                                             <span className="font-mono font-medium tabular-nums">{money(row.value)}</span>
                                         </div>
-                                        <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+                                        <div className="bg-muted h-1.5 overflow-hidden rounded-full">
                                             <div
                                                 className={`h-full ${row.color}`}
                                                 style={{ width: `${Math.min((row.value / Math.max(collections.invoicedCents, 1)) * 100, 100)}%` }}
@@ -239,7 +250,10 @@ export default function Dashboard({ firm, stats, today, revenue, upcomingHearing
 
                                 <div className="mt-2 flex items-center justify-between border-t pt-3 text-sm">
                                     <span className="text-muted-foreground">Ready to bill</span>
-                                    <Link href="/time-entries?billable=unbilled" className="font-mono font-semibold tabular-nums text-primary hover:underline">
+                                    <Link
+                                        href="/time-entries?billable=unbilled"
+                                        className="text-primary font-mono font-semibold tabular-nums hover:underline"
+                                    >
                                         {money(collections.unbilledTimeCents + collections.unbilledExpenseCents)}
                                     </Link>
                                 </div>
@@ -263,15 +277,13 @@ export default function Dashboard({ firm, stats, today, revenue, upcomingHearing
                             ))}
                         </ListCard>
 
-                        <section className="overflow-hidden rounded-2xl border bg-card lg:col-span-2">
+                        <section className="bg-card overflow-hidden rounded-2xl border lg:col-span-2">
                             <header className="border-b px-5 py-4">
                                 <h2 className="font-semibold">Tasks by Priority</h2>
-                                <p className="mt-0.5 text-sm text-muted-foreground">Task breakdown</p>
+                                <p className="text-muted-foreground mt-0.5 text-sm">Task breakdown</p>
                             </header>
                             <div className="flex flex-col items-center gap-5 p-5">
-                                <DonutChart
-                                    slices={tasksByPriority.map((p) => ({ label: p.label, value: p.total, color: PRIORITY_COLOR[p.key] }))}
-                                />
+                                <DonutChart slices={tasksByPriority.map((p) => ({ label: p.label, value: p.total, color: PRIORITY_COLOR[p.key] }))} />
                                 <div className="w-full">
                                     {tasksByPriority.map((p) => (
                                         <div key={p.key} className="mb-3 last:mb-0">
@@ -282,10 +294,10 @@ export default function Dashboard({ firm, stats, today, revenue, upcomingHearing
                                                 </span>
                                                 <span className="flex items-center gap-3">
                                                     <span className="font-mono font-semibold tabular-nums">{p.total}</span>
-                                                    <span className="w-9 text-right text-xs text-muted-foreground tabular-nums">{p.percent}%</span>
+                                                    <span className="text-muted-foreground w-9 text-right text-xs tabular-nums">{p.percent}%</span>
                                                 </span>
                                             </div>
-                                            <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+                                            <div className="bg-muted h-1.5 overflow-hidden rounded-full">
                                                 <div className="h-full" style={{ width: `${p.percent}%`, background: PRIORITY_COLOR[p.key] }} />
                                             </div>
                                         </div>

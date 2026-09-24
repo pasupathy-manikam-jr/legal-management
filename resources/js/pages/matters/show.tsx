@@ -1,6 +1,6 @@
+import { confirmAction } from '@/components/confirm-dialog';
 import { FormDialog, SelectField, TextField, TextareaField } from '@/components/form-dialog';
 import { StatCard } from '@/components/stat-card';
-import { confirmAction } from '@/components/confirm-dialog';
 import { StatusBadge } from '@/components/status-badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -72,12 +72,12 @@ export default function MatterShow({ matter, totals, options }: Props) {
                 <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
                         <div className="flex items-center gap-2">
-                            <span className="font-mono text-xs text-muted-foreground">{matter.reference}</span>
+                            <span className="text-muted-foreground font-mono text-xs">{matter.reference}</span>
                             <StatusBadge value={matter.status} />
                             <StatusBadge value={matter.priority} />
                         </div>
                         <h1 className="mt-1 text-xl font-semibold">{matter.title}</h1>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-muted-foreground text-sm">
                             {matter.client?.name}
                             {matter.court && ` · ${matter.court.name}`}
                             {matter.judge && ` · ${matter.judge}`}
@@ -89,7 +89,11 @@ export default function MatterShow({ matter, totals, options }: Props) {
                         </Button>
                         <Button
                             variant="outline"
-                            onClick={() => confirmAction({ title: 'Delete this case and everything on it?' }).then((ok) => ok && router.delete(`/matters/${matter.id}`))}
+                            onClick={() =>
+                                confirmAction({ title: 'Delete this case and everything on it?' }).then(
+                                    (ok) => ok && router.delete(`/matters/${matter.id}`),
+                                )
+                            }
                         >
                             <Trash2 className="size-4 text-rose-600" />
                         </Button>
@@ -97,7 +101,11 @@ export default function MatterShow({ matter, totals, options }: Props) {
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                    <StatCard label="Opened" value={date(matter.opened_on)} hint={matter.expected_completion ? `target ${date(matter.expected_completion)}` : undefined} />
+                    <StatCard
+                        label="Opened"
+                        value={date(matter.opened_on)}
+                        hint={matter.expected_completion ? `target ${date(matter.expected_completion)}` : undefined}
+                    />
                     <StatCard label="Time logged" value={hours(totals.minutes)} />
                     <StatCard label="Billable" value={money(totals.billableCents)} />
                     <StatCard label="Unbilled" value={money(totals.unbilledCents)} hint="ready to invoice" />
@@ -106,19 +114,19 @@ export default function MatterShow({ matter, totals, options }: Props) {
                 {matter.description && (
                     <Card className="p-4">
                         <h2 className="mb-1 text-sm font-semibold">Description</h2>
-                        <p className="text-sm whitespace-pre-line text-muted-foreground">{matter.description}</p>
+                        <p className="text-muted-foreground text-sm whitespace-pre-line">{matter.description}</p>
                     </Card>
                 )}
 
-                <div className="flex flex-wrap gap-1 rounded-lg bg-muted p-1">
+                <div className="bg-muted flex flex-wrap gap-1 rounded-lg p-1">
                     {tabs.map((t) => (
                         <button
                             key={t.id}
                             onClick={() => setTab(t.id)}
                             className={
                                 tab === t.id
-                                    ? 'rounded-md bg-background px-3 py-1.5 text-xs font-medium shadow-sm'
-                                    : 'rounded-md px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground'
+                                    ? 'bg-background rounded-md px-3 py-1.5 text-xs font-medium shadow-sm'
+                                    : 'text-muted-foreground hover:text-foreground rounded-md px-3 py-1.5 text-xs font-medium'
                             }
                         >
                             {t.label}
@@ -136,16 +144,18 @@ export default function MatterShow({ matter, totals, options }: Props) {
                                     <Plus className="size-4" /> Add entry
                                 </Button>
                             </div>
-                            {(matter.events?.length ?? 0) === 0 && <p className="py-6 text-center text-sm text-muted-foreground">Nothing recorded yet.</p>}
+                            {(matter.events?.length ?? 0) === 0 && (
+                                <p className="text-muted-foreground py-6 text-center text-sm">Nothing recorded yet.</p>
+                            )}
                             <ol className="flex flex-col gap-3 border-l pl-4">
                                 {matter.events?.map((e) => (
                                     <li key={e.id} className="relative">
-                                        <span className="absolute -left-[1.42rem] top-1.5 size-2 rounded-full bg-primary" />
+                                        <span className="bg-primary absolute top-1.5 -left-[1.42rem] size-2 rounded-full" />
                                         <div className="flex items-start justify-between gap-2">
                                             <div>
                                                 <div className="text-sm font-medium">{e.title}</div>
-                                                {e.body && <p className="mt-0.5 text-sm whitespace-pre-line text-muted-foreground">{e.body}</p>}
-                                                <div className="mt-0.5 text-xs text-muted-foreground">
+                                                {e.body && <p className="text-muted-foreground mt-0.5 text-sm whitespace-pre-line">{e.body}</p>}
+                                                <div className="text-muted-foreground mt-0.5 text-xs">
                                                     {dateTime(e.occurred_at)} · {e.kind} · {e.user?.name ?? 'system'}
                                                 </div>
                                             </div>
@@ -181,7 +191,7 @@ export default function MatterShow({ matter, totals, options }: Props) {
                                         <TableCell className="whitespace-nowrap">{dateTime(h.scheduled_at)}</TableCell>
                                         <TableCell className="text-muted-foreground">{h.court?.name ?? '—'}</TableCell>
                                         <TableCell className="text-muted-foreground">{h.type ?? '—'}</TableCell>
-                                        <TableCell className="max-w-xs truncate text-muted-foreground">{h.outcome ?? '—'}</TableCell>
+                                        <TableCell className="text-muted-foreground max-w-xs truncate">{h.outcome ?? '—'}</TableCell>
                                         <TableCell>
                                             <StatusBadge value={h.status} />
                                         </TableCell>
@@ -248,11 +258,11 @@ export default function MatterShow({ matter, totals, options }: Props) {
                                     {matter.documents?.map((d) => (
                                         <TableRow key={d.id}>
                                             <TableCell className="flex items-center gap-2 font-medium">
-                                                <FileText className="size-4 text-muted-foreground" />
+                                                <FileText className="text-muted-foreground size-4" />
                                                 {d.title}
                                             </TableCell>
-                                            <TableCell className="capitalize text-muted-foreground">{d.confidentiality}</TableCell>
-                                            <TableCell className="tabular-nums text-muted-foreground">{(d.size / 1024).toFixed(0)} KB</TableCell>
+                                            <TableCell className="text-muted-foreground capitalize">{d.confidentiality}</TableCell>
+                                            <TableCell className="text-muted-foreground tabular-nums">{(d.size / 1024).toFixed(0)} KB</TableCell>
                                             <TableCell className="text-muted-foreground">
                                                 {date(d.created_at)} · {d.uploader?.name ?? '—'}
                                             </TableCell>
@@ -265,7 +275,11 @@ export default function MatterShow({ matter, totals, options }: Props) {
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    onClick={() => confirmAction({ title: 'Delete this document?' }).then((ok) => ok && router.delete(`/documents/${d.id}`, { preserveScroll: true }))}
+                                                    onClick={() =>
+                                                        confirmAction({ title: 'Delete this document?' }).then(
+                                                            (ok) => ok && router.delete(`/documents/${d.id}`, { preserveScroll: true }),
+                                                        )
+                                                    }
                                                 >
                                                     <Trash2 className="size-4 text-rose-600" />
                                                 </Button>
@@ -300,7 +314,7 @@ export default function MatterShow({ matter, totals, options }: Props) {
                                         <TableCell className="text-right tabular-nums">
                                             {e.billable ? money(Math.round((e.minutes * e.rate_cents) / 60)) : '—'}
                                         </TableCell>
-                                        <TableCell className="text-xs text-muted-foreground">{e.invoice_id ? 'invoiced' : 'open'}</TableCell>
+                                        <TableCell className="text-muted-foreground text-xs">{e.invoice_id ? 'invoiced' : 'open'}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
@@ -328,7 +342,7 @@ export default function MatterShow({ matter, totals, options }: Props) {
                                     {matter.team?.map((u) => (
                                         <TableRow key={u.id}>
                                             <TableCell className="font-medium">{u.name}</TableCell>
-                                            <TableCell className="capitalize text-muted-foreground">{u.pivot.role}</TableCell>
+                                            <TableCell className="text-muted-foreground capitalize">{u.pivot.role}</TableCell>
                                             <TableCell className="text-right">
                                                 <Button
                                                     variant="ghost"
@@ -358,7 +372,13 @@ export default function MatterShow({ matter, totals, options }: Props) {
                     edit.put(`/matters/${matter.id}`, { onSuccess: () => setEditOpen(false), preserveScroll: true });
                 }}
             >
-                <TextField label="Title" value={edit.data.title} onChange={(v) => edit.setData('title', v)} error={edit.errors.title} className="sm:col-span-2" />
+                <TextField
+                    label="Title"
+                    value={edit.data.title}
+                    onChange={(v) => edit.setData('title', v)}
+                    error={edit.errors.title}
+                    className="sm:col-span-2"
+                />
                 <SelectField
                     label="Client"
                     value={edit.data.client_id}
@@ -393,7 +413,13 @@ export default function MatterShow({ matter, totals, options }: Props) {
                     onChange={(v) => edit.setData('priority', v)}
                     options={options.priorities.map((p) => ({ value: p, label: p }))}
                 />
-                <TextField label="Opened on" type="date" value={edit.data.opened_on} onChange={(v) => edit.setData('opened_on', v)} error={edit.errors.opened_on} />
+                <TextField
+                    label="Opened on"
+                    type="date"
+                    value={edit.data.opened_on}
+                    onChange={(v) => edit.setData('opened_on', v)}
+                    error={edit.errors.opened_on}
+                />
                 <TextField
                     label="Expected completion"
                     type="date"
@@ -410,7 +436,12 @@ export default function MatterShow({ matter, totals, options }: Props) {
                     error={edit.errors.hourly_rate}
                 />
                 <TextField label="Opposing party" value={edit.data.opposing_party} onChange={(v) => edit.setData('opposing_party', v)} />
-                <TextareaField label="Description" value={edit.data.description} onChange={(v) => edit.setData('description', v)} className="sm:col-span-2" />
+                <TextareaField
+                    label="Description"
+                    value={edit.data.description}
+                    onChange={(v) => edit.setData('description', v)}
+                    className="sm:col-span-2"
+                />
             </FormDialog>
 
             <FormDialog
@@ -483,7 +514,7 @@ export default function MatterShow({ matter, totals, options }: Props) {
                     <Label className="text-xs">File</Label>
                     <Input type="file" onChange={(e) => doc.setData('file', e.target.files?.[0] ?? null)} />
                     {doc.errors.file && <p className="text-xs text-rose-600">{doc.errors.file}</p>}
-                    <p className="text-xs text-muted-foreground">PDF, Office, image or text. Max 20 MB.</p>
+                    <p className="text-muted-foreground text-xs">PDF, Office, image or text. Max 20 MB.</p>
                 </div>
             </FormDialog>
 

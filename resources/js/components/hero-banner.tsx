@@ -55,12 +55,19 @@ export function HeroBanner({
                         <div className="mt-0.5 text-xs text-white/60">Total Cases</div>
                     </div>
                     <div className="rounded-xl bg-white/12 px-6 py-3 text-center">
-                        <div className="font-mono text-xl font-bold tabular-nums text-emerald-300">{growth >= 0 ? '+' : ''}{growth}%</div>
+                        <div className="font-mono text-xl font-bold text-emerald-300 tabular-nums">
+                            {growth >= 0 ? '+' : ''}
+                            {growth}%
+                        </div>
                         <div className="mt-0.5 text-xs text-white/60">Growth</div>
                     </div>
 
                     {QUICK_LINKS.map(({ label, url, icon: Icon, tone }) => (
-                        <Link key={label} href={url} className="group flex w-16 flex-col items-center gap-1.5 rounded-xl px-1 py-2 transition-colors hover:bg-white/8">
+                        <Link
+                            key={label}
+                            href={url}
+                            className="group flex w-16 flex-col items-center gap-1.5 rounded-xl px-1 py-2 transition-colors hover:bg-white/8"
+                        >
                             <Icon className={`size-5 ${tone}`} />
                             <span className="text-[11px] text-white/60 group-hover:text-white/90">{label}</span>
                         </Link>
@@ -119,7 +126,7 @@ export function TintedStat({
 
             <div className="relative mt-6">
                 <div className="text-sm font-medium">{label}</div>
-                <div className="mt-1 font-mono text-3xl font-bold tracking-tight tabular-nums text-foreground">{value}</div>
+                <div className="text-foreground mt-1 font-mono text-3xl font-bold tracking-tight tabular-nums">{value}</div>
                 {hint && <div className="mt-1 text-xs opacity-80">{hint}</div>}
             </div>
         </>
