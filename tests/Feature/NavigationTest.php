@@ -57,16 +57,28 @@ class NavigationTest extends TestCase
         '/settings/templates',
     ];
 
-    /**
-     * Every literal internal link in the front end must resolve to a GET route.
-     * Renaming a route is the moment links rot, and a 405 from a leftover URL
-     * looks like a working page until someone clicks it.
-     */
     public function test_the_root_url_sends_visitors_to_the_login_page(): void
     {
         $this->get('/')->assertRedirect('/login');
     }
 
+    public function test_the_user_guide_renders_with_a_contents_list(): void
+    {
+        $this->actingAs(User::factory()->create(['role' => 'lawyer']))
+            ->get('/user-guide')
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('user-guide')
+                ->where('sections.0', ['id' => 'getting-started', 'title' => 'Getting started'])
+                ->where('html', fn (string $html) => str_contains($html, '<h2 id="billing">Billing</h2>')
+                    && str_contains($html, '<table>')));
+    }
+
+    /**
+     * Every literal internal link in the front end must resolve to a GET route.
+     * Renaming a route is the moment links rot, and a 405 from a leftover URL
+     * looks like a working page until someone clicks it.
+     */
     public function test_no_page_links_to_a_route_that_does_not_exist(): void
     {
         $links = [];

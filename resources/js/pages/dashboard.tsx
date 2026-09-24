@@ -7,7 +7,7 @@ import AppLayout from '@/layouts/app-layout';
 import { hours, money } from '@/lib/format';
 import type { BreadcrumbItem } from '@/types';
 import { Head, Link, router } from '@inertiajs/react';
-import { Banknote, Briefcase, CalendarDays, Clock, RefreshCw, Target, Users, Wallet } from 'lucide-react';
+import { Banknote, BookOpen, Briefcase, CalendarDays, Clock, RefreshCw, Target, Users, Wallet } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Dashboard', href: '/dashboard' }];
 
@@ -77,12 +77,20 @@ export default function Dashboard({ firm, stats, today, revenue, upcomingHearing
                         <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
                         <p className="text-muted-foreground text-sm">Welcome to your firm dashboard.</p>
                     </div>
-                    <button
-                        onClick={() => router.reload()}
-                        className="bg-card hover:bg-accent flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-colors"
-                    >
-                        <RefreshCw className="size-4" /> Refresh
-                    </button>
+                    <div className="flex items-center gap-2">
+                        <Link
+                            href="/user-guide"
+                            className="bg-card hover:bg-accent flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-colors"
+                        >
+                            <BookOpen className="size-4" /> User Guide
+                        </Link>
+                        <button
+                            onClick={() => router.reload()}
+                            className="bg-card hover:bg-accent flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-colors"
+                        >
+                            <RefreshCw className="size-4" /> Refresh
+                        </button>
+                    </div>
                 </div>
 
                 <div className="bg-card flex flex-col gap-5 rounded-2xl border p-5">

@@ -32,6 +32,7 @@ const navGroups: NavGroup[] = [
             { title: 'Dashboard', url: '/dashboard', icon: LayoutGrid },
             { title: 'Analytics & Reports', url: '/analytics', icon: ChartColumn },
             { title: 'Calendar', url: '/calendar', icon: CalendarDays },
+            { title: 'User Guide', url: '/user-guide', icon: BookOpen },
         ],
     },
     {

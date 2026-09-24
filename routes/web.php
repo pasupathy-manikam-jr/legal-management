@@ -31,6 +31,7 @@ use App\Http\Controllers\TaxonomyController;
 use App\Http\Controllers\TimeEntryController;
 use App\Http\Controllers\TimesheetController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserGuideController;
 use Illuminate\Support\Facades\Route;
 
 // Not Route::redirect(): it answers with a root-relative Location, which escapes a subfolder install.
@@ -89,6 +90,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('analytics', AnalyticsController::class)->name('analytics');
     Route::get('calendar', CalendarController::class)->name('calendar');
+    Route::get('user-guide', UserGuideController::class)->name('user-guide');
 
     // Legal research
     Route::patch('research-projects/{researchProject}/status', [ResearchProjectController::class, 'cycleStatus'])->name('research-projects.status');
