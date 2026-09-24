@@ -1,0 +1,91 @@
+import { cn } from '@/lib/utils';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+
+/** Six weeks from gridStart — covers every month layout. */
+function buildGrid(gridStart: string): string[] {
+    const start = new Date(gridStart + 'T00:00:00');
+    return Array.from({ length: 42 }, (_, i) => {
+        const day = new Date(start);
+        day.setDate(start.getDate() + i);
+        return day.toISOString().slice(0, 10);
+    });
+}
+
+export function MiniCalendar({
+    month,
+    monthLabel,
+    gridStart,
+    selected,
+    today,
+    marked,
+    onSelect,
+    onMonth,
+    prevMonth,
+    nextMonth,
+}: {
+    month: string;
+    monthLabel: string;
+    gridStart: string;
+    selected: string;
+    today: string;
+    marked: string[];
+    onSelect: (date: string) => void;
+    onMonth: (month: string) => void;
+    prevMonth: string;
+    nextMonth: string;
+}) {
+    const cells = buildGrid(gridStart);
+    const markedSet = new Set(marked);
+    const currentMonth = month.slice(0, 7);
+
+    return (
+        <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
+            <div className="flex items-center justify-between border-b px-4 py-3">
+                <button onClick={() => onMonth(prevMonth)} className="cursor-pointer rounded p-1.5 hover:bg-accent" aria-label="Previous month">
+                    <ChevronLeft className="size-4 text-muted-foreground" />
+                </button>
+                <span className="text-sm font-semibold">{monthLabel}</span>
+                <button onClick={() => onMonth(nextMonth)} className="cursor-pointer rounded p-1.5 hover:bg-accent" aria-label="Next month">
+                    <ChevronRight className="size-4 text-muted-foreground" />
+                </button>
+            </div>
+
+            <div className="grid grid-cols-7 border-b px-4 py-1 text-center">
+                {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((d) => (
+                    <div key={d} className="py-1 text-xs font-semibold text-muted-foreground">
+                        {d}
+                    </div>
+                ))}
+            </div>
+
+            <div className="grid grid-cols-7 gap-1 p-4 text-center">
+                {cells.map((date) => {
+                    if (!date.startsWith(currentMonth)) {
+                        return <div key={date} className="size-8" />;
+                    }
+
+                    const isSelected = date === selected;
+                    const isToday = date === today;
+
+                    return (
+                        <button
+                            key={date}
+                            onClick={() => onSelect(date)}
+                            className={cn(
+                                'relative mx-auto flex size-8 cursor-pointer items-center justify-center rounded-full text-xs font-medium transition-colors',
+                                isSelected
+                                    ? 'bg-primary text-primary-foreground'
+                                    : cn('hover:bg-accent', isToday ? 'text-primary ring-1 ring-primary/40' : 'text-foreground'),
+                            )}
+                        >
+                            {Number(date.slice(8, 10))}
+                            {markedSet.has(date) && !isSelected && (
+                                <span className="absolute bottom-0.5 left-1/2 size-1 -translate-x-1/2 rounded-full bg-primary" />
+                            )}
+                        </button>
+                    );
+                })}
+            </div>
+        </div>
+    );
+}
