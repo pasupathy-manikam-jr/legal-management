@@ -99,7 +99,7 @@ class DatabaseSeeder extends Seeder
                     'type' => $h === 1 ? 'first hearing' : 'arguments',
                     'status' => $i === 4 ? 'completed' : 'scheduled',
                     'judge' => $matter->judge,
-                    'purpose' => $h === 1 ? 'Directions' : 'Substantive arguments',
+                    'title' => $h === 1 ? 'Directions' : 'Substantive arguments',
                 ]);
             }
 

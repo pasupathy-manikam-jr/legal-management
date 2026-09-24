@@ -113,7 +113,7 @@ class ModuleSeeder extends Seeder
                 'case_name' => $name,
                 'citation' => $citation,
                 'court' => $court,
-                'decided_year' => $year,
+                'decided_on' => "$year-01-01",
                 'holding' => 'Summary of the holding relied upon.',
                 'relevance' => $relevance,
                 'status' => $status,
