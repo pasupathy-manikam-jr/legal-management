@@ -33,7 +33,8 @@ use App\Http\Controllers\TimesheetController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::redirect('/', '/login')->name('home');
+// Not Route::redirect(): it answers with a root-relative Location, which escapes a subfolder install.
+Route::get('/', fn () => to_route('login'))->name('home');
 
 // Subscribable hearing feed. Authenticated by the secret token, not a session,
 // because Google Calendar fetches it without a logged-in user.
