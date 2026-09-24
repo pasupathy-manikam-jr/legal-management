@@ -32,9 +32,8 @@ use App\Http\Controllers\TimeEntryController;
 use App\Http\Controllers\TimesheetController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
-Route::get('/', fn () => Inertia::render('welcome'))->name('home');
+Route::redirect('/', '/login')->name('home');
 
 // Subscribable hearing feed. Authenticated by the secret token, not a session,
 // because Google Calendar fetches it without a logged-in user.

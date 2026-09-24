@@ -62,6 +62,11 @@ class NavigationTest extends TestCase
      * Renaming a route is the moment links rot, and a 405 from a leftover URL
      * looks like a working page until someone clicks it.
      */
+    public function test_the_root_url_sends_visitors_to_the_login_page(): void
+    {
+        $this->get('/')->assertRedirect('/login');
+    }
+
     public function test_no_page_links_to_a_route_that_does_not_exist(): void
     {
         $links = [];
