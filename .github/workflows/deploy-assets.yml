@@ -1,0 +1,63 @@
+name: Build & Publish Deploy Branch
+
+# The servers never run npm. On every push to main, CI builds the Vite/React
+# assets and publishes a `deploy` branch = main + compiled public/build. Staging
+# tracks `deploy` and pulls it with scripts/deploy.sh.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish-deploy-branch
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+
+      # The JS imports ziggy-js from vendor/tightenco/ziggy.
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.4
+          tools: composer:v2
+          coverage: none
+
+      - name: Install PHP deps
+        run: composer install --no-dev --prefer-dist --no-interaction --no-progress
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install JS deps
+        run: npm ci
+
+      # Staging serves the app from https://ui.staging.oriclabdev.com/legal-management.
+      # VITE_* values are compiled into the bundle, so set the app name explicitly.
+      - name: Build assets
+        run: APP_PATH_PREFIX=legal-management VITE_APP_NAME=Advocate npm run build
+
+      - name: Publish deploy branch (main + built assets)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git checkout -B deploy
+          # public/build is gitignored on main; force-add it for the deploy branch.
+          git add -f public/build
+          git commit --allow-empty -m "deploy: build assets for ${GITHUB_SHA::7}"
+
+          # deploy is a rebuilt snapshot each run -> force push.
+          git push -f origin deploy
