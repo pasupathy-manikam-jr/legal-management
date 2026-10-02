@@ -14,7 +14,23 @@ import { useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Clients', href: '/clients' }];
 
-const empty = () => ({ name: '', company: '', type: '', email: '', phone: '', address: '', notes: '', active: true as boolean });
+const empty = () => ({
+    name: '',
+    company: '',
+    type: '',
+    email: '',
+    phone: '',
+    address: '',
+    city: '',
+    postcode: '',
+    state: '',
+    country: 'Malaysia',
+    tin: '',
+    id_type: '',
+    id_number: '',
+    notes: '',
+    active: true as boolean,
+});
 
 export default function ClientsIndex({
     clients,
@@ -25,12 +41,13 @@ export default function ClientsIndex({
     clients: Paginated<Client>;
     filters: Record<string, string>;
     perPage: number;
-    options: { types: string[]; statuses: string[] };
+    options: { types: string[]; statuses: string[]; states: string[] };
 }) {
     const [open, setOpen] = useState(false);
     const [editing, setEditing] = useState<Client | null>(null);
     const [search, setSearch] = useState(filters.search ?? '');
     const form = useForm(empty());
+    const [tinChecked, setTinChecked] = useState(false);
 
     const hasFilters = Boolean(filters.search || filters.type || filters.status);
 
@@ -53,6 +70,13 @@ export default function ClientsIndex({
             email: client.email ?? '',
             phone: client.phone ?? '',
             address: client.address ?? '',
+            city: client.city ?? '',
+            postcode: client.postcode ?? '',
+            state: client.state ?? '',
+            country: client.country ?? 'Malaysia',
+            tin: client.tin ?? '',
+            id_type: client.id_type ?? '',
+            id_number: client.id_number ?? '',
             notes: client.notes ?? '',
             active: client.active ?? true,
         });
@@ -263,6 +287,64 @@ export default function ClientsIndex({
                 <TextField label="Email" type="email" value={form.data.email} onChange={(v) => form.setData('email', v)} error={form.errors.email} />
                 <TextField label="Phone" value={form.data.phone} onChange={(v) => form.setData('phone', v)} error={form.errors.phone} />
                 <TextareaField label="Address" value={form.data.address} onChange={(v) => form.setData('address', v)} className="sm:col-span-2" />
+                <TextField label="City" value={form.data.city} onChange={(v) => form.setData('city', v)} error={form.errors.city} />
+                <TextField label="Postcode" value={form.data.postcode} onChange={(v) => form.setData('postcode', v)} error={form.errors.postcode} />
+                <SelectField
+                    label="State"
+                    value={form.data.state}
+                    onChange={(v) => form.setData('state', v)}
+                    placeholder="Select state"
+                    options={options.states.map((s) => ({ value: s, label: s }))}
+                    error={form.errors.state}
+                />
+                <TextField label="Country" value={form.data.country} onChange={(v) => form.setData('country', v)} error={form.errors.country} />
+                <TextField label="TIN (LHDN)" value={form.data.tin} onChange={(v) => form.setData('tin', v)} error={form.errors.tin} />
+                <SelectField
+                    label="ID Type"
+                    value={form.data.id_type || 'none'}
+                    onChange={(v) => form.setData('id_type', v === 'none' ? '' : v)}
+                    options={[
+                        { value: 'none', label: 'None' },
+                        { value: 'BRN', label: 'Business Registration (BRN)' },
+                        { value: 'NRIC', label: 'MyKad / NRIC' },
+                        { value: 'PASSPORT', label: 'Passport' },
+                        { value: 'ARMY', label: 'Army ID' },
+                    ]}
+                    error={form.errors.id_type}
+                />
+                <TextField
+                    label="ID Number"
+                    value={form.data.id_number}
+                    onChange={(v) => form.setData('id_number', v)}
+                    error={form.errors.id_number}
+                />
+                {form.data.tin && form.data.id_type && form.data.id_number && (
+                    <Button
+                        type="button"
+                        variant="outline"
+                        className="self-end"
+                        onClick={() =>
+                            router.post(
+                                '/einvoice/validate-tin',
+                                { tin: form.data.tin, id_type: form.data.id_type, id_number: form.data.id_number },
+                                {
+                                    preserveState: true,
+                                    preserveScroll: true,
+                                    onSuccess: () => {
+                                        form.clearErrors('tin');
+                                        setTinChecked(true);
+                                    },
+                                    onError: (errs) => {
+                                        setTinChecked(false);
+                                        form.setError('tin', errs.tin ?? 'LHDN could not check this TIN.');
+                                    },
+                                },
+                            )
+                        }
+                    >
+                        {tinChecked ? 'TIN confirmed by LHDN ✓' : 'Validate TIN with LHDN'}
+                    </Button>
+                )}
                 <TextareaField label="Notes" value={form.data.notes} onChange={(v) => form.setData('notes', v)} className="sm:col-span-2" />
             </FormDialog>
         </AppLayout>

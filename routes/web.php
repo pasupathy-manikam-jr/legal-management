@@ -9,6 +9,7 @@ use App\Http\Controllers\ComplianceController;
 use App\Http\Controllers\CourtController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\EInvoiceController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\HearingController;
 use App\Http\Controllers\InvoiceController;
@@ -183,6 +184,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('expenses/{expense}/status', [ExpenseController::class, 'updateStatus'])->name('expenses.status');
 
     Route::patch('invoices/{invoice}/send', [InvoiceController::class, 'send'])->name('invoices.send');
+    // LHDN MyInvois e-invoicing.
+    Route::post('invoices/{invoice}/einvoice', [EInvoiceController::class, 'submit'])->name('invoices.einvoice.submit');
+    Route::put('einvoices/{einvoice}/cancel', [EInvoiceController::class, 'cancel'])->name('einvoices.cancel');
+    Route::put('einvoices/{einvoice}/poll', [EInvoiceController::class, 'poll'])->name('einvoices.poll');
+    Route::post('einvoice/validate-tin', [EInvoiceController::class, 'validateTin'])->name('einvoice.validate-tin');
+    Route::put('einvoice/settings', [EInvoiceController::class, 'saveSettings'])->name('einvoice.settings');
     Route::resource('invoices', InvoiceController::class)->except('create', 'edit');
     Route::get('payments', [PaymentController::class, 'index'])->name('payments.index');
     Route::post('invoices/{invoice}/payments', [PaymentController::class, 'store'])->name('invoices.payments.store');

@@ -48,6 +48,19 @@ class Setting extends Model
         'notable_cases' => '',
         'firm_description' => '',
 
+        // LHDN MyInvois e-invoice identity. registration_no holds the ID: SSM no. for BRN, IC no. for NRIC.
+        'firm_tin' => '',
+        'firm_id_type' => 'BRN',
+        'sst_no' => '',
+        'msic_code' => '',
+        'msic_description' => '',
+        'firm_city' => '',
+        'firm_postcode' => '',
+        'firm_state' => '',
+        'firm_country' => 'Malaysia',
+        // LHDN tax type for the invoice tax: 02 service tax (legal services), 01 sales tax, E exempt.
+        'einvoice_tax_type' => '02',
+
         // System
         'default_language' => 'en',
         'date_format' => 'Y-m-d',

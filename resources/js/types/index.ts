@@ -74,6 +74,13 @@ export interface Client {
     email: string | null;
     phone: string | null;
     address: string | null;
+    city?: string | null;
+    postcode?: string | null;
+    state?: string | null;
+    country?: string | null;
+    tin?: string | null;
+    id_type?: string | null;
+    id_number?: string | null;
     notes: string | null;
     matters_count?: number;
 }

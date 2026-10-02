@@ -9,7 +9,10 @@ class Client extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'company', 'type', 'email', 'phone', 'address', 'notes', 'active'];
+    protected $fillable = [
+        'name', 'company', 'tin', 'id_type', 'id_number', 'type', 'email', 'phone',
+        'address', 'city', 'postcode', 'state', 'country', 'notes', 'active',
+    ];
 
     protected $casts = ['active' => 'boolean'];
 

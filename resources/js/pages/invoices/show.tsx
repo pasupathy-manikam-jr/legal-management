@@ -1,4 +1,5 @@
 import { confirmAction } from '@/components/confirm-dialog';
+import { EInvoiceCard, type EInvoiceSummary } from '@/components/einvoice-card';
 import { FormDialog, SelectField, TextField } from '@/components/form-dialog';
 import { StatCard } from '@/components/stat-card';
 import { StatusBadge } from '@/components/status-badge';
@@ -28,12 +29,14 @@ export default function InvoiceShow({
     totals,
     payTo,
     invoiceFooter,
+    einvoice,
 }: {
     invoice: Invoice;
     lines: Line[];
     totals: { total_cents: number; balance_cents: number };
     payTo: string | null;
     invoiceFooter: string | null;
+    einvoice: EInvoiceSummary;
 }) {
     const [payOpen, setPayOpen] = useState(false);
     const [editOpen, setEditOpen] = useState(false);
@@ -161,6 +164,8 @@ export default function InvoiceShow({
                     )}
                 </Card>
 
+                <EInvoiceCard einvoice={einvoice} invoiceId={invoice.id} issued={invoice.status === 'sent' || invoice.status === 'paid'} />
+
                 <Card className="gap-0 p-4 print:hidden">
                     <h2 className="mb-3 text-sm font-semibold">Payments</h2>
                     <Table>
@@ -260,6 +265,7 @@ export default function InvoiceShow({
                         { value: 'paid', label: 'Paid' },
                         { value: 'void', label: 'Cancelled (releases its time)' },
                     ]}
+                    error={edit.errors.status}
                 />
                 <TextField
                     label="Due on"

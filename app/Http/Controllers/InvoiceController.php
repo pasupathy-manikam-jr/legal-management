@@ -106,6 +106,7 @@ class InvoiceController extends Controller
                 'total_cents' => $invoice->totalCents(),
                 'balance_cents' => $invoice->balanceCents(),
             ],
+            'einvoice' => EInvoiceController::summary($invoice),
             'payTo' => Setting::get('bank_transfer_enabled') === '1' ? Setting::get('bank_transfer_details') : null,
             'invoiceFooter' => Setting::get('invoice_footer'),
         ]);
@@ -172,6 +173,10 @@ class InvoiceController extends Controller
             'notes' => ['nullable', 'string', 'max:2000'],
         ]);
 
+        if (in_array($data['status'], ['void', 'draft'], true) && $data['status'] !== $invoice->status && $invoice->hasLiveEInvoice()) {
+            return back()->withErrors(['status' => 'This invoice is an e-invoice at LHDN. Cancel the e-invoice first (allowed within 72 hours of validation).']);
+        }
+
         // Voiding releases the time entries so they can be billed again.
         if ($data['status'] === 'void' && $invoice->status !== 'void') {
             DB::transaction(function () use ($invoice, $data) {
@@ -199,6 +204,10 @@ class InvoiceController extends Controller
 
     public function destroy(Invoice $invoice)
     {
+        if ($invoice->hasLiveEInvoice()) {
+            return back()->withErrors(['einvoice' => 'This invoice is an e-invoice at LHDN. Cancel the e-invoice before deleting it.']);
+        }
+
         DB::transaction(function () use ($invoice) {
             $invoice->timeEntries()->update(['invoice_id' => null]);
             $invoice->delete();

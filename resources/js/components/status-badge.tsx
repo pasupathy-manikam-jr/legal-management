@@ -17,6 +17,12 @@ const TONES: Record<string, string> = {
     sent: 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300',
     paid: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300',
     void: 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300',
+    // LHDN e-invoice.
+    submitted: 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300',
+    valid: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300',
+    invalid: 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300',
+    failed: 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300',
+    sandbox: 'bg-violet-100 text-violet-800 dark:bg-violet-950 dark:text-violet-300',
     active: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300',
     inactive: 'bg-neutral-200 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300',
     expiring: 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300',

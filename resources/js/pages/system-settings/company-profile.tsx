@@ -5,7 +5,7 @@ import { money } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
-import { Briefcase, Building2, Phone, Scale, SquarePen } from 'lucide-react';
+import { Briefcase, Building2, FileCheck2, KeyRound, Phone, Scale, SquarePen } from 'lucide-react';
 import type { ComponentType, ReactNode } from 'react';
 import { useState } from 'react';
 
@@ -13,9 +13,34 @@ const breadcrumbs: BreadcrumbItem[] = [{ title: 'Company Profile', href: '/compa
 
 type Profile = Record<string, string>;
 
-export default function CompanyProfile({ profile, options }: { profile: Profile; options: { businessTypes: string[]; practiceSizes: string[] } }) {
+type EInvoiceSettings = {
+    environment: 'sandbox' | 'production';
+    unsigned: boolean;
+    client_id: string;
+    has_client_secret: boolean;
+    has_certificate: boolean;
+} | null;
+
+export default function CompanyProfile({
+    profile,
+    options,
+    einvoice,
+}: {
+    profile: Profile;
+    options: { businessTypes: string[]; practiceSizes: string[]; states: string[]; taxTypes: Record<string, string> };
+    einvoice: EInvoiceSettings;
+}) {
     const [open, setOpen] = useState(false);
+    const [credentialsOpen, setCredentialsOpen] = useState(false);
     const form = useForm<Profile>({ ...profile });
+    const credentials = useForm({
+        environment: einvoice?.environment ?? 'sandbox',
+        unsigned: einvoice?.unsigned ? '1' : '0',
+        client_id: einvoice?.client_id ?? '',
+        client_secret: '',
+        certificate: '',
+        private_key: '',
+    });
 
     function openEdit() {
         form.setData({ ...profile });
@@ -81,6 +106,41 @@ export default function CompanyProfile({ profile, options }: { profile: Profile;
                                     <Value label="Specialization" value={profile.specialization} wide />
                                     <Value label="Court Jurisdictions" value={profile.court_jurisdictions} wide />
                                 </Grid>
+                            </Panel>
+
+                            <Panel icon={FileCheck2} title="LHDN e-Invoice">
+                                <Grid>
+                                    <Value label="TIN" value={profile.firm_tin} />
+                                    <Value
+                                        label="Registration No. Type"
+                                        value={
+                                            profile.firm_id_type === 'NRIC'
+                                                ? 'MyKad / NRIC (registration no. is the IC no.)'
+                                                : 'SSM Business Registration (BRN)'
+                                        }
+                                    />
+                                    <Value label="SST Registration No." value={profile.sst_no} />
+                                    <Value label="MSIC Code" value={[profile.msic_code, profile.msic_description].filter(Boolean).join(' · ')} />
+                                    <Value
+                                        label="City / Postcode / State"
+                                        value={[profile.firm_city, profile.firm_postcode, profile.firm_state, profile.firm_country]
+                                            .filter(Boolean)
+                                            .join(', ')}
+                                        wide
+                                    />
+                                    <Value label="Tax Type for Invoice Tax" value={options.taxTypes[profile.einvoice_tax_type]} />
+                                    <Value
+                                        label="MyInvois Connection"
+                                        value={
+                                            einvoice
+                                                ? `${einvoice.environment === 'sandbox' ? 'Sandbox' : 'Production'}${einvoice.unsigned ? ' (unsigned)' : ''}`
+                                                : 'Not set up'
+                                        }
+                                    />
+                                </Grid>
+                                <Button variant="outline" size="sm" className="mt-4" onClick={() => setCredentialsOpen(true)}>
+                                    <KeyRound className="size-4" /> MyInvois credentials
+                                </Button>
                             </Panel>
 
                             <Panel icon={Scale} title="Business &amp; Firm Details">
@@ -177,6 +237,43 @@ export default function CompanyProfile({ profile, options }: { profile: Profile;
                         error={form.errors.firm_address}
                         className="sm:col-span-2"
                     />
+                    <TextField label="City" value={form.data.firm_city} onChange={set('firm_city')} error={form.errors.firm_city} />
+                    <TextField label="Postcode" value={form.data.firm_postcode} onChange={set('firm_postcode')} error={form.errors.firm_postcode} />
+                    <SelectField
+                        label="State"
+                        value={form.data.firm_state}
+                        onChange={set('firm_state')}
+                        placeholder="Select state"
+                        options={options.states.map((s) => ({ value: s, label: s }))}
+                        error={form.errors.firm_state}
+                    />
+                    <TextField label="Country" value={form.data.firm_country} onChange={set('firm_country')} error={form.errors.firm_country} />
+                    <TextField label="TIN (LHDN)" value={form.data.firm_tin} onChange={set('firm_tin')} error={form.errors.firm_tin} />
+                    <SelectField
+                        label="Registration No. Type"
+                        value={form.data.firm_id_type}
+                        onChange={set('firm_id_type')}
+                        options={[
+                            { value: 'BRN', label: 'SSM Business Registration (BRN)' },
+                            { value: 'NRIC', label: 'MyKad / NRIC (sole proprietor)' },
+                        ]}
+                        error={form.errors.firm_id_type}
+                    />
+                    <TextField label="SST Registration No." value={form.data.sst_no} onChange={set('sst_no')} error={form.errors.sst_no} />
+                    <TextField label="MSIC Code" value={form.data.msic_code} onChange={set('msic_code')} error={form.errors.msic_code} />
+                    <TextField
+                        label="Business Activity (MSIC)"
+                        value={form.data.msic_description}
+                        onChange={set('msic_description')}
+                        error={form.errors.msic_description}
+                    />
+                    <SelectField
+                        label="LHDN Tax Type for Invoice Tax"
+                        value={form.data.einvoice_tax_type}
+                        onChange={set('einvoice_tax_type')}
+                        options={Object.entries(options.taxTypes).map(([value, label]) => ({ value, label }))}
+                        error={form.errors.einvoice_tax_type}
+                    />
                     <TextField label="Law Degree" value={form.data.law_degree} onChange={set('law_degree')} error={form.errors.law_degree} />
                     <TextField label="University" value={form.data.university} onChange={set('university')} error={form.errors.university} />
                     <TextField
@@ -225,6 +322,71 @@ export default function CompanyProfile({ profile, options }: { profile: Profile;
                         value={form.data.firm_description}
                         onChange={set('firm_description')}
                         error={form.errors.firm_description}
+                        className="sm:col-span-2"
+                    />
+                </FormDialog>
+
+                <FormDialog
+                    open={credentialsOpen}
+                    onOpenChange={setCredentialsOpen}
+                    title="MyInvois credentials"
+                    processing={credentials.processing}
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        credentials.put('/einvoice/settings', { onSuccess: () => setCredentialsOpen(false), preserveScroll: true });
+                    }}
+                >
+                    <p className="text-muted-foreground text-sm sm:col-span-2">
+                        From MyInvois portal → View Taxpayer Profile → Register ERP. Uses the TIN above. Blank secrets keep their saved values.
+                    </p>
+                    <SelectField
+                        label="Environment"
+                        value={credentials.data.environment}
+                        onChange={(v) => credentials.setData('environment', v as 'sandbox' | 'production')}
+                        options={[
+                            { value: 'sandbox', label: 'Sandbox (testing)' },
+                            { value: 'production', label: 'Production (live)' },
+                        ]}
+                    />
+                    {credentials.data.environment === 'sandbox' && (
+                        <SelectField
+                            label="Signing"
+                            value={credentials.data.unsigned}
+                            onChange={(v) => credentials.setData('unsigned', v)}
+                            options={[
+                                { value: '1', label: 'Send unsigned (no certificate yet)' },
+                                { value: '0', label: 'Sign with certificate' },
+                            ]}
+                        />
+                    )}
+                    <TextField
+                        label="Client ID"
+                        value={credentials.data.client_id}
+                        onChange={(v) => credentials.setData('client_id', v)}
+                        error={credentials.errors.client_id}
+                    />
+                    <TextField
+                        label="Client Secret"
+                        type="password"
+                        placeholder={einvoice?.has_client_secret ? 'Saved. Leave blank to keep it.' : ''}
+                        value={credentials.data.client_secret}
+                        onChange={(v) => credentials.setData('client_secret', v)}
+                        error={credentials.errors.client_secret}
+                    />
+                    <TextareaField
+                        label="Signing Certificate (PEM)"
+                        placeholder={einvoice?.has_certificate ? 'Saved. Leave blank to keep it.' : '-----BEGIN CERTIFICATE-----'}
+                        value={credentials.data.certificate}
+                        onChange={(v) => credentials.setData('certificate', v)}
+                        error={credentials.errors.certificate}
+                        className="sm:col-span-2"
+                    />
+                    <TextareaField
+                        label="Private Key (PEM)"
+                        placeholder={einvoice?.has_certificate ? 'Saved. Leave blank to keep it.' : '-----BEGIN PRIVATE KEY-----'}
+                        value={credentials.data.private_key}
+                        onChange={(v) => credentials.setData('private_key', v)}
+                        error={credentials.errors.private_key}
                         className="sm:col-span-2"
                     />
                 </FormDialog>

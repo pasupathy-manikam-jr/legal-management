@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Setting;
+use EInvoiceSdk\Codes;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -25,6 +26,8 @@ class CompanyProfileController extends Controller
         'firm_website', 'consultation_fee', 'office_hours', 'firm_address', 'law_degree',
         'university', 'languages_spoken', 'success_rate', 'specialization', 'court_jurisdictions',
         'services_offered', 'notable_cases', 'firm_description',
+        'firm_tin', 'firm_id_type', 'sst_no', 'msic_code', 'msic_description',
+        'firm_city', 'firm_postcode', 'firm_state', 'firm_country', 'einvoice_tax_type',
     ];
 
     public function index()
@@ -34,7 +37,10 @@ class CompanyProfileController extends Controller
             'options' => [
                 'businessTypes' => self::BUSINESS_TYPES,
                 'practiceSizes' => self::PRACTICE_SIZES,
+                'states' => array_values(Codes::states()),
+                'taxTypes' => Codes::taxTypes(),
             ],
+            'einvoice' => EInvoiceController::settingsSummary(),
         ]);
     }
 
@@ -66,6 +72,16 @@ class CompanyProfileController extends Controller
             'services_offered' => ['nullable', 'string', 'max:1000'],
             'notable_cases' => ['nullable', 'string', 'max:2000'],
             'firm_description' => ['nullable', 'string', 'max:2000'],
+            'firm_tin' => ['nullable', 'string', 'max:20'],
+            'firm_id_type' => ['sometimes', Rule::in(['BRN', 'NRIC'])],
+            'sst_no' => ['nullable', 'string', 'max:50'],
+            'msic_code' => ['nullable', 'digits:5'],
+            'msic_description' => ['nullable', 'string', 'max:255'],
+            'firm_city' => ['nullable', 'string', 'max:100'],
+            'firm_postcode' => ['nullable', 'string', 'max:20'],
+            'firm_state' => ['nullable', 'string', 'max:100'],
+            'firm_country' => ['nullable', 'string', 'max:100'],
+            'einvoice_tax_type' => ['sometimes', Rule::in(array_keys(Codes::taxTypes()))],
         ]);
 
         foreach ($data as $key => $value) {

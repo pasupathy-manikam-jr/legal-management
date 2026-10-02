@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Client;
 use App\Models\Taxonomy;
 use App\Models\TimeEntry;
+use EInvoiceSdk\Codes;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class ClientController extends Controller
@@ -35,6 +37,7 @@ class ClientController extends Controller
             'options' => [
                 'types' => Taxonomy::names('client_type') ?: ['Individual', 'Corporate'],
                 'statuses' => ['active', 'inactive'],
+                'states' => array_values(Codes::states()),
             ],
         ]);
     }
@@ -102,6 +105,14 @@ class ClientController extends Controller
             'email' => ['nullable', 'email', 'max:255'],
             'phone' => ['nullable', 'string', 'max:50'],
             'address' => ['nullable', 'string', 'max:1000'],
+            'city' => ['nullable', 'string', 'max:100'],
+            'postcode' => ['nullable', 'string', 'max:20'],
+            'state' => ['nullable', 'string', 'max:100'],
+            'country' => ['sometimes', 'required', 'string', 'max:100'],
+            // LHDN e-invoice buyer identity.
+            'tin' => ['nullable', 'string', 'max:20'],
+            'id_type' => ['nullable', 'required_with:id_number', Rule::in(['BRN', 'NRIC', 'PASSPORT', 'ARMY'])],
+            'id_number' => ['nullable', 'required_with:id_type', 'string', 'max:30'],
             'notes' => ['nullable', 'string', 'max:5000'],
             'active' => ['required', 'boolean'],
         ]);
