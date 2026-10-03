@@ -127,7 +127,7 @@ Every case belongs to a client, so add the client first. Find these under **Clie
 
 1. Go to **Client Management → Clients** and choose **Add Client**.
 2. Enter the **Name**, **Type** (for example Individual or Corporate), **Company**, **Email**, **Phone**, **Address** and any **Notes**, and set the **Status** to Active or Inactive.
-3. For e-invoicing, add the client's **TIN (LHDN)** and ID. Left blank, e-invoices go out with LHDN's general TIN: EI00000000010 for clients in Malaysia, EI00000000020 for foreign clients.
+3. For e-invoicing, add the client's **TIN (LHDN)** and ID. Left blank, e-invoices go out with LHDN's general buyer TIN, EI00000000020. (The general-public TIN, EI00000000010, is only for the monthly consolidated e-invoice.)
 
 **View** opens the client's page: their contact details, open cases, invoices (invoiced and outstanding totals), billed time and recent communication.
 

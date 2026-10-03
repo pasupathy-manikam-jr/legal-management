@@ -12,6 +12,9 @@ import { Head, Link, router, useForm } from '@inertiajs/react';
 import { Eye, Filter, Lock, LockOpen, Plus, RefreshCcw, Search, SquarePen, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
+/** LHDN's general buyer TIN, until the client's own is known (matches Invoice::DEFAULT_BUYER_TIN). */
+const DEFAULT_TIN = 'EI00000000020';
+
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Clients', href: '/clients' }];
 
 const empty = () => ({
@@ -25,7 +28,7 @@ const empty = () => ({
     postcode: '',
     state: '',
     country: 'Malaysia',
-    tin: '',
+    tin: DEFAULT_TIN,
     id_type: '',
     id_number: '',
     notes: '',
@@ -74,7 +77,7 @@ export default function ClientsIndex({
             postcode: client.postcode ?? '',
             state: client.state ?? '',
             country: client.country ?? 'Malaysia',
-            tin: client.tin ?? '',
+            tin: client.tin || DEFAULT_TIN,
             id_type: client.id_type ?? '',
             id_number: client.id_number ?? '',
             notes: client.notes ?? '',
@@ -303,7 +306,7 @@ export default function ClientsIndex({
                     value={form.data.tin}
                     onChange={(v) => form.setData('tin', v)}
                     error={form.errors.tin}
-                    placeholder="Blank: EI00000000010 local, EI00000000020 foreign"
+                    placeholder="Blank sends EI00000000020"
                 />
                 <SelectField
                     label="ID Type"

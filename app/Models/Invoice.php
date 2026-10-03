@@ -203,18 +203,12 @@ class Invoice extends Model implements EInvoiceable
         );
     }
 
-    /** LHDN's general TINs, sent for a client whose own TIN isn't on file: local (general public) or foreign buyer. */
-    public const LOCAL_BUYER_TIN = 'EI00000000010';
-
-    public const FOREIGN_BUYER_TIN = 'EI00000000020';
-
-    /** A client counts as local when their country is blank or Malaysia, however it was typed. */
-    public static function defaultBuyerTin(?string $country): string
-    {
-        return in_array(strtolower(trim((string) $country)), ['', 'mys', 'my', 'malaysia'], true)
-            ? self::LOCAL_BUYER_TIN
-            : self::FOREIGN_BUYER_TIN;
-    }
+    /**
+     * LHDN's general TIN sent for a client whose own TIN isn't on file. The general-public TIN
+     * (EI00000000010) is only accepted on the monthly consolidated e-invoice, never on a standard
+     * invoice, so every client without a TIN goes out under the general buyer TIN instead.
+     */
+    public const DEFAULT_BUYER_TIN = 'EI00000000020';
 
     private function einvoiceBuyer(): Party
     {
@@ -224,7 +218,7 @@ class Invoice extends Model implements EInvoiceable
 
         return new Party(
             name: $client->company ?: $client->name,
-            tin: $client->tin ?: self::defaultBuyerTin($client->country),
+            tin: $client->tin ?: self::DEFAULT_BUYER_TIN,
             brn: $id('BRN'),
             nric: $id('NRIC'),
             passport: $id('PASSPORT'),

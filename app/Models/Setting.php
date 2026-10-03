@@ -52,8 +52,9 @@ class Setting extends Model
         'firm_tin' => '',
         'firm_id_type' => 'BRN',
         'sst_no' => '',
-        'msic_code' => '',
-        'msic_description' => '',
+        // Every firm on this app practises law: MSIC 69100.
+        'msic_code' => '69100',
+        'msic_description' => 'Legal activities',
         'firm_city' => '',
         'firm_postcode' => '',
         'firm_state' => '',

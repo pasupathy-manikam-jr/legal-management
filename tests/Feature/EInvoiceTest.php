@@ -121,12 +121,14 @@ class EInvoiceTest extends TestCase
         $this->assertSame(0, EInvoiceDocument::count());
     }
 
-    public function test_a_client_without_a_tin_is_sent_with_the_general_tin_for_where_they_are(): void
+    public function test_a_client_without_a_tin_is_sent_with_the_general_buyer_tin(): void
     {
-        $this->assertSame('EI00000000020', $this->issuedInvoice(['tin' => null, 'country' => 'Singapore'])->toEInvoiceDocument()->buyer->tin);
-
         $invoice = $this->issuedInvoice(['tin' => null, 'country' => 'Malaysia']);
-        $this->assertSame('EI00000000010', $invoice->toEInvoiceDocument()->buyer->tin);
+        $document = $invoice->toEInvoiceDocument();
+
+        $this->assertSame('EI00000000020', $document->buyer->tin);
+        // The real driver's own rules: the general-public TIN would be refused on a standard invoice.
+        $this->assertSame([], (new JianniusDriver)->validate($document));
 
         $this->actingAs($this->user)->post("/invoices/{$invoice->id}/einvoice")->assertSessionHasNoErrors();
         $this->assertSame(Status::Valid, EInvoiceDocument::sole()->status);

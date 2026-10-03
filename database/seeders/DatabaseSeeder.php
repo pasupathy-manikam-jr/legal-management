@@ -38,13 +38,13 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Industrial Court of Malaysia', 'type' => 'Industrial Court', 'bench' => null],
         ])->map(fn ($c) => Court::firstOrCreate(['name' => $c['name']], $c + ['phone' => '+60 3-2612 0100']));
 
-        // No TINs: e-invoices for these Malaysian clients fall back to LHDN's general TIN, EI00000000010.
+        // LHDN's general buyer TIN, as Accounting's demo customers use, so sandbox e-invoices can be sent.
         $clients = collect([
             ['name' => 'Tan Mei Ling', 'company' => 'Tan Logistics Sdn Bhd', 'email' => 'meiling@tanlogistics.test', 'city' => 'Port Klang', 'state' => 'Selangor'],
             ['name' => 'Rajendran Family', 'company' => null, 'email' => 'rajendran@mail.test', 'city' => 'Petaling Jaya', 'state' => 'Selangor'],
             ['name' => 'Seri Murni Foods', 'company' => 'Seri Murni Foods Sdn Bhd', 'email' => 'legal@serimurni.test', 'city' => 'Shah Alam', 'state' => 'Selangor'],
             ['name' => 'Ahmad Faizal bin Osman', 'company' => 'Faizal Properties Sdn Bhd', 'email' => 'faizal@faizalprop.test', 'city' => 'Kuala Lumpur', 'state' => 'Wilayah Persekutuan Kuala Lumpur'],
-        ])->map(fn ($c) => Client::firstOrCreate(['name' => $c['name']], $c + ['phone' => '+60 12-345 0199', 'country' => 'Malaysia']));
+        ])->map(fn ($c) => Client::firstOrCreate(['name' => $c['name']], $c + ['phone' => '+60 12-345 0199', 'country' => 'Malaysia', 'tin' => Invoice::DEFAULT_BUYER_TIN]));
 
         if (Matter::exists()) {
             $this->call(ModuleSeeder::class);
