@@ -10,8 +10,8 @@ import { Table, TableBody, TableCell, TableEmpty, TableHead, TableHeader, TableR
 import AppLayout from '@/layouts/app-layout';
 import { date, dateTime, hours, money } from '@/lib/format';
 import type { BreadcrumbItem, Client, Court, Matter, User } from '@/types';
-import { Head, router, useForm } from '@inertiajs/react';
-import { Download, FileText, Plus, Trash2, Upload } from 'lucide-react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
+import { ArrowLeft, Download, FileText, Plus, Trash2, Upload } from 'lucide-react';
 import { useState } from 'react';
 
 type Tab = 'timeline' | 'team' | 'documents' | 'tasks' | 'hearings' | 'time';
@@ -69,6 +69,12 @@ export default function MatterShow({ matter, totals, options }: Props) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`${matter.reference} — ${matter.title}`} />
             <div className="flex flex-col gap-4 p-4">
+                <Link
+                    href="/matters"
+                    className="text-muted-foreground hover:text-foreground inline-flex w-fit items-center gap-1 text-sm print:hidden"
+                >
+                    <ArrowLeft className="size-4" /> Back to cases
+                </Link>
                 <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
                         <div className="flex items-center gap-2">

@@ -17,6 +17,43 @@ use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
+    /**
+     * The demo clients, every field filled. They carry LHDN's general buyer TIN, as Accounting's demo
+     * customers do, so sandbox e-invoices can be sent; the IDs are made up.
+     *
+     * @var list<array<string, string|bool>>
+     */
+    public const CLIENTS = [
+        [
+            'name' => 'Tan Mei Ling', 'company' => 'Tan Logistics Sdn Bhd', 'type' => 'Corporate',
+            'email' => 'meiling@tanlogistics.test', 'phone' => '+60 3-3101 4412',
+            'address' => "Lot 12, Jalan Pelabuhan Utara\nKawasan Perindustrian Pulau Indah", 'postcode' => '42000', 'city' => 'Port Klang', 'state' => 'Selangor', 'country' => 'Malaysia',
+            'tin' => 'EI00000000020', 'id_type' => 'BRN', 'id_number' => '201501012345',
+            'notes' => 'Haulage and freight forwarding. Director: Tan Mei Ling. Retainer for contract disputes and employment matters.', 'active' => true,
+        ],
+        [
+            'name' => 'Rajendran Family', 'company' => null, 'type' => 'Individual',
+            'email' => 'rajendran@mail.test', 'phone' => '+60 12-388 7421',
+            'address' => '21, Jalan SS 2/24', 'postcode' => '47300', 'city' => 'Petaling Jaya', 'state' => 'Selangor', 'country' => 'Malaysia',
+            'tin' => 'EI00000000020', 'id_type' => 'NRIC', 'id_number' => '800412105523',
+            'notes' => 'Family matter (custody). Contact: Mr. Rajendran a/l Subramaniam.', 'active' => true,
+        ],
+        [
+            'name' => 'Seri Murni Foods', 'company' => 'Seri Murni Foods Sdn Bhd', 'type' => 'Small Business',
+            'email' => 'legal@serimurni.test', 'phone' => '+60 3-5510 2290',
+            'address' => "No. 8, Jalan Utas 15/7\nSeksyen 15", 'postcode' => '40200', 'city' => 'Shah Alam', 'state' => 'Selangor', 'country' => 'Malaysia',
+            'tin' => 'EI00000000020', 'id_type' => 'BRN', 'id_number' => '201801034567',
+            'notes' => 'Halal food manufacturer. Supplier arbitration ongoing; contact the legal manager first.', 'active' => true,
+        ],
+        [
+            'name' => 'Ahmad Faizal bin Osman', 'company' => 'Faizal Properties Sdn Bhd', 'type' => 'Corporate',
+            'email' => 'faizal@faizalprop.test', 'phone' => '+60 19-276 5508',
+            'address' => "Suite 9-3, Menara Bangsar\nJalan Maarof", 'postcode' => '59000', 'city' => 'Kuala Lumpur', 'state' => 'Wilayah Persekutuan Kuala Lumpur', 'country' => 'Malaysia',
+            'tin' => 'EI00000000020', 'id_type' => 'BRN', 'id_number' => '201201056789',
+            'notes' => 'Property investment company. Lease rectification matter; prefers WhatsApp for scheduling.', 'active' => true,
+        ],
+    ];
+
     public function run(): void
     {
         // Users are validated against these, so they come first.
@@ -38,13 +75,7 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Industrial Court of Malaysia', 'type' => 'Industrial Court', 'bench' => null],
         ])->map(fn ($c) => Court::firstOrCreate(['name' => $c['name']], $c + ['phone' => '+60 3-2612 0100']));
 
-        // LHDN's general buyer TIN, as Accounting's demo customers use, so sandbox e-invoices can be sent.
-        $clients = collect([
-            ['name' => 'Tan Mei Ling', 'company' => 'Tan Logistics Sdn Bhd', 'email' => 'meiling@tanlogistics.test', 'address' => "Lot 12, Jalan Pelabuhan Utara\nKawasan Perindustrian Pulau Indah", 'postcode' => '42000', 'city' => 'Port Klang', 'state' => 'Selangor'],
-            ['name' => 'Rajendran Family', 'company' => null, 'email' => 'rajendran@mail.test', 'address' => '21, Jalan SS 2/24', 'postcode' => '47300', 'city' => 'Petaling Jaya', 'state' => 'Selangor'],
-            ['name' => 'Seri Murni Foods', 'company' => 'Seri Murni Foods Sdn Bhd', 'email' => 'legal@serimurni.test', 'address' => "No. 8, Jalan Utas 15/7\nSeksyen 15", 'postcode' => '40200', 'city' => 'Shah Alam', 'state' => 'Selangor'],
-            ['name' => 'Ahmad Faizal bin Osman', 'company' => 'Faizal Properties Sdn Bhd', 'email' => 'faizal@faizalprop.test', 'address' => "Suite 9-3, Menara Bangsar\nJalan Maarof", 'postcode' => '59000', 'city' => 'Kuala Lumpur', 'state' => 'Wilayah Persekutuan Kuala Lumpur'],
-        ])->map(fn ($c) => Client::firstOrCreate(['name' => $c['name']], $c + ['phone' => '+60 12-345 0199', 'country' => 'Malaysia', 'tin' => Invoice::DEFAULT_BUYER_TIN]));
+        $clients = collect(self::CLIENTS)->map(fn ($c) => Client::firstOrCreate(['name' => $c['name']], $c));
 
         if (Matter::exists()) {
             $this->call(ModuleSeeder::class);

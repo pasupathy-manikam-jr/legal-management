@@ -23,7 +23,13 @@ class DemoSeederTest extends TestCase
         $this->assertTrue(User::where('email', 'admin@advocate.test')->exists());
         $this->assertGreaterThan(0, Hearing::count());
         $this->assertSame(['EI00000000020'], Client::pluck('tin')->unique()->values()->all());
-        $this->assertSame(0, Client::whereNull('address')->orWhereNull('postcode')->count(), 'LHDN needs a buyer address on every e-invoice.');
+
+        // Every field a client form shows is filled, apart from the company of a private client.
+        foreach (Client::all() as $client) {
+            foreach (['type', 'email', 'phone', 'address', 'postcode', 'city', 'state', 'country', 'id_type', 'id_number', 'notes'] as $field) {
+                $this->assertNotEmpty($client->{$field}, "{$client->name} has no {$field}.");
+            }
+        }
         $this->assertNotEmpty(Storage::disk('local')->allFiles());
     }
 }

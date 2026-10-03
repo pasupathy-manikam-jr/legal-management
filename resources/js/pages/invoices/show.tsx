@@ -10,7 +10,7 @@ import AppLayout from '@/layouts/app-layout';
 import { date, hours, money } from '@/lib/format';
 import type { BreadcrumbItem, Invoice } from '@/types';
 import { Head, Link, router, useForm } from '@inertiajs/react';
-import { Plus, Printer, Trash2 } from 'lucide-react';
+import { ArrowLeft, Plus, Printer, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 interface Line {
@@ -59,6 +59,12 @@ export default function InvoiceShow({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={invoice.number} />
             <div className="flex flex-col gap-4 p-4 print:p-0">
+                <Link
+                    href="/invoices"
+                    className="text-muted-foreground hover:text-foreground inline-flex w-fit items-center gap-1 text-sm print:hidden"
+                >
+                    <ArrowLeft className="size-4" /> Back to invoices
+                </Link>
                 <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
                         <div className="flex items-center gap-2">
