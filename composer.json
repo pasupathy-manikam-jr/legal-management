@@ -63,7 +63,8 @@
     "extra": {
         "laravel": {
             "dont-discover": [
-                "jiannius/myinvois"
+                "jiannius/myinvois",
+                "noki/laravel-xml-converter"
             ]
         }
     },
@@ -84,5 +85,5 @@
             "type": "vcs",
             "url": "https://github.com/pasupathy-manikam-jr/e-invoice-sdk"
         }
-        ]
+    ]
 }
