@@ -40,10 +40,10 @@ class DatabaseSeeder extends Seeder
 
         // LHDN's general buyer TIN, as Accounting's demo customers use, so sandbox e-invoices can be sent.
         $clients = collect([
-            ['name' => 'Tan Mei Ling', 'company' => 'Tan Logistics Sdn Bhd', 'email' => 'meiling@tanlogistics.test', 'city' => 'Port Klang', 'state' => 'Selangor'],
-            ['name' => 'Rajendran Family', 'company' => null, 'email' => 'rajendran@mail.test', 'city' => 'Petaling Jaya', 'state' => 'Selangor'],
-            ['name' => 'Seri Murni Foods', 'company' => 'Seri Murni Foods Sdn Bhd', 'email' => 'legal@serimurni.test', 'city' => 'Shah Alam', 'state' => 'Selangor'],
-            ['name' => 'Ahmad Faizal bin Osman', 'company' => 'Faizal Properties Sdn Bhd', 'email' => 'faizal@faizalprop.test', 'city' => 'Kuala Lumpur', 'state' => 'Wilayah Persekutuan Kuala Lumpur'],
+            ['name' => 'Tan Mei Ling', 'company' => 'Tan Logistics Sdn Bhd', 'email' => 'meiling@tanlogistics.test', 'address' => "Lot 12, Jalan Pelabuhan Utara\nKawasan Perindustrian Pulau Indah", 'postcode' => '42000', 'city' => 'Port Klang', 'state' => 'Selangor'],
+            ['name' => 'Rajendran Family', 'company' => null, 'email' => 'rajendran@mail.test', 'address' => '21, Jalan SS 2/24', 'postcode' => '47300', 'city' => 'Petaling Jaya', 'state' => 'Selangor'],
+            ['name' => 'Seri Murni Foods', 'company' => 'Seri Murni Foods Sdn Bhd', 'email' => 'legal@serimurni.test', 'address' => "No. 8, Jalan Utas 15/7\nSeksyen 15", 'postcode' => '40200', 'city' => 'Shah Alam', 'state' => 'Selangor'],
+            ['name' => 'Ahmad Faizal bin Osman', 'company' => 'Faizal Properties Sdn Bhd', 'email' => 'faizal@faizalprop.test', 'address' => "Suite 9-3, Menara Bangsar\nJalan Maarof", 'postcode' => '59000', 'city' => 'Kuala Lumpur', 'state' => 'Wilayah Persekutuan Kuala Lumpur'],
         ])->map(fn ($c) => Client::firstOrCreate(['name' => $c['name']], $c + ['phone' => '+60 12-345 0199', 'country' => 'Malaysia', 'tin' => Invoice::DEFAULT_BUYER_TIN]));
 
         if (Matter::exists()) {

@@ -23,6 +23,7 @@ class DemoSeederTest extends TestCase
         $this->assertTrue(User::where('email', 'admin@advocate.test')->exists());
         $this->assertGreaterThan(0, Hearing::count());
         $this->assertSame(['EI00000000020'], Client::pluck('tin')->unique()->values()->all());
+        $this->assertSame(0, Client::whereNull('address')->orWhereNull('postcode')->count(), 'LHDN needs a buyer address on every e-invoice.');
         $this->assertNotEmpty(Storage::disk('local')->allFiles());
     }
 }
