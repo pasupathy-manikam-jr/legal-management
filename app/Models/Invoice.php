@@ -203,6 +203,9 @@ class Invoice extends Model implements EInvoiceable
         );
     }
 
+    /** LHDN's general TIN for a foreign buyer, sent for any client whose own TIN isn't on file. */
+    public const DEFAULT_BUYER_TIN = 'EI00000000020';
+
     private function einvoiceBuyer(): Party
     {
         $client = $this->client;
@@ -211,7 +214,7 @@ class Invoice extends Model implements EInvoiceable
 
         return new Party(
             name: $client->company ?: $client->name,
-            tin: (string) $client->tin,
+            tin: $client->tin ?: self::DEFAULT_BUYER_TIN,
             brn: $id('BRN'),
             nric: $id('NRIC'),
             passport: $id('PASSPORT'),

@@ -108,20 +108,27 @@ class EInvoiceTest extends TestCase
             ->where('einvoice.qr', fn ($qr) => str_starts_with($qr, 'data:image/svg+xml;base64,')));
     }
 
-    public function test_drafts_clients_without_tin_and_non_myr_firms_are_refused(): void
+    public function test_drafts_and_non_myr_firms_are_refused(): void
     {
         $invoice = $this->issuedInvoice();
         $invoice->update(['status' => 'draft']);
         $this->actingAs($this->user)->post("/invoices/{$invoice->id}/einvoice")->assertSessionHasErrors('einvoice');
-
-        $noTin = $this->issuedInvoice(['tin' => null]);
-        $this->actingAs($this->user)->post("/invoices/{$noTin->id}/einvoice")->assertSessionHasErrors('einvoice');
 
         Setting::updateOrCreate(['key' => 'currency'], ['value' => 'USD']);
         $usd = $this->issuedInvoice();
         $this->actingAs($this->user)->post("/invoices/{$usd->id}/einvoice")->assertSessionHasErrors('einvoice');
 
         $this->assertSame(0, EInvoiceDocument::count());
+    }
+
+    public function test_a_client_without_a_tin_is_sent_with_the_default_buyer_tin(): void
+    {
+        $invoice = $this->issuedInvoice(['tin' => null]);
+
+        $this->assertSame('EI00000000020', $invoice->toEInvoiceDocument()->buyer->tin);
+
+        $this->actingAs($this->user)->post("/invoices/{$invoice->id}/einvoice")->assertSessionHasNoErrors();
+        $this->assertSame(Status::Valid, EInvoiceDocument::sole()->status);
     }
 
     public function test_an_invoice_live_at_lhdn_cannot_be_voided_or_deleted_until_cancelled(): void

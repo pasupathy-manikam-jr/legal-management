@@ -35,12 +35,6 @@ class EInvoiceController extends Controller
         }
 
         try {
-            $document = $invoice->toEInvoiceDocument();
-
-            if (! $document->buyer->tin) {
-                return $this->fail("{$invoice->client->name} has no TIN. Add it on the client, or leave this sale for the monthly consolidated e-invoice.");
-            }
-
             $this->einvoice->submit($invoice);
         } catch (ValidationException $e) {
             return $this->fail('LHDN needs more details: '.implode(' ', $e->errors()['einvoice'] ?? []));

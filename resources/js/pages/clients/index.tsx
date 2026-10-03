@@ -298,7 +298,13 @@ export default function ClientsIndex({
                     error={form.errors.state}
                 />
                 <TextField label="Country" value={form.data.country} onChange={(v) => form.setData('country', v)} error={form.errors.country} />
-                <TextField label="TIN (LHDN)" value={form.data.tin} onChange={(v) => form.setData('tin', v)} error={form.errors.tin} />
+                <TextField
+                    label="TIN (LHDN)"
+                    value={form.data.tin}
+                    onChange={(v) => form.setData('tin', v)}
+                    error={form.errors.tin}
+                    placeholder="Blank sends EI00000000020"
+                />
                 <SelectField
                     label="ID Type"
                     value={form.data.id_type || 'none'}
