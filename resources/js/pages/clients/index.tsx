@@ -303,7 +303,7 @@ export default function ClientsIndex({
                     value={form.data.tin}
                     onChange={(v) => form.setData('tin', v)}
                     error={form.errors.tin}
-                    placeholder="Blank sends EI00000000020"
+                    placeholder="Blank: EI00000000010 local, EI00000000020 foreign"
                 />
                 <SelectField
                     label="ID Type"

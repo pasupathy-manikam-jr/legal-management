@@ -103,10 +103,11 @@ class ModuleSeeder extends Seeder
         }
 
         foreach ([
-            ['Corvus Freight v. Meridian Haulage', '[2021] HC 447', 'State High Court', 2021, 88, 'active'],
-            ['Re Oyelaran (Minors)', '[2019] FC 12', 'Family Court', 2019, 74, 'active'],
-            ['Delta Supplies v. Northwind', '[2017] CT 3', 'Commercial Tribunal', 2017, 61, 'questioned'],
-            ['Marrow Estates v. Cheng', '[2015] DC 220', 'Central District Court', 2015, 42, 'overruled'],
+            // Fictional demo authorities, cited in the style of the Malaysian law reports.
+            ['Kenderaan Maju Sdn Bhd v. Pelabuhan Freight Sdn Bhd', '[2021] 3 MLJ 447', 'Court of Appeal', 2021, 88, 'active'],
+            ['Re Rajendran (Infants)', '[2019] 5 CLJ 112', 'High Court (Shah Alam)', 2019, 74, 'active'],
+            ['Delta Bekalan Sdn Bhd v. Seri Murni Foods Sdn Bhd', '[2017] 2 AMR 301', 'High Court (Kuala Lumpur)', 2017, 61, 'questioned'],
+            ['Mutiara Estates Sdn Bhd v. Faizal Properties Sdn Bhd', '[2015] 1 MLJ 220', 'Federal Court', 2015, 42, 'overruled'],
         ] as $i => [$name, $citation, $court, $year, $relevance, $status]) {
             LegalPrecedent::create([
                 'matter_id' => $matters[$i % max($matters->count(), 1)]->id ?? null,
@@ -121,10 +122,10 @@ class ModuleSeeder extends Seeder
         }
 
         foreach ([
-            ['Annual CLE hours per fee earner', 'Continuing Education', 'Annually', 'high', 'in_progress'],
+            ['Annual CPD points per fee earner', 'Continuing Education', 'Annually', 'high', 'in_progress'],
             ['Client account monthly reconciliation', 'Trust Account', 'Monthly', 'high', 'compliant'],
             ['Conflict checks before engagement', 'Ethics', 'One Time', 'high', 'compliant'],
-            ['Data retention schedule review', 'Data Protection', 'Quarterly', 'medium', 'pending'],
+            ['PDPA 2010 data retention review', 'Data Protection', 'Quarterly', 'medium', 'pending'],
             ['Professional indemnity renewal', 'Insurance', 'Annually', 'high', 'non_compliant'],
         ] as $i => [$title, $category, $frequency, $priority, $status]) {
             ComplianceRequirement::create([
@@ -261,14 +262,14 @@ class ModuleSeeder extends Seeder
     ];
 
     private const COURT_TYPES = [
-        'High Court' => ['High court jurisdiction', '#ef4444'],
-        'Supreme Court' => ['Supreme court level', '#8b5cf6'],
-        'Criminal Court' => ['Criminal cases court', '#dc2626'],
-        'Commercial Court' => ['Commercial disputes court', '#059669'],
-        'Appellate Court' => ['Appeals court jurisdiction', '#f97316'],
-        'Magistrate Court' => ['Magistrate level court', '#84cc16'],
-        'Labor Court' => ['Employment disputes court', '#06b6d4'],
-        'Tax Court' => ['Tax matters court', '#6b7280'],
+        'Federal Court' => ['Apex court: final appeals and constitutional questions', '#8b5cf6'],
+        'Court of Appeal' => ['Appeals from the High Courts', '#f97316'],
+        'High Court' => ['High Court in Malaya, and High Court in Sabah and Sarawak', '#ef4444'],
+        'Sessions Court' => ['Subordinate court: civil claims up to RM1 million and serious offences', '#059669'],
+        'Magistrates\' Court' => ['Subordinate court: smaller civil claims and lesser offences', '#84cc16'],
+        'Industrial Court' => ['Employment and trade disputes', '#06b6d4'],
+        'Syariah Court' => ['Islamic family and personal law, state by state', '#14b8a6'],
+        'Special Commissioners of Income Tax' => ['Appeals against LHDN tax assessments', '#6b7280'],
     ];
 
     /** The kinds of audit the firm runs, with the colour each one wears. */
@@ -311,30 +312,30 @@ class ModuleSeeder extends Seeder
 
     /** Where the firm looks things up, and what each one is. */
     private const RESEARCH_SOURCES = [
-        'Westlaw' => ['type' => 'database', 'url' => 'https://westlaw.com'],
-        'LexisNexis' => ['type' => 'database', 'url' => 'https://lexisnexis.com'],
+        'CLJ Law' => ['type' => 'database', 'url' => 'https://www.cljlaw.com'],
+        'LexisNexis Malaysia (MLJ)' => ['type' => 'database', 'url' => 'https://www.lexisnexis.com.my'],
+        'eLaw' => ['type' => 'database', 'url' => 'https://www.elaw.my'],
+        'Laws of Malaysia (AGC)' => ['type' => 'statutory', 'url' => 'https://lom.agc.gov.my'],
+        'Federal Gazette (e-Federal Gazette)' => ['type' => 'statutory', 'url' => 'https://lom.agc.gov.my/federal-gazette.php'],
+        'Judgments, Office of the Chief Registrar' => ['type' => 'case law', 'url' => 'https://www.kehakiman.gov.my'],
+        'CommonLII' => ['type' => 'case law', 'url' => 'http://www.commonlii.org'],
         'Google Scholar' => ['type' => 'case law', 'url' => 'https://scholar.google.com'],
-        'Justia' => ['type' => 'case law', 'url' => 'https://justia.com'],
-        'Legal Information Institute' => ['type' => 'statutory', 'url' => 'https://law.cornell.edu'],
-        'Bloomberg Law' => ['type' => 'database', 'url' => 'https://bloomberglaw.com'],
-        'HeinOnline' => ['type' => 'secondary', 'url' => 'https://heinonline.org'],
-        'Fastcase' => ['type' => 'case law', 'url' => 'https://fastcase.com'],
-        'Casetext' => ['type' => 'database', 'url' => 'https://casetext.com'],
+        'Malaysian Bar Library' => ['type' => 'secondary', 'url' => 'https://www.malaysianbar.org.my'],
         'Law Library' => ['type' => 'secondary', 'url' => null],
     ];
 
     /** Who sits at each court the firm appears before. */
     private function bench(): void
     {
-        $designations = ['Chief Justice', 'Senior Judge', 'District Judge', 'Magistrate'];
+        $designations = ['Judge', 'Judicial Commissioner', 'Sessions Court Judge', 'Industrial Court Chairman'];
 
         foreach (Court::orderBy('id')->get() as $i => $court) {
             Judge::firstOrCreate(
-                ['court_id' => $court->id, 'name' => 'Hon. '.['Miriam Adeyemi', 'Charles Okonkwo', 'Nadia Faruqi', 'Peter Lindqvist', 'Grace Mbeki'][$i % 5]],
+                ['court_id' => $court->id, 'name' => ["YA Dato' Ahmad Kamal bin Ismail", 'YA Puan Lim Mei Fong', 'YA Tuan Ravi Chandran', 'YA Datin Noraini binti Yusof', 'YA Tuan Wong Kok Leong'][$i % 5]],
                 [
                     'designation' => $designations[$i % count($designations)],
-                    'email' => 'chambers'.($i + 1).'@'.Str::slug($court->name).'.gov',
-                    'phone' => sprintf('+1-555-%04d', 60 + $i),
+                    'email' => 'chambers'.($i + 1).'@'.Str::slug($court->name).'.test',
+                    'phone' => sprintf('+60 3-2612 %04d', 60 + $i),
                     'appointed_on' => now()->subYears(3 + $i)->startOfYear(),
                     'active' => true,
                 ],
@@ -346,19 +347,20 @@ class ModuleSeeder extends Seeder
     private function registers(Collection $users): void
     {
         $bodies = collect([
-            ['State Bar Association', 'SBA', 'bar association', 'State', 'info@statebar.gov', '+1-555-0100'],
-            ['Federal Bar Association', 'FBA', 'bar association', 'Federal', 'contact@federalbar.gov', '+1-555-0200'],
-            ['Data Protection Authority', 'DPA', 'regulator', 'Federal', 'privacy@dpa.gov', '+1-555-0300'],
-            ['Professional Standards Board', 'PSB', 'regulator', 'State', 'standards@psb.gov', '+1-555-0500'],
-            ['Legal Ethics Commission', 'LEC', 'regulator', 'State', 'ethics@lec.gov', '+1-555-0600'],
-            ['Court Administration Office', 'CAO', 'court', 'State', 'admin@courts.gov', '+1-555-0700'],
-            ['Insurance Regulatory Board', 'IRB', 'government', 'State', 'insurance@irb.gov', '+1-555-0800'],
-            ['Environmental Protection Agency', 'EPA', 'government', 'Federal', 'legal@epa.gov', '+1-555-1000'],
+            ['Malaysian Bar', 'Bar Council', 'bar association', 'Peninsular Malaysia', 'https://www.malaysianbar.org.my', '+60 3-0000 0100'],
+            ['Inland Revenue Board of Malaysia', 'LHDN', 'government', 'Federal', 'https://www.hasil.gov.my', '+60 3-0000 0200'],
+            ['Personal Data Protection Department', 'JPDP', 'regulator', 'Federal', 'https://www.pdp.gov.my', '+60 3-0000 0300'],
+            ['Companies Commission of Malaysia', 'SSM', 'government', 'Federal', 'https://www.ssm.com.my', '+60 3-0000 0500'],
+            ['Office of the Chief Registrar, Federal Court', 'PKPMP', 'court', 'Federal', 'https://www.kehakiman.gov.my', '+60 3-0000 0600'],
+            ['Bank Negara Malaysia', 'BNM', 'regulator', 'Federal', 'https://www.bnm.gov.my', '+60 3-0000 0700'],
+            ['Securities Commission Malaysia', 'SC', 'regulator', 'Federal', 'https://www.sc.com.my', '+60 3-0000 0800'],
+            ['Labuan Financial Services Authority', 'Labuan FSA', 'regulator', 'Labuan', 'https://www.labuanfsa.gov.my', '+60 3-0000 1000'],
         ])->map(fn ($row) => RegulatoryBody::firstOrCreate(
             ['name' => $row[0]],
             [
+                // Demo contact details: the websites are real, the email and phone are placeholders.
                 'short_name' => $row[1], 'type' => $row[2], 'jurisdiction' => $row[3],
-                'website' => 'https://'.Str::after($row[4], '@'), 'contact_email' => $row[4],
+                'website' => $row[4], 'contact_email' => 'enquiries@'.Str::slug($row[1]).'.test',
                 'phone' => $row[5], 'active' => true,
             ],
         ));
@@ -366,14 +368,14 @@ class ModuleSeeder extends Seeder
         // Staggered so the grid shows a live licence, one due for renewal, one
         // expired, and one of each status the register recognises.
         $licences = [
-            ['Bar License', 'BAR', 'California', 'active', -300, 320],
-            ['Notary Public License', 'NOT', 'Local', 'suspended', -700, 400],
-            ['Patent Attorney License', 'PAT', 'Federal', 'active', -800, -60],
-            ['Mediator License', 'MED', 'Multi-State', 'active', -180, 185],
-            ['Tax Attorney License', 'TAX', 'California', 'revoked', -200, 280],
-            ['Supreme Court License', 'SUP', 'New York', 'active', -45, 320],
-            ['Immigration Attorney License', 'IMM', 'Multi-State', 'active', -600, 390],
-            ['Federal Court License', 'FED', 'Multi-State', 'suspended', -760, 330],
+            ['Annual Practising Certificate', 'APC', 'Peninsular Malaysia', 'active', -300, 320],
+            ['Commissioner for Oaths', 'COO', 'Kuala Lumpur', 'suspended', -700, 400],
+            ['Patent Agent', 'PAT', 'Malaysia', 'active', -800, -60],
+            ['Accredited Mediator', 'MED', 'Malaysia', 'active', -180, 185],
+            ['Tax Agent (Section 153)', 'TAX', 'Malaysia', 'revoked', -200, 280],
+            ['Notary Public', 'NOT', 'Malaysia', 'active', -45, 320],
+            ['Syarie Lawyer Certificate', 'SYR', 'Selangor', 'active', -600, 390],
+            ['Advocate, High Court in Sabah and Sarawak', 'SAB', 'Sabah', 'suspended', -760, 330],
         ];
 
         foreach ($licences as $i => [$type, $prefix, $jurisdiction, $status, $issued, $expires]) {
@@ -395,10 +397,10 @@ class ModuleSeeder extends Seeder
         foreach ($users as $i => $user) {
 
             $courses = [
-                ['Legal Ethics and Professional Responsibility', 'Legal Education Institute', 'Ethics', 4.7, 4.7, 'completed'],
-                ['Contract Law Updates', 'State Bar Association', 'Continuing Education', 2.1, 4.2, 'in_progress'],
+                ['Legal Profession Act and Etiquette Rules', 'Malaysian Bar CPD', 'Ethics', 4.7, 4.7, 'completed'],
+                ['Contracts Act 1950: recent decisions', 'Malaysian Bar CPD', 'Continuing Education', 2.1, 4.2, 'in_progress'],
                 ['Technology in Legal Practice', 'Digital Law Academy', 'Technology', 3.8, 3.5, 'in_progress'],
-                ['Family Law Practice', 'Law Practice Institute', 'Continuing Education', 3.3, 2.8, 'expired'],
+                ['Law Reform (Marriage and Divorce) Act in practice', 'Malaysian Bar CPD', 'Continuing Education', 3.3, 2.8, 'expired'],
             ];
 
             foreach ([$courses[$i % 4], $courses[($i + 1) % 4]] as $j => [$title, $provider, $category, $earned, $required, $status]) {
@@ -867,29 +869,33 @@ class ModuleSeeder extends Seeder
     private function companyProfile(): void
     {
         $profile = [
-            'firm_name' => 'Whitmore & Co.',
+            'firm_name' => 'Aisyah & Partners',
             'business_type' => 'law firm',
             'years_experience' => '18',
             'practice_size' => 'medium',
-            'bar_registration_no' => 'BAR/2008/04417',
-            'registration_no' => 'LLP/2008/000417',
+            'bar_registration_no' => 'BC/N/2008/0417',
+            'registration_no' => 'LLP0017417-LGN',
             'established_on' => '2008-03-17',
-            'advocate_name' => 'Eleanor Whitmore',
-            'firm_email' => 'clerks@whitmore.test',
-            'firm_phone' => '+44 20 7946 0417',
-            'firm_website' => 'https://whitmore.test',
+            'advocate_name' => 'Nurul Aisyah binti Ahmad',
+            'firm_email' => 'clerks@aisyahpartners.test',
+            'firm_phone' => '+60 3-2161 0417',
+            'firm_website' => 'https://aisyahpartners.test',
             'consultation_fee' => '250.00',
-            'office_hours' => 'Monday to Friday: 9:00 AM - 6:00 PM, Saturday: 10:00 AM - 1:00 PM',
-            'firm_address' => '4 Gray\'s Inn Square, Holborn, London WC1R 5AY',
-            'law_degree' => 'LLB (Hons), LLM (Commercial Litigation)',
-            'university' => 'University of London',
-            'languages_spoken' => 'English, French, Yoruba',
+            'office_hours' => 'Monday to Friday: 9:00 AM - 6:00 PM, Saturday: 9:00 AM - 1:00 PM',
+            'firm_address' => "Level 12, Menara Aisyah\nJalan Sultan Ismail",
+            'firm_city' => 'Kuala Lumpur',
+            'firm_postcode' => '50250',
+            'firm_state' => 'Wilayah Persekutuan Kuala Lumpur',
+            'firm_country' => 'Malaysia',
+            'law_degree' => 'LLB (Hons), CLP, LLM (Commercial Law)',
+            'university' => 'Universiti Malaya',
+            'languages_spoken' => 'Bahasa Malaysia, English, Mandarin, Tamil',
             'success_rate' => '87',
             'specialization' => 'Commercial Litigation, Corporate Advisory, Employment Law',
-            'court_jurisdictions' => 'High Court, Court of Appeal, Employment Tribunal',
+            'court_jurisdictions' => 'High Court in Malaya, Court of Appeal, Federal Court, Industrial Court',
             'services_offered' => 'Legal Consultation, Contract Drafting, Commercial Litigation, Corporate Advisory, Court Representation, Compliance Audits',
             'notable_cases' => 'Acted in leading carriage-of-goods and shareholder-dispute matters between 2014 and 2024.',
-            'firm_description' => 'Whitmore & Co. is a commercial practice advising owner-managed businesses and their directors. With 18 years of experience we handle contentious and advisory work end to end.',
+            'firm_description' => 'Aisyah & Partners is a Kuala Lumpur commercial practice advising owner-managed businesses and their directors. With 18 years of experience we handle contentious and advisory work end to end.',
         ];
 
         foreach ($profile as $key => $value) {

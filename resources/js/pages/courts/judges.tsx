@@ -365,7 +365,7 @@ export default function Judges({
                         value={form.data.name}
                         onChange={(v) => form.setData('name', v)}
                         error={form.errors.name}
-                        placeholder="Hon. Miriam Adeyemi"
+                        placeholder="YA Puan Lim Mei Fong"
                         className="sm:col-span-2"
                     />
                     <TextField
@@ -374,7 +374,7 @@ export default function Judges({
                         onChange={(v) => form.setData('designation', v)}
                         error={form.errors.designation}
                         list="judge-designations"
-                        placeholder="District Judge"
+                        placeholder="Sessions Court Judge"
                     />
                     <datalist id="judge-designations">
                         {options.designations.map((d) => (

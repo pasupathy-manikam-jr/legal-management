@@ -329,7 +329,8 @@ class PracticeTest extends TestCase
             'minutes' => 60, 'rate_cents' => 30000, 'billable' => true, 'description' => 'Hearing',
         ]);
 
-        // The firm's week starts on Sunday by default, so Monday is the second column.
+        // In a firm whose week starts on Sunday, Monday is the second column.
+        Setting::updateOrCreate(['key' => 'calendar_start_day'], ['value' => 'sunday']);
         $this->actingAs($user)->get("/billing/time-entries?week={$monday->toDateString()}&member={$user->id}")
             ->assertOk()
             ->assertInertia(fn ($page) => $page

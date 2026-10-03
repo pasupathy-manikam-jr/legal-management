@@ -17,7 +17,7 @@ class Setting extends Model
     /** Firm defaults — the fallbacks the app runs on before anyone visits Billing Setup. */
     public const DEFAULTS = [
         // Billing
-        'firm_name' => 'Whitmore & Co.',
+        'firm_name' => 'Aisyah & Partners',
         'invoice_prefix' => 'INV',
         'payment_terms_days' => '30',
         'default_tax_percent' => '0',
@@ -65,8 +65,8 @@ class Setting extends Model
         'default_language' => 'en',
         'date_format' => 'Y-m-d',
         'time_format' => 'H:i',
-        'calendar_start_day' => 'sunday',
-        'default_timezone' => 'UTC',
+        'calendar_start_day' => 'monday',
+        'default_timezone' => 'Asia/Kuala_Lumpur',
 
         // Brand
         'title_text' => 'Advocate',
@@ -74,8 +74,8 @@ class Setting extends Model
         'theme_color' => '#10b981',
 
         // Currency — these drive money formatting across the whole app.
-        'currency' => 'USD',
-        'currency_symbol' => '$',
+        'currency' => 'MYR',
+        'currency_symbol' => 'RM',
         'currency_symbol_position' => 'before',
         'currency_symbol_space' => '0',
         'currency_decimals' => '2',

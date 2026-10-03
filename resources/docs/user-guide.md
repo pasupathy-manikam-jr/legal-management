@@ -111,7 +111,7 @@ Switch between **List View** and **Grid View** at the top right. Each court show
 ### Judges
 
 1. Go to **Judges** and choose **Add Judge**.
-2. Enter the **Name**, **Title** (for example District Judge), **Court**, contact details and any **Notes**, and mark them **Active** or **Inactive**.
+2. Enter the **Name**, **Title** (for example Sessions Court Judge), **Court**, contact details and any **Notes**, and mark them **Active** or **Inactive**.
 
 Filter judges by court. Each judge shows their number of hearings.
 
@@ -127,7 +127,7 @@ Every case belongs to a client, so add the client first. Find these under **Clie
 
 1. Go to **Client Management → Clients** and choose **Add Client**.
 2. Enter the **Name**, **Type** (for example Individual or Corporate), **Company**, **Email**, **Phone**, **Address** and any **Notes**, and set the **Status** to Active or Inactive.
-3. For e-invoicing, add the client's **TIN (LHDN)** and ID. Left blank, e-invoices go out with LHDN's general buyer TIN, EI00000000020.
+3. For e-invoicing, add the client's **TIN (LHDN)** and ID. Left blank, e-invoices go out with LHDN's general TIN: EI00000000010 for clients in Malaysia, EI00000000020 for foreign clients.
 
 **View** opens the client's page: their contact details, open cases, invoices (invoiced and outstanding totals), billed time and recent communication.
 
@@ -277,7 +277,7 @@ The dropdowns across the app (case types, statuses, categories and so on) come f
 | Billing Setup | Expense Categories |
 | Document Setup | Categories (the same list as Document Types) |
 
-To add an entry, open the list, choose **Add**, and give it a name and **Description**. Some lists also take a **Color** for their badges, a parent (research categories sit under a practice area) or a link (research sources, for example https://westlaw.com). Mark an entry **Inactive** to hide it from new records without losing it from old ones.
+To add an entry, open the list, choose **Add**, and give it a name and **Description**. Some lists also take a **Color** for their badges, a parent (research categories sit under a practice area) or a link (research sources, for example https://www.cljlaw.com). Mark an entry **Inactive** to hide it from new records without losing it from old ones.
 
 ## Administration
 
@@ -318,7 +318,7 @@ Today only the administrator role actually restricts access. The permission tick
 | --- | --- |
 | System Settings | Default language and timezone, date and time formats |
 | Brand Settings | Firm name, title text, footer text and theme colour |
-| Currency Settings | Default currency, symbol and its position, decimal places, and separators, for example 1,234.56 or 1.234,56 |
+| Currency Settings | Default currency (Malaysian ringgit, RM, out of the box), symbol and its position, decimal places, and separators |
 | Email Settings | The outgoing mail server, with **Test Email Configuration** |
 | Email Notifications | Which notification templates are switched on |
 | Slack Settings | The Slack connection, with **Test Slack Configuration** |

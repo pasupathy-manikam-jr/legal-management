@@ -418,7 +418,7 @@ export default function SetupIndex({
                         type="url"
                         value={form.data.meta.url ?? ''}
                         onChange={(e) => form.setData('meta', { ...form.data.meta, url: e.target.value })}
-                        placeholder="https://westlaw.com"
+                        placeholder="https://www.cljlaw.com"
                     />
                     {(form.errors as Record<string, string>)['meta.url'] && (
                         <p className="text-xs text-rose-600">{(form.errors as Record<string, string>)['meta.url']}</p>

@@ -1,8 +1,8 @@
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
-import type { NavGroup } from '@/types';
-import { Link } from '@inertiajs/react';
+import type { NavGroup, SharedData } from '@/types';
+import { Link, usePage } from '@inertiajs/react';
 import {
     BookOpen,
     Briefcase,
@@ -240,6 +240,7 @@ const navGroups: NavGroup[] = [
 let sidebarScroll = 0;
 
 export function AppSidebar() {
+    const { settings } = usePage<SharedData>().props;
     const [search, setSearch] = useState('');
     const contentRef = useRef<HTMLDivElement>(null);
 
@@ -310,7 +311,7 @@ export function AppSidebar() {
                             <Building2 className="text-sidebar-foreground/70 size-4" />
                         </div>
                         <div className="min-w-0 flex-1">
-                            <p className="truncate text-sm font-medium">Whitmore &amp; Co.</p>
+                            <p className="truncate text-sm font-medium">{settings?.firmName}</p>
                             <p className="text-sidebar-foreground/60 truncate text-xs">Legal practice management</p>
                         </div>
                     </div>

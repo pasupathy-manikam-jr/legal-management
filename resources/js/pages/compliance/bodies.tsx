@@ -320,7 +320,7 @@ export default function RegulatoryBodies({
                         value={form.data.phone}
                         onChange={(v) => form.setData('phone', v)}
                         error={form.errors.phone}
-                        placeholder="+1-555-0100"
+                        placeholder="+60 3-2050 2050"
                     />
                     <TextField
                         label="Contact email"

@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Client;
 use App\Models\Hearing;
+use App\Models\Invoice;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
@@ -22,7 +23,11 @@ class DemoSeederTest extends TestCase
 
         $this->assertTrue(User::where('email', 'admin@advocate.test')->exists());
         $this->assertGreaterThan(0, Hearing::count());
-        $this->assertSame(0, Client::whereNull('tin')->count(), 'Every demo client needs a TIN to send e-invoices.');
+        $this->assertSame(
+            [Invoice::LOCAL_BUYER_TIN],
+            Client::all()->map(fn (Client $client) => $client->tin ?: Invoice::defaultBuyerTin($client->country))->unique()->values()->all(),
+            'Demo clients are Malaysian, so their e-invoices go out under the local general TIN.',
+        );
         $this->assertNotEmpty(Storage::disk('local')->allFiles());
     }
 }

@@ -121,11 +121,12 @@ class EInvoiceTest extends TestCase
         $this->assertSame(0, EInvoiceDocument::count());
     }
 
-    public function test_a_client_without_a_tin_is_sent_with_the_default_buyer_tin(): void
+    public function test_a_client_without_a_tin_is_sent_with_the_general_tin_for_where_they_are(): void
     {
-        $invoice = $this->issuedInvoice(['tin' => null]);
+        $this->assertSame('EI00000000020', $this->issuedInvoice(['tin' => null, 'country' => 'Singapore'])->toEInvoiceDocument()->buyer->tin);
 
-        $this->assertSame('EI00000000020', $invoice->toEInvoiceDocument()->buyer->tin);
+        $invoice = $this->issuedInvoice(['tin' => null, 'country' => 'Malaysia']);
+        $this->assertSame('EI00000000010', $invoice->toEInvoiceDocument()->buyer->tin);
 
         $this->actingAs($this->user)->post("/invoices/{$invoice->id}/einvoice")->assertSessionHasNoErrors();
         $this->assertSame(Status::Valid, EInvoiceDocument::sole()->status);

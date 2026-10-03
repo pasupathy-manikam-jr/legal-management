@@ -559,7 +559,7 @@ export default function SystemSettings({ values, hasSecret, calendarFeedUrl, tem
                                         value={twilio.data.twilio_from_number}
                                         onChange={(v) => twilio.setData('twilio_from_number', v)}
                                         error={twilio.errors.twilio_from_number}
-                                        placeholder="+15550123456"
+                                        placeholder="+60123456789"
                                         disabled={!twilio.data.twilio_enabled}
                                     />
                                 </div>
@@ -573,7 +573,7 @@ export default function SystemSettings({ values, hasSecret, calendarFeedUrl, tem
                                         <div className="min-w-[220px] flex-1">
                                             <Label className="text-xs">Send test to</Label>
                                             <Input
-                                                placeholder="+15550123456"
+                                                placeholder="+60123456789"
                                                 value={testSms.data.phone}
                                                 onChange={(e) => testSms.setData('phone', e.target.value)}
                                                 className="mt-1.5"
@@ -615,9 +615,7 @@ export default function SystemSettings({ values, hasSecret, calendarFeedUrl, tem
                                             value={payments.data.bank_transfer_details}
                                             onChange={(e) => payments.setData('bank_transfer_details', e.target.value)}
                                             disabled={!payments.data.bank_transfer_enabled}
-                                            placeholder={
-                                                'Whitmore & Co. Client Account\nSort code 00-00-00\nAccount 12345678\nIBAN GB00 XXXX 0000 0000 0000 00'
-                                            }
+                                            placeholder={'Aisyah & Partners Client Account\nMaybank, account 5140 1234 5678\nSWIFT MBBEMYKL'}
                                             className="border-input focus-visible:border-ring focus-visible:ring-ring/50 dark:bg-input/30 rounded-md border bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:ring-[3px] disabled:opacity-50"
                                         />
                                     </Field>

@@ -24,27 +24,27 @@ class DatabaseSeeder extends Seeder
 
         $admin = User::firstOrCreate(
             ['email' => 'admin@advocate.test'],
-            ['name' => 'Ada Whitmore', 'password' => Hash::make('password'), 'email_verified_at' => now()],
+            ['name' => 'Nurul Aisyah binti Ahmad', 'password' => Hash::make('password'), 'email_verified_at' => now()],
         );
 
-        $team = collect(['Marcus Reyes', 'Priya Nair', 'Tom Okafor'])->map(fn ($name) => User::firstOrCreate(
+        $team = collect(['Lim Wei Jie', 'Priya Nair', 'Muhammad Hafiz bin Rahman'])->map(fn ($name) => User::firstOrCreate(
             ['email' => strtolower(explode(' ', $name)[0]).'@advocate.test'],
             ['name' => $name, 'password' => Hash::make('password'), 'email_verified_at' => now()],
         ))->prepend($admin);
 
         $courts = collect([
-            ['name' => 'Central District Court', 'type' => 'district', 'bench' => 'Bench 3'],
-            ['name' => 'State High Court', 'type' => 'high', 'bench' => 'Division II'],
-            ['name' => 'Commercial Tribunal', 'type' => 'commercial', 'bench' => null],
-        ])->map(fn ($c) => Court::firstOrCreate(['name' => $c['name']], $c + ['phone' => '+1 555 0100']));
+            ['name' => 'Kuala Lumpur Sessions Court', 'type' => 'Sessions Court', 'bench' => 'Court 3'],
+            ['name' => 'Kuala Lumpur High Court', 'type' => 'High Court', 'bench' => 'Civil Division (NCvC)'],
+            ['name' => 'Industrial Court of Malaysia', 'type' => 'Industrial Court', 'bench' => null],
+        ])->map(fn ($c) => Court::firstOrCreate(['name' => $c['name']], $c + ['phone' => '+60 3-2612 0100']));
 
-        // LHDN's general foreign-buyer TIN, so sandbox e-invoices can be sent for every demo client.
+        // No TINs: e-invoices for these Malaysian clients fall back to LHDN's general TIN, EI00000000010.
         $clients = collect([
-            ['name' => 'Helena Brandt', 'company' => 'Brandt Logistics', 'email' => 'helena@brandt.test'],
-            ['name' => 'Oyelaran Family', 'company' => null, 'email' => 'oyelaran@mail.test'],
-            ['name' => 'Northwind Foods', 'company' => 'Northwind Foods Ltd', 'email' => 'legal@northwind.test'],
-            ['name' => 'Samuel Cheng', 'company' => 'Cheng Property', 'email' => 'sam@chengprop.test'],
-        ])->map(fn ($c) => Client::firstOrCreate(['name' => $c['name']], $c + ['phone' => '+1 555 0199', 'tin' => 'EI00000000020']));
+            ['name' => 'Tan Mei Ling', 'company' => 'Tan Logistics Sdn Bhd', 'email' => 'meiling@tanlogistics.test', 'city' => 'Port Klang', 'state' => 'Selangor'],
+            ['name' => 'Rajendran Family', 'company' => null, 'email' => 'rajendran@mail.test', 'city' => 'Petaling Jaya', 'state' => 'Selangor'],
+            ['name' => 'Seri Murni Foods', 'company' => 'Seri Murni Foods Sdn Bhd', 'email' => 'legal@serimurni.test', 'city' => 'Shah Alam', 'state' => 'Selangor'],
+            ['name' => 'Ahmad Faizal bin Osman', 'company' => 'Faizal Properties Sdn Bhd', 'email' => 'faizal@faizalprop.test', 'city' => 'Kuala Lumpur', 'state' => 'Wilayah Persekutuan Kuala Lumpur'],
+        ])->map(fn ($c) => Client::firstOrCreate(['name' => $c['name']], $c + ['phone' => '+60 12-345 0199', 'country' => 'Malaysia']));
 
         if (Matter::exists()) {
             $this->call(ModuleSeeder::class);
@@ -53,11 +53,11 @@ class DatabaseSeeder extends Seeder
         }
 
         $specs = [
-            ['Brandt Logistics v. Corvus Freight', 'commercial contract dispute', 'civil', 'high', 0],
-            ['Oyelaran custody arrangement', 'family', 'family', 'medium', 1],
-            ['Northwind supplier arbitration', 'commercial', 'corporate', 'high', 2],
-            ['Cheng Property — lease rectification', 'property', 'property', 'low', 3],
-            ['Brandt Logistics — employment claim', 'labour', 'labour', 'medium', 0],
+            ['Tan Logistics Sdn Bhd v. Kenderaan Maju Sdn Bhd', 'commercial contract dispute', 'civil', 'high', 0],
+            ['Rajendran custody arrangement', 'family', 'family', 'medium', 1],
+            ['Seri Murni Foods supplier arbitration', 'commercial', 'corporate', 'high', 2],
+            ['Faizal Properties — lease rectification', 'property', 'property', 'low', 3],
+            ['Tan Logistics — Industrial Court claim', 'labour', 'labour', 'medium', 0],
         ];
 
         foreach ($specs as $i => [$title, $area, $type, $priority, $clientIdx]) {
@@ -70,8 +70,8 @@ class DatabaseSeeder extends Seeder
                 'practice_area' => $area,
                 'case_type' => $type,
                 'priority' => $priority,
-                'judge' => ['Hon. R. Alvarez', 'Hon. P. Mensah', 'Hon. L. Tanaka'][$i % 3],
-                'opposing_party' => ['Corvus Freight', '—', 'Delta Supplies', 'Marrow Estates', 'Former employee'][$i],
+                'judge' => ["YA Dato' Ahmad Kamal bin Ismail", 'YA Puan Lim Mei Fong', 'YA Tuan Ravi Chandran'][$i % 3],
+                'opposing_party' => ['Kenderaan Maju Sdn Bhd', '—', 'Delta Bekalan Sdn Bhd', 'Mutiara Estates Sdn Bhd', 'Former employee'][$i],
                 'status' => $i === 4 ? 'closed' : ($i === 3 ? 'pending' : 'open'),
                 'opened_on' => now()->subDays(120 - $i * 20),
                 'expected_completion' => now()->addDays(60 + $i * 10),
@@ -154,7 +154,7 @@ class DatabaseSeeder extends Seeder
             'paid_on' => now()->subDays(5),
             'amount_cents' => (int) round($invoice->totalCents() / 3),
             'method' => 'bank',
-            'reference' => 'TRF-88120',
+            'reference' => 'DuitNow 88120',
         ]);
 
         $invoice->refresh()->refreshPaidTotal();

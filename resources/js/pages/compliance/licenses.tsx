@@ -293,7 +293,7 @@ export default function ProfessionalLicenses({
                         onChange={(v) => form.setData('type', v)}
                         error={form.errors.type}
                         list="license-types"
-                        placeholder="Bar License"
+                        placeholder="Annual Practising Certificate"
                         className="sm:col-span-2"
                     />
                     <datalist id="license-types">

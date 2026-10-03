@@ -1007,8 +1007,9 @@ class ModulesTest extends TestCase
     public function test_the_calendar_window_follows_the_chosen_view(): void
     {
         $admin = $this->admin();
+        Setting::updateOrCreate(['key' => 'calendar_start_day'], ['value' => 'sunday']);
 
-        // A Wednesday, with the firm's default Sunday week start.
+        // A Wednesday, in a firm whose week starts on Sunday.
         $this->actingAs($admin)->get('/calendar?view=day&date=2026-09-23')
             ->assertOk()
             ->assertInertia(fn ($page) => $page
