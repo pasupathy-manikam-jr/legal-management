@@ -38,12 +38,13 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Commercial Tribunal', 'type' => 'commercial', 'bench' => null],
         ])->map(fn ($c) => Court::firstOrCreate(['name' => $c['name']], $c + ['phone' => '+1 555 0100']));
 
+        // LHDN's general foreign-buyer TIN, so sandbox e-invoices can be sent for every demo client.
         $clients = collect([
             ['name' => 'Helena Brandt', 'company' => 'Brandt Logistics', 'email' => 'helena@brandt.test'],
             ['name' => 'Oyelaran Family', 'company' => null, 'email' => 'oyelaran@mail.test'],
             ['name' => 'Northwind Foods', 'company' => 'Northwind Foods Ltd', 'email' => 'legal@northwind.test'],
             ['name' => 'Samuel Cheng', 'company' => 'Cheng Property', 'email' => 'sam@chengprop.test'],
-        ])->map(fn ($c) => Client::firstOrCreate(['name' => $c['name']], $c + ['phone' => '+1 555 0199']));
+        ])->map(fn ($c) => Client::firstOrCreate(['name' => $c['name']], $c + ['phone' => '+1 555 0199', 'tin' => 'EI00000000020']));
 
         if (Matter::exists()) {
             $this->call(ModuleSeeder::class);
