@@ -42,12 +42,6 @@ export default function Welcome() {
                                 >
                                     Log in
                                 </Link>
-                                <Link
-                                    href={route('register')}
-                                    className="rounded-md bg-neutral-900 px-4 py-2 font-medium text-white dark:bg-white dark:text-neutral-900"
-                                >
-                                    Register
-                                </Link>
                             </>
                         )}
                     </nav>
@@ -70,14 +64,6 @@ export default function Welcome() {
                             >
                                 {auth.user ? 'Go to dashboard' : 'Sign in to your firm'}
                             </Link>
-                            {!auth.user && (
-                                <Link
-                                    href={route('register')}
-                                    className="rounded-md border border-neutral-300 px-6 py-3 text-sm font-medium hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-900"
-                                >
-                                    Create an account
-                                </Link>
-                            )}
                         </div>
                     </section>
 
