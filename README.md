@@ -114,7 +114,7 @@ That runs the Laravel server, queue worker, log viewer and Vite together.
 `php artisan migrate --seed` creates a demo firm: clients, cases, hearings, invoices, documents with sample files, roles and settings. Sign in with:
 
 - Email: `admin@advocate.test`
-- Password: `password`
+- Password: `Zx123456`
 
 Change this password before deploying anywhere public.
 

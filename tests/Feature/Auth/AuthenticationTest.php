@@ -43,8 +43,8 @@ class AuthenticationTest extends TestCase
         $this->seed(DatabaseSeeder::class);
 
         $this->post('/login', [
-            'email' => 'admin@advocate.test',
-            'password' => 'password',
+            'email' => DatabaseSeeder::LOGINS[0]['email'],
+            'password' => DatabaseSeeder::LOGINS[0]['password'],
         ]);
 
         $this->assertAuthenticated();

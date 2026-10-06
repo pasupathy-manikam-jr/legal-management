@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
      * @var list<array{name: string, email: string, password: string}>
      */
     public const LOGINS = [
-        ['name' => 'Admin', 'email' => 'admin@advocate.test', 'password' => 'password'],
+        ['name' => 'Admin', 'email' => 'admin@advocate.test', 'password' => 'Zx123456'],
     ];
 
     /**
