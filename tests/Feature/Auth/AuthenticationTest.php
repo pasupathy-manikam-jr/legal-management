@@ -3,7 +3,10 @@
 namespace Tests\Feature\Auth;
 
 use App\Models\User;
+use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class AuthenticationTest extends TestCase
@@ -15,6 +18,36 @@ class AuthenticationTest extends TestCase
         $response = $this->get('/login');
 
         $response->assertStatus(200);
+    }
+
+    public function test_login_screen_hides_demo_logins_by_default()
+    {
+        config(['app.demo_logins' => false]);
+
+        $this->get('/login')->assertInertia(fn (Assert $page) => $page
+            ->where('demoLogins', []));
+    }
+
+    public function test_login_screen_offers_seeded_logins_when_enabled()
+    {
+        config(['app.demo_logins' => true]);
+
+        $this->get('/login')->assertInertia(fn (Assert $page) => $page
+            ->where('demoLogins', DatabaseSeeder::LOGINS)
+            ->where('demoLogins.0.email', 'admin@advocate.test'));
+    }
+
+    public function test_seeded_admin_can_log_in()
+    {
+        Storage::fake('local');
+        $this->seed(DatabaseSeeder::class);
+
+        $this->post('/login', [
+            'email' => 'admin@advocate.test',
+            'password' => 'password',
+        ]);
+
+        $this->assertAuthenticated();
     }
 
     public function test_users_can_authenticate_using_the_login_screen()

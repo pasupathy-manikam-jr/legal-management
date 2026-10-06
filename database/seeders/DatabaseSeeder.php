@@ -18,6 +18,16 @@ use Illuminate\Support\Facades\Hash;
 class DatabaseSeeder extends Seeder
 {
     /**
+     * Seeded accounts by role. With DEMO_LOGINS=true the login page also offers them as
+     * one-click logins, so never enable that flag on a live server.
+     *
+     * @var list<array{name: string, email: string, password: string}>
+     */
+    public const LOGINS = [
+        ['name' => 'Admin', 'email' => 'admin@advocate.test', 'password' => 'password'],
+    ];
+
+    /**
      * The demo clients, every field filled. They carry LHDN's general buyer TIN, as Accounting's demo
      * customers do, so sandbox e-invoices can be sent; the IDs are made up.
      *
@@ -60,8 +70,8 @@ class DatabaseSeeder extends Seeder
         $this->call(RoleSeeder::class);
 
         $admin = User::firstOrCreate(
-            ['email' => 'admin@advocate.test'],
-            ['name' => 'Nurul Aisyah binti Ahmad', 'password' => Hash::make('password'), 'email_verified_at' => now()],
+            ['email' => self::LOGINS[0]['email']],
+            ['name' => 'Nurul Aisyah binti Ahmad', 'password' => Hash::make(self::LOGINS[0]['password']), 'email_verified_at' => now()],
         );
 
         $team = collect(['Lim Wei Jie', 'Priya Nair', 'Muhammad Hafiz bin Rahman'])->map(fn ($name) => User::firstOrCreate(

@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import AuthLayout from '@/layouts/auth-layout';
 
 type LoginForm = {
@@ -16,17 +17,28 @@ type LoginForm = {
     remember: boolean;
 };
 
+type DemoLogin = { name: string; email: string; password: string };
+
 interface LoginProps {
     status?: string;
     canResetPassword: boolean;
+    demoLogins: DemoLogin[];
 }
 
-export default function Login({ status, canResetPassword }: LoginProps) {
+export default function Login({ status, canResetPassword, demoLogins }: LoginProps) {
     const { data, setData, post, processing, errors, reset } = useForm<LoginForm>({
         email: '',
         password: '',
         remember: false,
     });
+
+    const fill = (email: string) => {
+        const login = demoLogins.find((l) => l.email === email);
+
+        if (login) {
+            setData((d) => ({ ...d, email: login.email, password: login.password }));
+        }
+    };
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
@@ -41,6 +53,21 @@ export default function Login({ status, canResetPassword }: LoginProps) {
 
             <form className="flex flex-col gap-6" onSubmit={submit}>
                 <div className="grid gap-6">
+                    {demoLogins.length > 0 && (
+                        <div className="bg-muted/50 grid gap-3 rounded-lg border p-4">
+                            <Label id="quick-login">Quick login</Label>
+                            <RadioGroup aria-labelledby="quick-login" onValueChange={fill}>
+                                {demoLogins.map((login) => (
+                                    <Label key={login.email} className="flex cursor-pointer items-center gap-3 font-normal">
+                                        <RadioGroupItem value={login.email} />
+                                        <span className="font-medium">{login.name}</span>
+                                        <span className="text-muted-foreground truncate">{login.email}</span>
+                                    </Label>
+                                ))}
+                            </RadioGroup>
+                        </div>
+                    )}
+
                     <div className="grid gap-2">
                         <Label htmlFor="email">Email address</Label>
                         <Input
